@@ -1,10 +1,21 @@
-// import apiClient from "@/shared/utils/api";
-import { cookies } from "next/headers";
+"use client";
 
-export default async function Dashboard() {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken");
+import { logout } from "@/api/auth/logout";
+import { useRouter } from "next/navigation";
 
-  console.log(cookieStore, accessToken);
-  return <div>dashboard</div>;
+export default function Dashboard() {
+  const router = useRouter();
+  const handleLogout = async () => {
+    const status = await logout();
+    if (status === 200) {
+      router.push("/login");
+    }
+  };
+  return (
+    <div>
+      dashboard
+      <br />
+      <button onClick={handleLogout}>logout</button>
+    </div>
+  );
 }

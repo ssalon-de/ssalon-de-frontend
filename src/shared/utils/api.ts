@@ -65,7 +65,7 @@ class ApiClient {
     return this.request<T>("GET", endpoint);
   }
 
-  async post<T>(endpoint: string, body: unknown): Promise<T> {
+  async post<T>(endpoint: string, body?: unknown): Promise<T> {
     return this.request<T>("POST", endpoint, body);
   }
 
@@ -82,7 +82,6 @@ const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 const apiClient = new ApiClient(baseUrl);
 
 apiClient.setGlobalErrorHandler((error) => {
-  console.log(error);
   if (error.status === 401) {
     alert(error.message);
   } else if (error.status === 500) {
