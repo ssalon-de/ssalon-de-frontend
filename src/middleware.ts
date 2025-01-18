@@ -7,7 +7,6 @@ export default function middleware(request: NextRequest) {
   const { nextUrl, cookies } = request;
   const { pathname } = nextUrl;
 
-  console.log(pathname);
   const accessToken = cookies.get("accessToken");
 
   if (AUTH_PAGES.includes(pathname)) {

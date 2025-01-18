@@ -1,3 +1,5 @@
+export const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+
 type Error = {
   status: number;
   message: string;
@@ -21,6 +23,7 @@ class ApiClient {
     this.globalErrorHandler = handler;
   }
 
+  // Client에서만 사용해야함
   private async request<T>(
     method: string,
     endpoint: string,
@@ -29,6 +32,13 @@ class ApiClient {
     const headers: HeadersInit = {
       "Content-Type": "application/json",
     };
+
+    // if (isServer()) {
+    //   const serverCookies = await cookies();
+    //   this.accessToken = serverCookies.get("accessToken")?.value || "";
+    // } else {
+    // }
+    this.accessToken = getCookie("accessToken");
 
     if (this.accessToken) {
       headers["Authorization"] = `Bearer ${this.accessToken}`;
@@ -50,6 +60,7 @@ class ApiClient {
 
       return res.json();
     } catch (error) {
+      console.log(error);
       const customError = error as Error;
 
       if (this.globalErrorHandler) {
@@ -78,17 +89,25 @@ class ApiClient {
   }
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
-const apiClient = new ApiClient(baseUrl);
+const apiClient = new ApiClient(BASE_URL);
 
 apiClient.setGlobalErrorHandler((error) => {
   if (error.status === 401) {
-    alert(error.message);
-  } else if (error.status === 500) {
-    alert(error.message);
+    // reissue
   } else {
-    alert(error.message);
+    console.log(error);
   }
 });
+
+export function getCookie(name: string): string | null {
+  const cookies = document.cookie.split("; "); // 쿠키를 개별 키-값 쌍으로 분리
+  for (const cookie of cookies) {
+    const [key, value] = cookie.split("="); // 키와 값 분리
+    if (key === name) {
+      return decodeURIComponent(value); // URI 인코딩된 값 디코딩
+    }
+  }
+  return null;
+}
 
 export default apiClient; // 기본 서버 URL 설정

@@ -1,7 +1,11 @@
 "use client";
 
-import { login } from "@/api/auth/login";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Scissors } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -10,24 +14,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@radix-ui/react-label";
-import { Scissors } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 
-export default function Page() {
-  const router = useRouter();
+export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
-  const handleLogin = async () => {
-    const data = await login({ email, password });
-
-    if (data) {
-      router.push("/dashboard");
-    }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push("/login");
   };
 
   return (
@@ -41,14 +36,14 @@ export default function Page() {
             </span>
           </div>
           <CardTitle className="text-2xl font-bold text-center">
-            로그인
+            회원가입
           </CardTitle>
           <CardDescription className="text-center">
-            계정에 로그인하여 매출을 관리하세요
+            새 계정을 만들어 매출을 관리하세요
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">이메일</Label>
               <Input
@@ -74,19 +69,14 @@ export default function Page() {
           </form>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
-          <Button className="w-full" onClick={handleLogin}>
-            로그인
+          <Button className="w-full" onClick={handleSubmit}>
+            회원가입
           </Button>
-          <div className="text-sm text-center space-y-2">
-            <a href="#" className="text-blue-600 hover:underline">
-              비밀번호를 잊으셨나요?
+          <div className="flex gap-1 text-sm text-center">
+            이미 계정이 있으신가요?
+            <a href="/login" className="text-blue-600 hover:underline">
+              로그인
             </a>
-            <div className="flex gap-1">
-              계정이 없으신가요?
-              <Link href="/sign-up" className="text-blue-600 hover:underline">
-                회원가입
-              </Link>
-            </div>
           </div>
         </CardFooter>
       </Card>
