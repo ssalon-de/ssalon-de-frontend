@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import useUserStore from "@/zustand/user";
 import { Label } from "@radix-ui/react-label";
 import { Scissors } from "lucide-react";
 import Link from "next/link";
@@ -19,6 +20,7 @@ import { useState } from "react";
 
 export default function Page() {
   const router = useRouter();
+  const { setUser } = useUserStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -26,6 +28,7 @@ export default function Page() {
     const data = await login({ email, password });
 
     if (data) {
+      setUser({ email: data.user.email });
       router.push("/dashboard");
     }
   };

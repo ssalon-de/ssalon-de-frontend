@@ -2,20 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import {
-  Home,
-  DollarSign,
-  List,
-  ChevronLeft,
-  ChevronRight,
-  Scissors,
-  LogOut,
-  Settings,
-} from "lucide-react";
+import { usePathname } from "next/navigation";
+import { ChevronLeft, ChevronRight, Scissors, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { logout } from "@/api/auth/logout";
+import { useLogout } from "@/shared/hooks/use-logout";
+import { useStore } from "@/shared/hooks/use-store";
+import useUserStore from "@/zustand/user";
+import { routes } from "@/shared/constants/route";
 
 function SimpleCalendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -91,23 +85,14 @@ function SimpleCalendar() {
 
 export function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter();
+  const user = useStore(useUserStore, (state) => state.user);
+
+  // Todo: user 이름 받아서 바꾸기
+  const userName = user?.email.split("@")[0].slice(0, 3) ?? "";
+
+  const handleLogout = useLogout();
 
   const isActive = (path: string) => pathname === path;
-
-  const handleLogout = async () => {
-    const status = await logout();
-    if (status === 200) {
-      router.push("/");
-    }
-  };
-
-  const navItems = [
-    { href: "/", icon: Home, label: "대시보드" },
-    { href: "/sales/new", icon: DollarSign, label: "매출 입력" },
-    { href: "/sales", icon: List, label: "매출 목록" },
-    { href: "/service-types", icon: Settings, label: "서비스 관리" },
-  ];
 
   return (
     <aside className="hidden md:flex md:flex-col w-64 h-screen bg-gray-50 shadow-lg">
@@ -121,29 +106,28 @@ export function Sidebar() {
       <div className="flex-none p-4 border-b border-gray-200">
         <div className="flex items-center space-x-3">
           <Avatar>
-            <AvatarImage alt="User" />
-            <AvatarFallback>UN</AvatarFallback>
+            <AvatarImage alt="user" />
+            <AvatarFallback>{userName}</AvatarFallback>
           </Avatar>
           <div>
-            <p className="font-medium text-gray-700">사용자 이름</p>
-            <p className="text-sm text-gray-500">user@example.com</p>
+            <p className="text-sm text-gray-500">{user?.email}</p>
           </div>
         </div>
       </div>
 
       <nav className="flex-grow p-4 overflow-auto">
         <ul className="space-y-2">
-          {navItems.map((item) => (
-            <li key={item.href}>
+          {routes.map((item) => (
+            <li key={item.path}>
               <Link
-                href={item.href}
+                href={item.path}
                 className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-                  isActive(item.href)
+                  isActive(item.path)
                     ? "bg-blue-100 text-blue-600"
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
-                <item.icon size={20} />
+                {item?.icon && <item.icon size={20} />}
                 <span>{item.label}</span>
               </Link>
             </li>
