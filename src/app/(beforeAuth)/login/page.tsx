@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/shared/hooks/use-toast";
 import { ERROR_MESSAGE } from "@/shared/constants/api-error";
 import { ApiError } from "@/shared/types/error";
 import useUserStore from "@/zustand/user";
