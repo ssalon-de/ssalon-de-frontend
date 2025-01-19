@@ -11,6 +11,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { ERROR_MESSAGE } from "@/shared/constants/api-error";
+import { ApiError } from "@/shared/types/error";
 import useUserStore from "@/zustand/user";
 import { Label } from "@radix-ui/react-label";
 import { Scissors } from "lucide-react";
@@ -21,11 +24,25 @@ import { useState } from "react";
 export default function Page() {
   const router = useRouter();
   const { setUser } = useUserStore();
+  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
     const data = await login({ email, password });
+
+    if (Object.hasOwn(data, "code")) {
+      const { code } = data as unknown as ApiError;
+
+      switch (code) {
+        case ERROR_MESSAGE.invalid_credentials.code:
+        case ERROR_MESSAGE.validation_failed.code:
+          return toast({
+            variant: "destructive",
+            description: ERROR_MESSAGE.validation_failed.message,
+          });
+      }
+    }
 
     if (data) {
       setUser({ email: data.user.email });
