@@ -1,87 +1,15 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronLeft, ChevronRight, Scissors, LogOut } from "lucide-react";
+import { Scissors, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useLogout } from "@/shared/hooks/use-logout";
 import { useStore } from "@/shared/hooks/use-store";
 import useUserStore from "@/zustand/user";
-import { routes } from "@/shared/constants/route";
-
-function SimpleCalendar() {
-  const [currentDate, setCurrentDate] = useState(new Date());
-
-  const daysInMonth = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth() + 1,
-    0
-  ).getDate();
-  const firstDayOfMonth = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    1
-  ).getDay();
-
-  const prevMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
-    );
-  };
-
-  const nextMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
-    );
-  };
-
-  return (
-    <div className="w-full bg-white rounded-lg shadow-sm p-4">
-      <div className="flex justify-between items-center mb-4">
-        <button
-          onClick={prevMonth}
-          className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-          aria-label="Previous month"
-        >
-          <ChevronLeft size={20} />
-        </button>
-        <span className="font-semibold text-gray-700">
-          {currentDate.toLocaleString("default", {
-            month: "long",
-            year: "numeric",
-          })}
-        </span>
-        <button
-          onClick={nextMonth}
-          className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-          aria-label="Next month"
-        >
-          <ChevronRight size={20} />
-        </button>
-      </div>
-      <div className="grid grid-cols-7 gap-1 text-center">
-        {["일", "월", "화", "수", "목", "금", "토"].map((day) => (
-          <div key={day} className="text-xs font-semibold text-gray-500">
-            {day}
-          </div>
-        ))}
-        {Array.from({ length: firstDayOfMonth }).map((_, index) => (
-          <div key={`empty-${index}`} />
-        ))}
-        {Array.from({ length: daysInMonth }).map((_, index) => (
-          <div
-            key={index + 1}
-            className="text-sm p-1 hover:bg-blue-100 rounded-full transition-colors cursor-pointer"
-          >
-            {index + 1}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+import { routes } from "@/shared/constants/routes";
+import SimpleCalendar from "./calendar";
 
 export function Sidebar() {
   const pathname = usePathname();

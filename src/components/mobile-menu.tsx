@@ -11,9 +11,10 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { useLogout } from "@/shared/hooks/use-logout";
-import { routes } from "@/shared/constants/route";
+import { routes } from "@/shared/constants/routes";
 import { useStore } from "@/shared/hooks/use-store";
 import useUserStore from "@/zustand/user";
+import Calendar from "./calendar";
 
 export function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -38,7 +39,10 @@ export function MobileMenu() {
           <Menu size={24} />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+      <SheetContent
+        side="left"
+        className="w-[300px] sm:w-[400px] overflow-y-auto"
+      >
         <VisuallyHidden.Root>
           <DialogTitle>title</DialogTitle>
         </VisuallyHidden.Root>
@@ -80,6 +84,9 @@ export function MobileMenu() {
               ))}
             </ul>
           </nav>
+          <div className="border-t">
+            <Calendar />
+          </div>
           <div className="py-4 px-6 border-t">
             <Button
               variant="outline"
