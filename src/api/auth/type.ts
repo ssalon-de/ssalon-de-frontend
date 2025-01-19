@@ -9,3 +9,7 @@ export type LoginResponse = {
     email: string;
   };
 };
+
+export type User = {
+  email: string;
+};
