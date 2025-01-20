@@ -3,20 +3,6 @@ import { CreateServiceType, ServiceType } from "./type";
 
 export const getServiceTypes = async (): Promise<ServiceType[]> => {
   try {
-    // const token = getCookie("accessToken");
-    // const response = await fetch(`${BASE_URL}/service-types`, {
-    //   method: "GET",
-    //   headers: { ...headers, Authorization: `Bearer ${token}` },
-    // });
-
-    // if (!response.ok) {
-    //   throw new Error(response.statusText);
-    // }
-
-    // const data: ServiceType[] = await response.json();
-
-    // return data;
-
     return apiClient.get<ServiceType[]>("/service-types");
   } catch (error) {
     throw error;
