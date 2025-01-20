@@ -1,3 +1,4 @@
+import { ApiError } from "@/shared/types/error";
 import { BASE_URL } from "@/shared/utils/api";
 import { NextResponse, NextRequest } from "next/server";
 
@@ -13,7 +14,8 @@ export async function POST(req: NextRequest) {
     });
 
     if (!res.ok) {
-      throw new Error(res.statusText);
+      const error: ApiError = await res.json();
+      throw { status: error.status, code: error.code };
     }
 
     const { user, accessToken, refreshToken } = await res.json();
@@ -40,6 +42,10 @@ export async function POST(req: NextRequest) {
 
     return response;
   } catch (error) {
-    return NextResponse.json({ error });
+    const err = error as ApiError;
+    return NextResponse.json(
+      { code: err.code, message: err.message },
+      { status: err.status }
+    );
   }
 }

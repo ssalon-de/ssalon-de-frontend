@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,12 +33,14 @@ export default function ServiceTypesPage() {
   });
   const { mutate: updateServiceType } = useUpdateServiceType({
     onSuccess: () => {
+      setIsEdit(false);
       setEditingId("");
       setEditingName("");
       setEditingPrice(0);
       afterMutateServiceType();
     },
   });
+  const [isEdit, setIsEdit] = useState(false);
   const [editingId, setEditingId] = useState<string>("");
   const [editingName, setEditingName] = useState("");
   const [editingPrice, setEditingPrice] = useState(0);
@@ -53,17 +55,19 @@ export default function ServiceTypesPage() {
   };
 
   const handleClickEdit = (serviceType: ServiceType) => {
+    setIsEdit(true);
     setEditingId(serviceType.id);
     setEditingName(serviceType.name);
     setEditingPrice(serviceType.price);
   };
 
-  const handleClickSave = () =>
+  const handleClickSave = () => {
     updateServiceType({
       id: editingId,
       name: editingName,
       price: editingPrice,
     });
+  };
 
   const handleClickDelete = (id: string) => {
     deleteServiceType(id);
@@ -113,30 +117,33 @@ export default function ServiceTypesPage() {
                     `${price.toLocaleString()}원`
                   )}
                 </TableCell>
-                <TableCell className="text-right">
-                  {editingId === id ? (
-                    <Button size="sm" onClick={handleClickSave}>
-                      저장
-                    </Button>
-                  ) : (
+                <TableCell className="text-right flex gap-1 justify-end">
+                  {isEdit && editingId === id ? (
                     <Button
-                      onClick={() => handleClickEdit({ id, name, price })}
                       size="sm"
+                      onClick={handleClickSave}
                       variant="outline"
                     >
-                      <Pencil className="mr-2 h-4 w-4" />
-                      수정
+                      <Save className="h-4 w-4" />
                     </Button>
+                  ) : (
+                    <>
+                      <Button
+                        onClick={() => handleClickEdit({ id, name, price })}
+                        size="sm"
+                        variant="outline"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        onClick={() => handleClickDelete(id)}
+                        size="sm"
+                        variant="outline"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </>
                   )}
-                  <Button
-                    onClick={() => handleClickDelete(id)}
-                    size="sm"
-                    variant="outline"
-                    className="ml-2"
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    삭제
-                  </Button>
                 </TableCell>
               </TableRow>
             ))}

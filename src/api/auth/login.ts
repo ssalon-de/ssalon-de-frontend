@@ -2,14 +2,18 @@ import { AuthDto, User } from "./type";
 import { encryptPassword } from "@/shared/utils/encrypt";
 
 export const login = async (dto: AuthDto): Promise<{ user: User }> => {
-  const encryptedPassword = encryptPassword(dto.password);
-  const data: { user: User } = await fetch("/api/login", {
-    method: "POST",
-    body: JSON.stringify({ ...dto, password: encryptedPassword }),
-  }).then((res) => {
-    const data = res.json();
-    return data;
-  });
+  try {
+    const encryptedPassword = encryptPassword(dto.password);
+    const data: { user: User } = await fetch("/api/login", {
+      method: "POST",
+      body: JSON.stringify({ ...dto, password: encryptedPassword }),
+    }).then((res) => {
+      const data = res.json();
+      return data;
+    });
 
-  return data;
+    return data;
+  } catch (error) {
+    throw error;
+  }
 };
