@@ -1,4 +1,4 @@
-import { logout } from "@/api/auth/logout";
+import { logout } from "@/queries/auth/api";
 import useUserStore from "@/zustand/user";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";

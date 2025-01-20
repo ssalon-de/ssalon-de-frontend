@@ -1,6 +1,5 @@
 "use client";
 
-import { login } from "@/api/auth/login";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,6 +19,7 @@ import { Scissors } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { login } from "@/queries/auth/api";
 
 export default function Page() {
   const router = useRouter();

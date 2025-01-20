@@ -24,7 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { NewSaleDialog } from "@/components/dialogs/create-sale-dialog";
+import { NewSaleDialog } from "@/app/(afterAuth)/sales/components/create-sale-dialog";
 
 type Sale = {
   id: number;

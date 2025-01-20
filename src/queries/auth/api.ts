@@ -17,3 +17,14 @@ export const login = async (dto: AuthDto): Promise<{ user: User }> => {
     throw error;
   }
 };
+
+export async function logout() {
+  try {
+    const { status } = await fetch("/api/logout", {
+      method: "POST",
+    });
+    return status;
+  } catch (error) {
+    console.log(error);
+  }
+}
