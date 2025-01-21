@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -12,9 +12,7 @@ import ServicTypesHeader from "./components/service-types-header";
 export default function Page() {
   return (
     <Card>
-      <CardHeader>
-        <ServicTypesHeader />
-      </CardHeader>
+      <ServicTypesHeader />
       <CardContent>
         <Table>
           <TableHeader>
