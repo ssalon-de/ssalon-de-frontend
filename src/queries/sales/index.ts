@@ -6,7 +6,7 @@ import { MutationOptions } from "@/shared/types/query";
 
 export const useSales = (
   params: GetSalesParams,
-  options?: UseQueryOptions<Sale[]>
+  options?: Omit<UseQueryOptions<Sale[]>, "queryKey" | "queryFn">
 ) => {
   return useQuery<Sale[]>({
     ...options,

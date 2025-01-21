@@ -17,7 +17,11 @@ type Props = {
   onConfirmDelete: () => void;
 };
 
-export default function DeleteAlert({ onConfirmDelete, open, setOpen }: Props) {
+export default function DeleteSaleAlert({
+  onConfirmDelete,
+  open,
+  setOpen,
+}: Props) {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogContent>

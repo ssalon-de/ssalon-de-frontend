@@ -13,5 +13,7 @@ export type Sale = {
   description?: string;
 };
 
-export type CreateSaleDto = Omit<Sale, "id">;
-export type UpdateSaleDto = Sale;
+export type CreateSaleDto = Omit<Sale, "id" | "services"> & {
+  services: string[];
+};
+export type UpdateSaleDto = CreateSaleDto & { id: string };

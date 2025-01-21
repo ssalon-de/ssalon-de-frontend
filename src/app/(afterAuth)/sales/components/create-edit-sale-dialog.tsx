@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,18 +14,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useCreateSale, useUpdateSale } from "@/queries/sales";
-
-type ServiceType = {
-  id: string;
-  name: string;
-  price: number;
-};
+import { useServiceTypes } from "@/queries/service-types";
+import { MutateType } from "@/shared/types/query";
+import { CreateSaleDto, UpdateSaleDto } from "@/queries/sales/type";
+import { useToast } from "@/shared/hooks/use-toast";
 
 type NewSaleDialogProps = {
   id?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAfterMutate?: () => void;
+  onAfterMutate?: (type: MutateType) => void;
 };
 
 export function CreateEditSaleDialog({
@@ -36,17 +34,20 @@ export function CreateEditSaleDialog({
 }: NewSaleDialogProps) {
   const isEdit = !!id;
   const [dateTime, setDateTime] = useState("");
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState(0);
+
+  const { toast } = useToast();
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [description, setDescription] = useState("");
-  const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
+
+  const { data: serviceTypes = [] } = useServiceTypes();
 
   const onSuccessCallback = () => {
     onOpenChange(false);
     resetForm();
 
     if (onAfterMutate) {
-      onAfterMutate();
+      onAfterMutate(isEdit ? "UPDATE" : "CREATE");
     }
   };
 
@@ -57,31 +58,73 @@ export function CreateEditSaleDialog({
     onSuccess: onSuccessCallback,
   });
 
+  const validateForm = useCallback((data: CreateSaleDto | UpdateSaleDto) => {
+    const validate = {
+      message: "",
+      flag: true,
+    };
+    if (data.amount === 0) {
+      validate.message = "총 금액을 입력해주세요.";
+      validate.flag = false;
+      return validate;
+    } else if (data.services.length === 0) {
+      validate.message = "서비스 유형을 선택해주세요.";
+      validate.flag = false;
+      return validate;
+    } else if (!data.date) {
+      validate.message = "날짜 및 시간을 선택해주세요.";
+      validate.flag = false;
+      return validate;
+    }
+    return validate;
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // resetForm();
-
-    const dto = {
-      // id: id,
-      date: new Date(dateTime).toISOString(),
-      amount: parseInt(amount),
-      services: serviceTypes,
-      description: description,
+    const inputData = {
+      date: dateTime,
+      amount,
+      services: selectedServices,
+      description,
     };
 
-    if (isEdit) {
-      updateSale({
-        id: id,
-        ...dto,
-      });
+    const { message, flag } = validateForm(inputData);
+
+    if (flag) {
+      const services = selectedServices.reduce((prev, cur) => {
+        const service = serviceTypes.find((service) => service.id === cur);
+        if (service) {
+          prev.push(service.id);
+        }
+        return prev;
+      }, [] as string[]);
+
+      const dto = {
+        date: new Date(dateTime).toISOString(),
+        amount: amount,
+        services,
+        description: description,
+      };
+
+      if (isEdit) {
+        updateSale({
+          id: id,
+          ...dto,
+        });
+      } else {
+        createSale(dto);
+      }
     } else {
-      createSale(dto);
+      toast({
+        variant: "destructive",
+        description: message,
+      });
     }
   };
 
   const resetForm = () => {
     setDateTime("");
-    setAmount("");
+    setAmount(0);
     setSelectedServices([]);
     setDescription("");
   };
@@ -94,18 +137,13 @@ export function CreateEditSaleDialog({
     );
   };
 
-  const calculateTotalAmount = () => {
-    return serviceTypes
-      .filter((service) => selectedServices.includes(service.id))
-      .reduce((total, service) => total + service.price, 0);
+  const handleClose = (open: boolean) => {
+    resetForm();
+    onOpenChange(open);
   };
 
-  useEffect(() => {
-    setAmount(calculateTotalAmount().toString());
-  }, [selectedServices]);
-
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>매출 입력</DialogTitle>
@@ -151,7 +189,7 @@ export function CreateEditSaleDialog({
                 id="amount"
                 type="number"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={(e) => setAmount(+e.target.value)}
                 required
                 className="col-span-3"
               />
@@ -163,8 +201,8 @@ export function CreateEditSaleDialog({
               <Input
                 id="customerInfo"
                 type="text"
-                value={customerInfo}
-                onChange={(e) => setCustomerInfo(e.target.value)}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 placeholder="예: 30대 여성, 단골 고객"
                 className="col-span-3"
               />

@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ServiceType } from "@/queries/service-types/type";
 import { Edit2, Trash2 } from "lucide-react";
-import { useState } from "react";
 
 type Props = {
   id: string;
@@ -13,6 +12,8 @@ type Props = {
   amount: number;
   services: ServiceType[];
   description?: string;
+  onClickEdit: (id: string) => void;
+  onClickDelete: (id: string) => void;
 };
 
 export default function SalesItem({
@@ -21,18 +22,9 @@ export default function SalesItem({
   amount,
   services,
   description,
+  onClickEdit,
+  onClickDelete,
 }: Props) {
-  const [selectedSaleId, setSelectedSaleId] = useState<null | string>(null);
-  const handleEdit = () => {
-    setSelectedSaleId(id);
-  };
-
-  const handleDelete = () => {};
-
-  const onAfterEdit = () => {
-    setSelectedSaleId(null);
-  };
-
   return (
     <Card key={id}>
       <CardContent className="p-4">
@@ -45,18 +37,18 @@ export default function SalesItem({
         </div>
         <div className="mb-2">
           <p className="text-sm font-medium">서비스</p>
-          <p>
+          <div className="flex gap-1">
             {services.map((service) => (
               <Badge key={service.id}>{service.name}</Badge>
             ))}
-          </p>
+          </div>
         </div>
         <div className="flex justify-end space-x-2">
-          <Button onClick={handleEdit} size="sm" variant="outline">
-            <Edit2 className="w-4 h-4 mr-1" /> 수정
+          <Button onClick={() => onClickEdit(id)} size="sm" variant="outline">
+            <Edit2 className="w-4 h-4 mr-1" />
           </Button>
-          <Button onClick={handleDelete} size="sm" variant="outline">
-            <Trash2 className="w-4 h-4 mr-1" /> 삭제
+          <Button onClick={() => onClickDelete(id)} size="sm" variant="outline">
+            <Trash2 className="w-4 h-4 mr-1" />
           </Button>
         </div>
       </CardContent>
