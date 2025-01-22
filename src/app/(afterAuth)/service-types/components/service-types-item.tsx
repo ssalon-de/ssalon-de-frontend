@@ -1,5 +1,9 @@
 "use client";
 
+import { memo, PropsWithChildren, useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Pencil, Save, Trash2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TableCell, TableRow } from "@/components/ui/table";
@@ -8,9 +12,6 @@ import {
   useUpdateServiceType,
 } from "@/queries/service-types";
 import { ServiceType } from "@/queries/service-types/type";
-import { Pencil, Save, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { PropsWithChildren, useState } from "react";
 
 type Props = PropsWithChildren<{
   id: string;
@@ -18,7 +19,7 @@ type Props = PropsWithChildren<{
   price: number;
 }>;
 
-export default function ServiceItem({ id, name, price }: Props) {
+const ServiceItem: React.FC<Props> = ({ id, name, price }) => {
   const router = useRouter();
   const [isEdit, setIsEdit] = useState(false);
   const [editingId, setEditingId] = useState<string>("");
@@ -41,28 +42,31 @@ export default function ServiceItem({ id, name, price }: Props) {
     },
   });
 
-  const afterMutateServiceType = () => {
+  const afterMutateServiceType = useCallback(() => {
     router.refresh();
-  };
+  }, [router]);
 
-  const handleClickEdit = (serviceType: ServiceType) => {
+  const handleClickEdit = useCallback((serviceType: ServiceType) => {
     setIsEdit(true);
     setEditingId(serviceType.id);
     setEditingName(serviceType.name);
     setEditingPrice(serviceType.price);
-  };
+  }, []);
 
-  const handleClickSave = () => {
+  const handleClickSave = useCallback(() => {
     updateServiceType({
       id: editingId,
       name: editingName,
       price: editingPrice,
     });
-  };
+  }, [editingId, editingName, editingPrice, updateServiceType]);
 
-  const handleClickDelete = (id: string) => {
-    deleteServiceType(id);
-  };
+  const handleClickDelete = useCallback(
+    (id: string) => {
+      deleteServiceType(id);
+    },
+    [deleteServiceType]
+  );
 
   return (
     <TableRow key={id}>
@@ -87,10 +91,10 @@ export default function ServiceItem({ id, name, price }: Props) {
           `${price.toLocaleString()}원`
         )}
       </TableCell>
-      <TableCell className="text-right flex gap-1 justify-end">
+      <TableCell className="flex justify-end gap-1 text-right">
         {isEdit && editingId === id ? (
           <Button size="sm" onClick={handleClickSave} variant="outline">
-            <Save className="h-4 w-4" />
+            <Save className="w-4 h-4" />
           </Button>
         ) : (
           <>
@@ -99,18 +103,20 @@ export default function ServiceItem({ id, name, price }: Props) {
               size="sm"
               variant="outline"
             >
-              <Pencil className="h-4 w-4" />
+              <Pencil className="w-4 h-4" />
             </Button>
             <Button
               onClick={() => handleClickDelete(id)}
               size="sm"
               variant="outline"
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="w-4 h-4" />
             </Button>
           </>
         )}
       </TableCell>
     </TableRow>
   );
-}
+};
+
+export default memo(ServiceItem);
