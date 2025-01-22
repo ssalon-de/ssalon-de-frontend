@@ -25,6 +25,6 @@ export async function logout() {
     });
     return status;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 }

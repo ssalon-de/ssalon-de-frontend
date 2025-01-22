@@ -8,14 +8,20 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
-import Link from "next/link";
+// import Link from "next/link";
+import { cookies } from "next/headers";
+import { User } from "@/queries/auth/type";
+import { BASE_URL } from "@/shared/utils/api";
 
-export default function ProfilePage() {
-  const userInfo = {
-    username: "홍길동",
-    companyName: "홍길동 헤어샵",
-    email: "hong@example.com",
-  };
+export default async function ProfilePage() {
+  const store = await cookies();
+  const token = store.get("accessToken")?.value ?? "";
+  const userInfo: User = await fetch(`${BASE_URL}/auth/info`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    method: "GET",
+  }).then((res) => res.json());
 
   const handleEdit = () => {
     redirect("/profile/edit");
@@ -31,17 +37,17 @@ export default function ProfilePage() {
         <CardContent className="space-y-4">
           <div>
             <h3 className="font-semibold">이름</h3>
-            <p>{userInfo.username}</p>
+            <p>{userInfo.name}</p>
           </div>
           <div>
-            <h3 className="font-semibold">회사 이름</h3>
-            <p>{userInfo.companyName}</p>
+            <h3 className="font-semibold">매장</h3>
+            <p>{userInfo.company}</p>
           </div>
           <div>
             <h3 className="font-semibold">이메일</h3>
             <p>{userInfo.email}</p>
           </div>
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <h3 className="font-semibold">약관 및 정책</h3>
             <div className="space-x-4">
               <Link href="/terms" className="text-blue-600 hover:underline">
@@ -51,7 +57,7 @@ export default function ProfilePage() {
                 개인정보처리방침
               </Link>
             </div>
-          </div>
+          </div> */}
         </CardContent>
         <CardFooter>
           <Button onClick={handleEdit} className="w-full">
