@@ -8,22 +8,21 @@ type Error = {
 class ApiClient {
   private baseUrl: string;
   private accessToken: string | null = null;
-  private globalErrorHandler?: (error: Error) => void;
+  private globalErrorHandler: (error: Error) => void;
 
-  constructor(baseUrl: string) {
+  constructor(baseUrl: string, globalHandler: (error: Error) => void) {
     this.baseUrl = baseUrl;
+    this.globalErrorHandler = globalHandler;
   }
 
   setAccessToken(token: string) {
     this.accessToken = token;
   }
 
-  // 🔹 글로벌 에러 핸들러 설정
   setGlobalErrorHandler(handler: (error: Error) => void) {
     this.globalErrorHandler = handler;
   }
 
-  // Client에서만 사용해야함
   private async request<T>(
     method: string,
     endpoint: string,
@@ -33,11 +32,6 @@ class ApiClient {
       "Content-Type": "application/json",
     };
 
-    // if (isServer()) {
-    //   const serverCookies = await cookies();
-    //   this.accessToken = serverCookies.get("accessToken")?.value || "";
-    // } else {
-    // }
     this.accessToken = getCookie("accessToken");
 
     if (this.accessToken) {
@@ -60,15 +54,13 @@ class ApiClient {
 
       return res.json();
     } catch (error) {
-      console.log(error);
       const customError = error as Error;
 
       if (this.globalErrorHandler) {
         this.globalErrorHandler(customError);
       }
 
-      // temp
-      return customError as T;
+      throw customError;
     }
   }
 
@@ -89,15 +81,15 @@ class ApiClient {
   }
 }
 
-const apiClient = new ApiClient(BASE_URL);
-
-apiClient.setGlobalErrorHandler((error) => {
+const globalHandler = (error: Error) => {
   if (error.status === 401) {
     // reissue
   } else {
     console.log(error);
   }
-});
+};
+
+const apiClient = new ApiClient(BASE_URL, globalHandler);
 
 export function getCookie(name: string): string | null {
   const cookies = document.cookie.split("; "); // 쿠키를 개별 키-값 쌍으로 분리

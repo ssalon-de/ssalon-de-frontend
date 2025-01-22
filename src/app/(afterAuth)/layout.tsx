@@ -1,5 +1,5 @@
-import { MobileMenu } from "@/components/mobile-menu";
-import { Sidebar } from "@/components/sidebar";
+import { MobileMenu } from "./components/mobile-menu";
+import { Sidebar } from "./components/sidebar";
 
 export default function BeforeAuthLayout({
   children,
@@ -7,11 +7,11 @@ export default function BeforeAuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="max-w-[1200px] flex h-screen overflow-hidden mx-auto">
       <Sidebar />
       <MobileMenu />
-      <main className="flex-1 overflow-auto p-6">
-        <div className="container mx-auto">{children}</div>
+      <main className="flex-1 overflow-auto p-6 bg-white">
+        <div className="container mx-auto w-full h-full">{children}</div>
       </main>
     </div>
   );
