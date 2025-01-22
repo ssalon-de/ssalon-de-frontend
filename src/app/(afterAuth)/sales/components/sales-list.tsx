@@ -1,29 +1,25 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
-
+import { memo, useCallback, useState } from "react";
 import dayjs from "dayjs";
+
 import { useDeleteSale, useSales } from "@/queries/sales";
-import SalesItem from "./sales-item";
-import { CreateEditSaleDialog } from "./create-edit-sale-dialog";
-import DeleteSaleAlert from "./delete-sale-alert";
 import { MutateType } from "@/shared/types/query";
 
-export default function SalesList() {
+import SalesItem from "./sales-item";
+import EmptySales from "./empty-sales";
+import SalesFilter from "./sales-filter";
+import CreateEditSaleDialog from "./create-edit-sale-dialog";
+import DeleteSaleAlert from "./delete-sale-alert";
+
+const SalesList = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [openDeleteAlert, setOpenDeleteAlert] = useState(false);
   const [selectedSale, setSelectedSale] = useState<string>();
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
 
-  const { mutate: deleteSale } = useDeleteSale({
-    onSuccess: () => onAfterMutate("DELETE"),
-  });
-
-  const { data: sales = [] } = useSales(
+  const { data: sales = [], isLoading } = useSales(
     {
       startTime: dayjs(startTime).unix(),
       endTime: dayjs(endTime).unix(),
@@ -33,79 +29,75 @@ export default function SalesList() {
     }
   );
 
-  const onAfterMutate = (type: MutateType) => {
+  const { mutate: deleteSale } = useDeleteSale({
+    onSuccess: () => onAfterMutate("DELETE"),
+  });
+
+  const onChangeDate = useCallback((value: string, id: string) => {
+    if (id === "startTime") {
+      setStartTime(value);
+    } else {
+      setEndTime(value);
+    }
+  }, []);
+
+  const onClickReset = useCallback(() => {
+    setStartTime("");
+    setEndTime("");
+  }, []);
+
+  const onAfterMutate = useCallback((type: MutateType) => {
     setSelectedSale(undefined);
     if (type === "DELETE") {
       setOpenDeleteAlert(false);
     } else if (type === "UPDATE") {
       setOpenDialog(false);
     }
-  };
+  }, []);
 
-  const handleAction = (type: MutateType) => (id: string) => {
-    setSelectedSale(id);
-    if (type === "DELETE") {
-      setOpenDeleteAlert(true);
-    } else if (type === "UPDATE") {
-      setOpenDialog(true);
-    }
-  };
+  const handleAction = useCallback(
+    (type: MutateType) => (id: string) => {
+      setSelectedSale(id);
+      if (type === "DELETE") {
+        setOpenDeleteAlert(true);
+      } else if (type === "UPDATE") {
+        setOpenDialog(true);
+      }
+    },
+    []
+  );
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = useCallback(() => {
     if (selectedSale) {
       deleteSale(selectedSale);
     }
-  };
+  }, [selectedSale, deleteSale]);
 
   return (
     <>
       <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1 min-w-[200px] flex-wrap">
-            <Label htmlFor="startDate" className="mb-2 block">
-              시작 날짜
-            </Label>
-            <Input
-              id="startDate"
-              type="date"
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-              className="w-full"
-            />
-          </div>
-          <div className="flex-1 min-w-[200px]">
-            <Label htmlFor="endDate" className="mb-2 block">
-              종료 날짜
-            </Label>
-            <Input
-              id="endDate"
-              type="date"
-              value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
-              className="w-full"
-            />
-          </div>
-          <div className="flex items-end">
-            <Button
-              onClick={() => {
-                setStartTime("");
-                setEndTime("");
-              }}
-              className="w-full sm:w-auto"
-            >
-              필터 초기화
-            </Button>
-          </div>
-        </div>
+        <SalesFilter
+          startTime={startTime}
+          endTime={endTime}
+          onChangeDate={onChangeDate}
+          onClickReset={onClickReset}
+        />
         <div className="flex flex-col gap-4">
-          {sales.map((sale) => (
-            <SalesItem
-              key={sale.id}
-              {...sale}
-              onClickDelete={handleAction("DELETE")}
-              onClickEdit={handleAction("UPDATE")}
+          {sales.length === 0 ? (
+            <EmptySales
+              isLoading={isLoading}
+              onClickButton={() => setOpenDialog(true)}
             />
-          ))}
+          ) : (
+            sales.map((sale) => (
+              <SalesItem
+                key={sale.id}
+                {...sale}
+                onClickDelete={handleAction("DELETE")}
+                onClickEdit={handleAction("UPDATE")}
+              />
+            ))
+          )}
         </div>
       </div>
       <CreateEditSaleDialog
@@ -121,4 +113,6 @@ export default function SalesList() {
       />
     </>
   );
-}
+};
+
+export default memo(SalesList);

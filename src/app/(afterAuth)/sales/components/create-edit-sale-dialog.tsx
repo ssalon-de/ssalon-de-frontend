@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,19 +19,19 @@ import { MutateType } from "@/shared/types/query";
 import { CreateSaleDto, UpdateSaleDto } from "@/queries/sales/type";
 import { useToast } from "@/shared/hooks/use-toast";
 
-type NewSaleDialogProps = {
+type Props = {
   id?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAfterMutate?: (type: MutateType) => void;
 };
 
-export function CreateEditSaleDialog({
+const CreateEditSaleDialog: React.FC<Props> = ({
   id,
   open,
   onOpenChange,
   onAfterMutate,
-}: NewSaleDialogProps) {
+}) => {
   const isEdit = !!id;
   const [dateTime, setDateTime] = useState("");
   const [amount, setAmount] = useState(0);
@@ -215,4 +215,6 @@ export function CreateEditSaleDialog({
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default memo(CreateEditSaleDialog);

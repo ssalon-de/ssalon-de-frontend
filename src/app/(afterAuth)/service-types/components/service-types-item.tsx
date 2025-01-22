@@ -8,9 +8,8 @@ import {
   useUpdateServiceType,
 } from "@/queries/service-types";
 import { ServiceType } from "@/queries/service-types/type";
-import { KEYS } from "@/shared/constants/query-keys";
-import { useQueryClient } from "@tanstack/react-query";
 import { Pencil, Save, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { PropsWithChildren, useState } from "react";
 
 type Props = PropsWithChildren<{
@@ -20,7 +19,7 @@ type Props = PropsWithChildren<{
 }>;
 
 export default function ServiceItem({ id, name, price }: Props) {
-  const client = useQueryClient();
+  const router = useRouter();
   const [isEdit, setIsEdit] = useState(false);
   const [editingId, setEditingId] = useState<string>("");
   const [editingName, setEditingName] = useState("");
@@ -43,9 +42,7 @@ export default function ServiceItem({ id, name, price }: Props) {
   });
 
   const afterMutateServiceType = () => {
-    client.invalidateQueries({
-      queryKey: [KEYS.serviceTypes.list],
-    });
+    router.refresh();
   };
 
   const handleClickEdit = (serviceType: ServiceType) => {

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ServiceType } from "@/queries/service-types/type";
 import { Edit2, Trash2 } from "lucide-react";
+import { memo } from "react";
 
 type Props = {
   id: string;
@@ -16,7 +17,7 @@ type Props = {
   onClickDelete: (id: string) => void;
 };
 
-export default function SalesItem({
+const SalesItem: React.FC<Props> = ({
   id,
   date,
   amount,
@@ -24,7 +25,7 @@ export default function SalesItem({
   description,
   onClickEdit,
   onClickDelete,
-}: Props) {
+}) => {
   return (
     <Card key={id}>
       <CardContent className="p-4">
@@ -54,4 +55,6 @@ export default function SalesItem({
       </CardContent>
     </Card>
   );
-}
+};
+
+export default memo(SalesItem);

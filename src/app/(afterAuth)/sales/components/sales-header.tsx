@@ -1,12 +1,13 @@
 "use client";
+import { memo, useState } from "react";
+import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus } from "lucide-react";
-import { useState } from "react";
-import { CreateEditSaleDialog } from "./create-edit-sale-dialog";
 
-export default function SalesHeader() {
+import CreateEditSaleDialog from "./create-edit-sale-dialog";
+
+const SalesHeader = () => {
   const [isNewSaleDialogOpen, setIsNewSaleDialogOpen] = useState(false);
 
   return (
@@ -24,4 +25,6 @@ export default function SalesHeader() {
       />
     </>
   );
-}
+};
+
+export default memo(SalesHeader);

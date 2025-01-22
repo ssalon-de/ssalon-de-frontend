@@ -11,7 +11,7 @@ export default function BeforeAuthLayout({
       <Sidebar />
       <MobileMenu />
       <main className="flex-1 overflow-auto p-6 bg-white">
-        <div className="container mx-auto">{children}</div>
+        <div className="container mx-auto w-full h-full">{children}</div>
       </main>
     </div>
   );

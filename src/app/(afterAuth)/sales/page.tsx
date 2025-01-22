@@ -4,7 +4,7 @@ import SalesList from "./components/sales-list";
 
 export default function SalesListPage() {
   return (
-    <Card>
+    <Card className="w-full h-full">
       <SalesHeader />
       <CardContent>
         <SalesList />
