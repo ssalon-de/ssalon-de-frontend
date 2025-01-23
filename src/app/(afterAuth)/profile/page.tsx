@@ -8,7 +8,6 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
-// import Link from "next/link";
 import { cookies } from "next/headers";
 import { User } from "@/queries/auth/type";
 import { BASE_URL } from "@/shared/utils/api";
@@ -22,10 +21,6 @@ export default async function ProfilePage() {
     },
     method: "GET",
   }).then((res) => res.json());
-
-  const handleEdit = () => {
-    redirect("/profile/edit");
-  };
 
   return (
     <div className="container p-4 mx-auto">
@@ -60,7 +55,13 @@ export default async function ProfilePage() {
           </div> */}
         </CardContent>
         <CardFooter>
-          <Button onClick={handleEdit} className="w-full">
+          <Button
+            onClick={async () => {
+              "use server";
+              redirect("/profile/edit");
+            }}
+            className="w-full"
+          >
             개인정보 수정
           </Button>
         </CardFooter>

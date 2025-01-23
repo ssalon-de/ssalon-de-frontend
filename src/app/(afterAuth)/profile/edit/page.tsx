@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,34 +15,55 @@ import {
 } from "@/components/ui/card";
 import Spinner from "@/components/ui/spinner";
 
+import { useForm } from "react-hook-form";
+import { User } from "@/queries/auth/type";
+import { useUpdateUserInfo, useUserInfo } from "@/queries/auth";
+import { useToast } from "@/shared/hooks/use-toast";
+
 export default function EditProfilePage() {
-  const [username, setUsername] = useState("홍길동");
-  const [companyName, setCompanyName] = useState("홍길동 헤어샵");
-  const [email, setEmail] = useState("hong@example.com");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+  const { register, handleSubmit, reset, formState } = useForm<User>({
+    defaultValues: {
+      name: "",
+      company: "",
+      email: "",
+    },
+  });
 
-    // Here you would typically send a request to your API to update the user's information
-    // For this example, we'll simulate an API call with a timeout
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  const { data: userInfo, isSuccess, isError } = useUserInfo();
 
-    console.log("Profile update with:", {
-      username,
-      companyName,
-      email,
-      password,
-    });
+  const { mutate: update, isPending } = useUpdateUserInfo({
+    onSuccess: () => {
+      router.push("/profile");
+    },
+    onError: (error) => {
+      console.log(error);
+      toast({
+        description: "개인정보 수정에 실패했습니다.",
+        variant: "destructive",
+      });
+    },
+  });
 
-    setIsLoading(false);
-    // After successful update, redirect to the profile page
-    router.push("/profile");
+  const onSubmit = async (data: User) => {
+    if (formState.isValid) {
+      router.push("/profile");
+      update(data);
+    }
   };
+
+  useEffect(() => {
+    if (isSuccess && userInfo) {
+      reset(userInfo);
+    } else if (isError) {
+      toast({
+        description: "개인정보를 불러오는데 실패했습니다.",
+        variant: "destructive",
+      });
+    }
+  }, [isSuccess, isError, userInfo, reset, toast]);
 
   return (
     <div className="container p-4 mx-auto">
@@ -54,66 +75,44 @@ export default function EditProfilePage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="username">이름</Label>
-              <Input
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="companyName">회사 이름</Label>
-              <Input
-                id="companyName"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                required
-              />
-            </div>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">이메일</Label>
               <Input
                 id="email"
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                disabled
                 required
+                {...register("email", { required: true })}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">새 비밀번호 (선택사항)</Label>
+              <Label htmlFor="name">이름</Label>
               <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="변경하려면 입력하세요"
+                id="name"
+                required
+                {...register("name", {
+                  required: true,
+                })}
               />
             </div>
-            {password && (
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">새 비밀번호 확인</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required={!!password}
-                />
-              </div>
-            )}
+            <div className="space-y-2">
+              <Label htmlFor="companyName">회사 이름</Label>
+              <Input
+                id="company"
+                required
+                {...register("company", { required: true })}
+              />
+            </div>
           </form>
         </CardContent>
         <CardFooter>
           <Button
-            onClick={handleSubmit}
-            disabled={isLoading}
+            onClick={handleSubmit(onSubmit)}
+            disabled={!formState.isValid || isPending}
             className="w-full"
           >
-            {isLoading ? <Spinner className="mr-2" /> : null}
+            {isPending ? <Spinner className="mr-2" /> : null}
             변경사항 저장
           </Button>
         </CardFooter>
