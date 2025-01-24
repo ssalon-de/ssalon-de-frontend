@@ -31,8 +31,6 @@ export default function Page() {
   const handleLogin = async () => {
     const data = await login({ email, password });
 
-    console.log(data);
-
     if (Object.hasOwn(data, "code")) {
       const { code } = data as unknown as ApiError;
 
@@ -51,10 +49,6 @@ export default function Page() {
       router.push("/dashboard");
     }
   };
-
-  useEffect(() => {
-    fetch("https://api.ssalon.store/auth/info");
-  }, []);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
