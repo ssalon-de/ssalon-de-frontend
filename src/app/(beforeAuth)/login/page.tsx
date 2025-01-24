@@ -45,6 +45,7 @@ export default function Page() {
     }
 
     if (data) {
+      console.log(data);
       setUser({ email: data.user.email });
       router.push("/dashboard");
     }
