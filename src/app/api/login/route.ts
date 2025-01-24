@@ -1,11 +1,11 @@
 import { ApiError } from "@/shared/types/error";
-// import { BASE_URL } from "@/shared/utils/api";
+import { BASE_URL } from "@/shared/utils/api";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
     const requestBody = await req.json();
-    const res = await fetch(`https://api.ssalon.store/auth/login`, {
+    const res = await fetch(`${BASE_URL}/auth/login`, {
       method: "POST",
       body: JSON.stringify(requestBody),
       headers: {

@@ -31,6 +31,8 @@ export default function Page() {
   const handleLogin = async () => {
     const data = await login({ email, password });
 
+    console.log(data);
+
     if (Object.hasOwn(data, "code")) {
       const { code } = data as unknown as ApiError;
 
