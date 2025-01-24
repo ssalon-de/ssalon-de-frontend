@@ -13,6 +13,8 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    console.log(res);
+
     if (!res.ok) {
       const error: ApiError = await res.json();
       throw { status: error.status, code: error.code };
