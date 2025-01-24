@@ -26,12 +26,12 @@ export default function SignUp() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
+    <div className="flex items-center justify-center min-h-screen px-4 bg-gray-50">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-center mb-6">
             <Scissors className="w-12 h-12 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-800 ml-2">
+            <span className="ml-2 text-2xl font-bold text-gray-800">
               HairSalon
             </span>
           </div>

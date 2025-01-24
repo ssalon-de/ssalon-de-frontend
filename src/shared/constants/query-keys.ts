@@ -5,4 +5,7 @@ export const KEYS = {
   sales: {
     list: "SALES",
   },
+  user: {
+    info: "USER_INFO",
+  },
 };

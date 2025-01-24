@@ -4,7 +4,7 @@ import ServicTypesHeader from "./components/service-types-header";
 
 export default function Page() {
   return (
-    <Card className="w-full h-full  overflow-auto">
+    <Card className="w-full h-full overflow-auto">
       <ServicTypesHeader />
       <CardContent>
         <ServiceList />

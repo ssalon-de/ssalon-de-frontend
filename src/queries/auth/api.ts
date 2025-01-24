@@ -1,3 +1,4 @@
+import apiClient from "@/shared/utils/api";
 import { AuthDto, User } from "./type";
 import { encryptPassword } from "@/shared/utils/encrypt";
 
@@ -25,6 +26,22 @@ export async function logout() {
     });
     return status;
   } catch (error) {
-    console.log(error);
+    throw error;
+  }
+}
+
+export async function getUserInfo() {
+  try {
+    return apiClient.get<User>("/auth/info");
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateUserInfo(dto: User) {
+  try {
+    return apiClient.put<User>("/auth/info", dto);
+  } catch (error) {
+    throw error;
   }
 }
