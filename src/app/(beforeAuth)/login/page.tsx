@@ -18,7 +18,7 @@ import { Label } from "@radix-ui/react-label";
 import { Scissors } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { login } from "@/queries/auth/api";
 
 export default function Page() {
@@ -49,6 +49,10 @@ export default function Page() {
       router.push("/dashboard");
     }
   };
+
+  useEffect(() => {
+    fetch("https://api.ssalon.store/auth/info");
+  }, []);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
