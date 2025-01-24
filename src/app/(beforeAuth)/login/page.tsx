@@ -18,7 +18,7 @@ import { Label } from "@radix-ui/react-label";
 import { Scissors } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { login } from "@/queries/auth/api";
 
 export default function Page() {
