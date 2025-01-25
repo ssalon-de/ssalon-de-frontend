@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { CardHeader, CardTitle } from "@/components/ui/card";
 
 import CreateServiceTypesDialog from "./create-service-types-dialog";
+import PageTitle from "@/components/ui/page-title";
 
-const ServicTypesHeader = () => {
+const ServiceTypesHeader = () => {
   const router = useRouter();
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -18,21 +18,19 @@ const ServicTypesHeader = () => {
   }, [router]);
 
   return (
-    <CardHeader>
-      <div className="flex items-center justify-between">
-        <CardTitle className="text-2xl font-bold">서비스 관리</CardTitle>
-        <Button onClick={() => setOpenDialog(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          서비스 생성
-        </Button>
-        <CreateServiceTypesDialog
-          open={openDialog}
-          onOpenChange={setOpenDialog}
-          afterCreateServiceType={afterMutateServiceType}
-        />
-      </div>
-    </CardHeader>
+    <div className="flex items-center justify-between">
+      <PageTitle title="서비스 관리" />
+      <Button onClick={() => setOpenDialog(true)}>
+        <Plus className="w-4 h-4 mr-2" />
+        생성
+      </Button>
+      <CreateServiceTypesDialog
+        open={openDialog}
+        onOpenChange={setOpenDialog}
+        afterCreateServiceType={afterMutateServiceType}
+      />
+    </div>
   );
 };
 
-export default memo(ServicTypesHeader);
+export default memo(ServiceTypesHeader);

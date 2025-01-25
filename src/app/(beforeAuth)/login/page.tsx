@@ -20,18 +20,22 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { login } from "@/queries/auth/api";
+import Spinner from "@/components/ui/spinner";
 
 export default function Page() {
   const router = useRouter();
   const { setUser } = useUserStore();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
+    setIsLoading(true);
     const data = await login({ email, password });
 
     if (Object.hasOwn(data, "code")) {
+      setIsLoading(false);
       const { code } = data as unknown as ApiError;
 
       switch (code) {
@@ -95,6 +99,7 @@ export default function Page() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <Button className="w-full" onClick={handleLogin}>
+            {isLoading && <Spinner className="mr-2" />}
             로그인
           </Button>
           <div className="text-sm text-center space-y-2">

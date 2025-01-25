@@ -8,43 +8,29 @@ import { MutateType } from "@/shared/types/query";
 
 import SalesItem from "./sales-item";
 import EmptySales from "./empty-sales";
-import SalesFilter from "./sales-filter";
 import CreateEditSaleDialog from "./create-edit-sale-dialog";
 import DeleteSaleAlert from "./delete-sale-alert";
+import useDateStore from "@/zustand/date";
 
 const SalesList = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [openDeleteAlert, setOpenDeleteAlert] = useState(false);
   const [selectedSale, setSelectedSale] = useState<string>();
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const { date } = useDateStore();
 
   const { data: sales = [], isLoading } = useSales(
     {
-      startTime: dayjs(startTime).unix(),
-      endTime: dayjs(endTime).unix(),
+      startTime: dayjs(date).startOf("day").unix(),
+      endTime: dayjs(date).endOf("day").unix(),
     },
     {
-      enabled: !!startTime && !!endTime,
+      enabled: !!date,
     }
   );
 
   const { mutate: deleteSale } = useDeleteSale({
     onSuccess: () => onAfterMutate("DELETE"),
   });
-
-  const onChangeDate = useCallback((value: string, id: string) => {
-    if (id === "startTime") {
-      setStartTime(value);
-    } else {
-      setEndTime(value);
-    }
-  }, []);
-
-  const onClickReset = useCallback(() => {
-    setStartTime("");
-    setEndTime("");
-  }, []);
 
   const onAfterMutate = useCallback((type: MutateType) => {
     setSelectedSale(undefined);
@@ -76,12 +62,6 @@ const SalesList = () => {
   return (
     <>
       <div className="space-y-4">
-        <SalesFilter
-          startTime={startTime}
-          endTime={endTime}
-          onChangeDate={onChangeDate}
-          onClickReset={onClickReset}
-        />
         <div className="flex flex-col gap-4">
           {sales.length === 0 ? (
             <EmptySales

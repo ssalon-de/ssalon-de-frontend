@@ -1,15 +1,13 @@
 import {
-  AlertDialogFooter,
-  AlertDialogHeader,
-} from "@/components/ui/alert-dialog";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
   AlertDialogTitle,
-} from "@radix-ui/react-alert-dialog";
+} from "@/components/ui/alert-dialog";
 
 type Props = {
   open: boolean;

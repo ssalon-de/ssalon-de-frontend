@@ -29,20 +29,17 @@ const SalesItem: React.FC<Props> = ({
   return (
     <Card key={id}>
       <CardContent className="p-4">
-        <div className="flex justify-between items-start mb-2">
+        <div className="flex justify-between items-start mb-4">
           <div>
             <p className="font-semibold">{new Date(date).toLocaleString()}</p>
             <p className="text-sm text-gray-500">{description}</p>
           </div>
           <p className="font-bold text-lg">{amount.toLocaleString()}원</p>
         </div>
-        <div className="mb-2">
-          <p className="text-sm font-medium">서비스</p>
-          <div className="flex gap-1">
-            {services.map((service) => (
-              <Badge key={service.id}>{service.name}</Badge>
-            ))}
-          </div>
+        <div className="flex gap-1">
+          {services.map((service) => (
+            <Badge key={service.id}>{service.name}</Badge>
+          ))}
         </div>
         <div className="flex justify-end space-x-2">
           <Button onClick={() => onClickEdit(id)} size="sm" variant="outline">
