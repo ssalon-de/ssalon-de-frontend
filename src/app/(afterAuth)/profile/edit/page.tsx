@@ -19,27 +19,37 @@ import { useForm } from "react-hook-form";
 import { User } from "@/queries/auth/type";
 import { useUpdateUserInfo, useUserInfo } from "@/queries/auth";
 import { useToast } from "@/shared/hooks/use-toast";
+import useUserStore from "@/zustand/user";
 
 export default function EditProfilePage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { setUser } = useUserStore();
 
-  const { register, handleSubmit, reset, formState } = useForm<User>({
-    defaultValues: {
-      name: "",
-      company: "",
-      email: "",
-    },
-  });
+  const { register, handleSubmit, reset, formState, getValues } = useForm<User>(
+    {
+      defaultValues: {
+        name: "",
+        company: "",
+        email: "",
+      },
+    }
+  );
 
   const { data: userInfo, isSuccess, isError } = useUserInfo();
 
   const { mutate: update, isPending } = useUpdateUserInfo({
     onSuccess: () => {
+      const userInfo = getValues();
+      setUser({
+        email: userInfo.email,
+        name: userInfo.name,
+        company: userInfo.company,
+        createdAt: userInfo.createdAt,
+      });
       router.push("/profile");
     },
-    onError: (error) => {
-      console.log(error);
+    onError: () => {
       toast({
         description: "개인정보 수정에 실패했습니다.",
         variant: "destructive",
