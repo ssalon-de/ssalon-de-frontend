@@ -15,7 +15,10 @@ export async function POST(req: NextRequest) {
 
     if (!res.ok) {
       const error: ApiError = await res.json();
-      throw { status: error.status, code: error.code };
+      return NextResponse.json(
+        { code: error.code, message: error.message },
+        { status: res.status }
+      );
     }
 
     const { user, accessToken, refreshToken } = await res.json();
@@ -43,9 +46,10 @@ export async function POST(req: NextRequest) {
     return response;
   } catch (error) {
     const err = error as ApiError;
+
     return NextResponse.json(
       { code: err.code, message: err.message },
-      { status: err.status }
+      { status: err.status || 500 }
     );
   }
 }

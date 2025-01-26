@@ -11,6 +11,14 @@ export function getSales(params: GetSalesParams) {
   }
 }
 
+export function getSale(saleId: string) {
+  try {
+    return apiClient.get<Sale>(`/sales/${saleId}`);
+  } catch (error) {
+    throw error;
+  }
+}
+
 export const createSale = (dto: CreateSaleDto): Promise<unknown> => {
   try {
     return apiClient.post("/sales", dto);

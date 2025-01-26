@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, memo } from "react";
+import { useCallback, memo, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,17 +13,32 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useCreateSale, useUpdateSale } from "@/queries/sales";
+import { useCreateSale, useSale, useUpdateSale } from "@/queries/sales";
 import { useServiceTypes } from "@/queries/service-types";
 import { MutateType } from "@/shared/types/query";
-import { CreateSaleDto, UpdateSaleDto } from "@/queries/sales/type";
+import { CreateSaleDto, Sale, UpdateSaleDto } from "@/queries/sales/type";
 import { useToast } from "@/shared/hooks/use-toast";
+import dayjs from "dayjs";
+import { useForm, useWatch } from "react-hook-form";
 
 type Props = {
   id?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAfterMutate?: (type: MutateType) => void;
+};
+
+type SaleForm = Omit<Sale, "services" | "date"> & {
+  services: string[];
+  date: Date;
+};
+
+const defaultValues = {
+  date: dayjs().toDate(),
+  amount: 0,
+  services: [],
+  description: "",
+  id: "",
 };
 
 const CreateEditSaleDialog: React.FC<Props> = ({
@@ -33,18 +48,24 @@ const CreateEditSaleDialog: React.FC<Props> = ({
   onAfterMutate,
 }) => {
   const isEdit = !!id;
-  const [dateTime, setDateTime] = useState("");
-  const [amount, setAmount] = useState(0);
 
   const { toast } = useToast();
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [description, setDescription] = useState("");
+  const { register, handleSubmit, formState, reset, setValue, control } =
+    useForm<SaleForm>({
+      defaultValues,
+    });
+
+  const services = useWatch({ control, name: "services" });
+
+  const { data: sale } = useSale(id ?? "", {
+    enabled: isEdit,
+  });
 
   const { data: serviceTypes = [] } = useServiceTypes();
 
   const onSuccessCallback = () => {
     onOpenChange(false);
-    resetForm();
+    reset(defaultValues);
 
     if (onAfterMutate) {
       onAfterMutate(isEdit ? "UPDATE" : "CREATE");
@@ -79,68 +100,81 @@ const CreateEditSaleDialog: React.FC<Props> = ({
     return validate;
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const inputData = {
-      date: dateTime,
-      amount,
-      services: selectedServices,
-      description,
-    };
-
-    const { message, flag } = validateForm(inputData);
-
-    if (flag) {
-      const services = selectedServices.reduce((prev, cur) => {
-        const service = serviceTypes.find((service) => service.id === cur);
-        if (service) {
-          prev.push(service.id);
-        }
-        return prev;
-      }, [] as string[]);
-
-      const dto = {
-        date: new Date(dateTime).toISOString(),
-        amount: amount,
-        services,
-        description: description,
+  const onSubmit = useCallback(
+    (sale: SaleForm) => {
+      const inputData = {
+        date: sale.date.toISOString(),
+        amount: sale.amount,
+        services: sale.services,
+        description: sale.description,
       };
 
-      if (isEdit) {
-        updateSale({
-          id: id,
-          ...dto,
-        });
+      const { message, flag } = validateForm(inputData);
+
+      if (flag) {
+        const services = sale.services.reduce((prev, cur) => {
+          const service = serviceTypes.find((service) => service.id === cur);
+          if (service) {
+            prev.push(service.id);
+          }
+          return prev;
+        }, [] as string[]);
+
+        const dto = {
+          date: inputData.date,
+          amount: inputData.amount,
+          services,
+          description: inputData.description,
+        };
+
+        if (isEdit) {
+          updateSale({
+            id: id,
+            ...dto,
+          });
+        } else {
+          createSale(dto);
+        }
       } else {
-        createSale(dto);
+        toast({
+          variant: "destructive",
+          description: message,
+        });
       }
-    } else {
-      toast({
-        variant: "destructive",
-        description: message,
+    },
+    [createSale, id, isEdit, serviceTypes, toast, updateSale, validateForm]
+  );
+
+  const handleServiceChange = useCallback(
+    (serviceId: string) => {
+      const newServices = services.includes(serviceId)
+        ? services.filter((id) => id !== serviceId)
+        : [...services, serviceId];
+      setValue("services", newServices);
+    },
+    [services, setValue]
+  );
+
+  const handleClose = useCallback(() => {
+    onOpenChange(false);
+    reset(defaultValues);
+  }, [onOpenChange, reset]);
+
+  const isFormDisabled = useMemo(() => {
+    return formState.isSubmitting || !formState.isDirty;
+  }, [formState]);
+
+  useEffect(() => {
+    if (isEdit && sale) {
+      reset({
+        date: dayjs(sale.date).toDate(),
+        amount: sale.amount,
+        services: sale.services.map(({ id }) => id),
+        description: sale.description ?? "",
+        id: sale.id,
       });
     }
-  };
-
-  const resetForm = () => {
-    setDateTime("");
-    setAmount(0);
-    setSelectedServices([]);
-    setDescription("");
-  };
-
-  const handleServiceChange = (serviceId: string) => {
-    setSelectedServices((prev) =>
-      prev.includes(serviceId)
-        ? prev.filter((id) => id !== serviceId)
-        : [...prev, serviceId]
-    );
-  };
-
-  const handleClose = (open: boolean) => {
-    resetForm();
-    onOpenChange(open);
-  };
+  }, [isEdit, reset, sale]);
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -149,17 +183,16 @@ const CreateEditSaleDialog: React.FC<Props> = ({
           <DialogTitle>매출 입력</DialogTitle>
           <DialogDescription>매출 정보를 입력하세요.</DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="dateTime" className="text-right">
                 날짜 및 시간
               </Label>
               <Input
+                {...register("date")}
                 id="dateTime"
                 type="datetime-local"
-                value={dateTime}
-                onChange={(e) => setDateTime(e.target.value)}
                 required
                 className="col-span-3"
               />
@@ -171,7 +204,7 @@ const CreateEditSaleDialog: React.FC<Props> = ({
                   <div key={service.id} className="flex items-center space-x-2">
                     <Checkbox
                       id={`service-${service.id}`}
-                      checked={selectedServices.includes(service.id)}
+                      checked={services.includes(service.id)}
                       onCheckedChange={() => handleServiceChange(service.id)}
                     />
                     <Label htmlFor={`service-${service.id}`}>
@@ -186,10 +219,18 @@ const CreateEditSaleDialog: React.FC<Props> = ({
                 총 금액
               </Label>
               <Input
+                {...register("amount")}
                 id="amount"
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(+e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value !== "" && !/^\d+$/.test(value)) {
+                    return toast({
+                      variant: "destructive",
+                      description: "총 금액은 숫자만 입력 가능합니다.",
+                    });
+                  }
+                  setValue("amount", +e.target.value);
+                }}
                 required
                 className="col-span-3"
               />
@@ -199,17 +240,18 @@ const CreateEditSaleDialog: React.FC<Props> = ({
                 고객 정보
               </Label>
               <Input
+                {...register("description")}
                 id="customerInfo"
                 type="text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
                 placeholder="예: 30대 여성, 단골 고객"
                 className="col-span-3"
               />
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">매출 등록</Button>
+            <Button type="submit" disabled={isFormDisabled}>
+              매출 등록
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

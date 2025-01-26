@@ -11,8 +11,11 @@ import EmptySales from "./empty-sales";
 import CreateEditSaleDialog from "./create-edit-sale-dialog";
 import DeleteSaleAlert from "./delete-sale-alert";
 import useDateStore from "@/zustand/date";
+import { useQueryClient } from "@tanstack/react-query";
+import { KEYS } from "@/shared/constants/query-keys";
 
 const SalesList = () => {
+  const client = useQueryClient();
   const [openDialog, setOpenDialog] = useState(false);
   const [openDeleteAlert, setOpenDeleteAlert] = useState(false);
   const [selectedSale, setSelectedSale] = useState<string>();
@@ -32,14 +35,21 @@ const SalesList = () => {
     onSuccess: () => onAfterMutate("DELETE"),
   });
 
-  const onAfterMutate = useCallback((type: MutateType) => {
-    setSelectedSale(undefined);
-    if (type === "DELETE") {
-      setOpenDeleteAlert(false);
-    } else if (type === "UPDATE") {
-      setOpenDialog(false);
-    }
-  }, []);
+  const onAfterMutate = useCallback(
+    (type: MutateType) => {
+      client.invalidateQueries({
+        queryKey: [KEYS.sales.list],
+      });
+
+      if (type === "DELETE") {
+        setOpenDeleteAlert(false);
+      } else if (type === "UPDATE") {
+        setOpenDialog(false);
+      }
+      setSelectedSale(undefined);
+    },
+    [client]
+  );
 
   const handleAction = useCallback(
     (type: MutateType) => (id: string) => {
