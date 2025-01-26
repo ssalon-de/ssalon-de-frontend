@@ -1,9 +1,9 @@
 import { StateCreator } from "zustand";
 import { PersistOptions } from "zustand/middleware";
 
-export type User = {
-  email: string;
-};
+import { type User as QueryUser } from "@/queries/auth/type";
+
+export type User = QueryUser;
 
 export interface UserStates {
   user: User;

@@ -34,7 +34,10 @@ export default function Page() {
     setIsLoading(true);
     const data = await login({ email, password });
 
-    if (Object.hasOwn(data, "code")) {
+    if (
+      Object.hasOwn(data, "code") ||
+      (data as unknown as ApiError).message === "fetch failed"
+    ) {
       setIsLoading(false);
       const { code } = data as unknown as ApiError;
 
@@ -46,10 +49,13 @@ export default function Page() {
             description: ERROR_MESSAGE.validation_failed.message,
           });
       }
-    }
-
-    if (data) {
-      setUser({ email: data.user.email });
+    } else {
+      setUser({
+        email: data.user.email,
+        name: data.user.name,
+        company: data.user.company,
+        createdAt: data.user.createdAt,
+      });
       router.push("/dashboard");
     }
   };

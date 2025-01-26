@@ -6,6 +6,9 @@ const key = "user-store";
 
 export const initialUser: User = {
   email: "",
+  name: "",
+  company: "",
+  createdAt: "",
 };
 
 const useUserStore = create(

@@ -18,8 +18,8 @@ import { useServiceTypes } from "@/queries/service-types";
 import { MutateType } from "@/shared/types/query";
 import { CreateSaleDto, Sale, UpdateSaleDto } from "@/queries/sales/type";
 import { useToast } from "@/shared/hooks/use-toast";
-import dayjs from "dayjs";
 import { useForm, useWatch } from "react-hook-form";
+import dayjs from "dayjs";
 
 type Props = {
   id?: string;
@@ -28,13 +28,12 @@ type Props = {
   onAfterMutate?: (type: MutateType) => void;
 };
 
-type SaleForm = Omit<Sale, "services" | "date"> & {
+type SaleForm = Omit<Sale, "services"> & {
   services: string[];
-  date: Date;
 };
 
 const defaultValues = {
-  date: dayjs().toDate(),
+  date: "",
   amount: 0,
   services: [],
   description: "",
@@ -50,15 +49,25 @@ const CreateEditSaleDialog: React.FC<Props> = ({
   const isEdit = !!id;
 
   const { toast } = useToast();
-  const { register, handleSubmit, formState, reset, setValue, control } =
-    useForm<SaleForm>({
-      defaultValues,
-    });
+  const {
+    register,
+    handleSubmit,
+    formState,
+    reset,
+    setValue,
+    control,
+    setError,
+    clearErrors,
+  } = useForm<SaleForm>({
+    defaultValues,
+    mode: "onChange",
+  });
 
+  const amount = useWatch({ control, name: "amount" });
   const services = useWatch({ control, name: "services" });
 
   const { data: sale } = useSale(id ?? "", {
-    enabled: isEdit,
+    enabled: isEdit && open,
   });
 
   const { data: serviceTypes = [] } = useServiceTypes();
@@ -103,7 +112,7 @@ const CreateEditSaleDialog: React.FC<Props> = ({
   const onSubmit = useCallback(
     (sale: SaleForm) => {
       const inputData = {
-        date: sale.date.toISOString(),
+        date: dayjs(sale.date).format("YYYY-MM-DDTHH:mm"),
         amount: sale.amount,
         services: sale.services,
         description: sale.description,
@@ -161,20 +170,21 @@ const CreateEditSaleDialog: React.FC<Props> = ({
   }, [onOpenChange, reset]);
 
   const isFormDisabled = useMemo(() => {
-    return formState.isSubmitting || !formState.isDirty;
+    const hasError = Object.keys(formState.errors).length > 0;
+    return formState.isSubmitting || hasError;
   }, [formState]);
 
   useEffect(() => {
     if (isEdit && sale) {
       reset({
-        date: dayjs(sale.date).toDate(),
+        date: dayjs(sale.date).format("YYYY-MM-DDTHH:mm"),
         amount: sale.amount,
-        services: sale.services.map(({ id }) => id),
+        services: sale.services.map((service) => service.id),
         description: sale.description ?? "",
         id: sale.id,
       });
     }
-  }, [isEdit, reset, sale]);
+  }, [isEdit, reset, sale, open]);
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -187,7 +197,7 @@ const CreateEditSaleDialog: React.FC<Props> = ({
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="dateTime" className="text-right">
-                날짜 및 시간
+                시간
               </Label>
               <Input
                 {...register("date")}
@@ -205,7 +215,15 @@ const CreateEditSaleDialog: React.FC<Props> = ({
                     <Checkbox
                       id={`service-${service.id}`}
                       checked={services.includes(service.id)}
-                      onCheckedChange={() => handleServiceChange(service.id)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          const price =
+                            serviceTypes.find((s) => s.id === service.id)
+                              ?.price ?? 0;
+                          setValue("amount", +price + +amount);
+                        }
+                        handleServiceChange(service.id);
+                      }}
                     />
                     <Label htmlFor={`service-${service.id}`}>
                       {service.name} ({service.price.toLocaleString()}원)
@@ -224,13 +242,20 @@ const CreateEditSaleDialog: React.FC<Props> = ({
                 onChange={(e) => {
                   const value = e.target.value;
                   if (value !== "" && !/^\d+$/.test(value)) {
+                    const message = "총 금액은 숫자만 입력 가능합니다.";
+                    setError("amount", {
+                      message,
+                    });
                     return toast({
                       variant: "destructive",
-                      description: "총 금액은 숫자만 입력 가능합니다.",
+                      description: message,
                     });
+                  } else {
+                    clearErrors("amount");
+                    setValue("amount", +e.target.value);
                   }
-                  setValue("amount", +e.target.value);
                 }}
+                isError={!!formState.errors.amount}
                 required
                 className="col-span-3"
               />

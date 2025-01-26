@@ -13,6 +13,7 @@ import DeleteSaleAlert from "./delete-sale-alert";
 import useDateStore from "@/zustand/date";
 import { useQueryClient } from "@tanstack/react-query";
 import { KEYS } from "@/shared/constants/query-keys";
+import Spinner from "@/components/ui/spinner";
 
 const SalesList = () => {
   const client = useQueryClient();
@@ -21,7 +22,11 @@ const SalesList = () => {
   const [selectedSale, setSelectedSale] = useState<string>();
   const { date } = useDateStore();
 
-  const { data: sales = [], isLoading } = useSales(
+  const {
+    data: sales = [],
+    isLoading,
+    isFetching,
+  } = useSales(
     {
       startTime: dayjs(date).startOf("day").unix(),
       endTime: dayjs(date).endOf("day").unix(),
@@ -68,6 +73,14 @@ const SalesList = () => {
       deleteSale(selectedSale);
     }
   }, [selectedSale, deleteSale]);
+
+  if (isFetching || isLoading) {
+    return (
+      <div className="flex justify-center">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <>

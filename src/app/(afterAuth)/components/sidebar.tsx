@@ -12,14 +12,9 @@ import { routes } from "@/shared/constants/routes";
 import SimpleCalendar from "./calendar";
 
 export function Sidebar() {
-  const pathname = usePathname();
   const user = useStore(useUserStore, (state) => state.user);
-
-  // Todo: user 이름 받아서 바꾸기
-  const userName = user?.email.split("@")[0].slice(0, 3) ?? "";
-
+  const pathname = usePathname();
   const handleLogout = useLogout();
-
   const isActive = (path: string) => pathname === path;
 
   return (
@@ -27,7 +22,9 @@ export function Sidebar() {
       <div className="flex-none p-6 border-b border-gray-200">
         <Link href="/" className="flex items-center space-x-2">
           <Scissors className="w-8 h-8 text-blue-600" />
-          <span className="text-xl font-bold text-gray-800">HairSalon</span>
+          <span className="text-xl font-bold text-gray-800">
+            {user?.company}
+          </span>
         </Link>
       </div>
 
@@ -35,9 +32,10 @@ export function Sidebar() {
         <div className="flex items-center space-x-3">
           <Avatar>
             <AvatarImage alt="user" />
-            <AvatarFallback>{userName}</AvatarFallback>
+            <AvatarFallback>{user?.name}</AvatarFallback>
           </Avatar>
           <div>
+            <p className="font-medium text-gray-700">{user?.name}</p>
             <p className="text-sm text-gray-500">{user?.email}</p>
           </div>
         </div>

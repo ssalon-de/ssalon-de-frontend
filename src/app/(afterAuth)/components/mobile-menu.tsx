@@ -49,7 +49,7 @@ export function MobileMenu() {
               >
                 <Scissors className="w-8 h-8 text-blue-600" />
                 <span className="text-xl font-bold text-gray-800">
-                  HairSalon
+                  {user?.company}
                 </span>
               </Link>
             </div>
@@ -59,6 +59,7 @@ export function MobileMenu() {
                 <AvatarFallback>{userName}</AvatarFallback>
               </Avatar>
               <div>
+                <p className="font-medium text-gray-700">{user?.name}</p>
                 <p className="text-sm text-gray-500">{user?.email}</p>
               </div>
             </div>
