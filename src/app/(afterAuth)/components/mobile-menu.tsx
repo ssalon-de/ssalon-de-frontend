@@ -12,7 +12,6 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { useLogout } from "@/shared/hooks/use-logout";
 import { routes } from "@/shared/constants/routes";
-import { useStore } from "@/shared/hooks/use-store";
 import useUserStore from "@/zustand/user";
 import Calendar from "./calendar";
 import { MobileHeader } from "./mobile-header";
@@ -22,10 +21,7 @@ export function MobileMenu() {
   const handleLogout = useLogout();
   const pathname = usePathname();
 
-  const user = useStore(useUserStore, (state) => state.user);
-
-  // Todo: user 이름 받아서 바꾸기
-  const userName = user?.email.split("@")[0].slice(0, 3) ?? "";
+  const { user } = useUserStore();
 
   const isActive = (path: string) => pathname === path;
 
@@ -56,7 +52,7 @@ export function MobileMenu() {
             <div className="flex items-center space-x-4 py-4 px-6 border-b">
               <Avatar>
                 <AvatarImage alt="User" />
-                <AvatarFallback>{userName}</AvatarFallback>
+                <AvatarFallback>{user.name.slice(0, 2)}</AvatarFallback>
               </Avatar>
               <div>
                 <p className="font-medium text-gray-700">{user?.name}</p>
@@ -69,7 +65,7 @@ export function MobileMenu() {
                   <li key={item.path}>
                     <Link
                       href={item.path}
-                      className={`flex items-center space-x-3 px-6 py-3 text-gray-700 hover:bg-gray-100 ${
+                      className={`flex items-center space-x-3 px-6 py-3  text-gray-700 hover:bg-gray-100 ${
                         isActive(item.path) ? "bg-blue-100 text-blue-600" : ""
                       }`}
                       onClick={() => setIsOpen(false)}
