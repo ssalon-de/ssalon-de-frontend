@@ -10,7 +10,7 @@ export const useLogout = () => {
   const handleLogout = useCallback(async () => {
     const status = await logout();
     if (status === 200) {
-      setUser({ email: "" });
+      setUser({ email: "", name: "", company: "", createdAt: "" });
       router.push("/");
     }
   }, [router, setUser]);
