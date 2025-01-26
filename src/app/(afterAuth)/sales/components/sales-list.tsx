@@ -14,12 +14,16 @@ import useDateStore from "@/zustand/date";
 import { useQueryClient } from "@tanstack/react-query";
 import { KEYS } from "@/shared/constants/query-keys";
 import Spinner from "@/components/ui/spinner";
+import { ServiceTypeFilter } from "./service-type-filter";
 
 const SalesList = () => {
   const client = useQueryClient();
   const [openDialog, setOpenDialog] = useState(false);
   const [openDeleteAlert, setOpenDeleteAlert] = useState(false);
   const [selectedSale, setSelectedSale] = useState<string>();
+  const [selectedServiceTypes, setSelectedServiceTypes] = useState<string[]>(
+    []
+  );
   const { date } = useDateStore();
 
   const {
@@ -38,6 +42,18 @@ const SalesList = () => {
 
   const { mutate: deleteSale } = useDeleteSale({
     onSuccess: () => onAfterMutate("DELETE"),
+  });
+
+  const loading = isLoading || isFetching;
+
+  const filteredSales = sales.filter((sale) => {
+    if (selectedServiceTypes.length === 0) {
+      return true;
+    }
+
+    return sale.services.some((service) =>
+      selectedServiceTypes.includes(service.id)
+    );
   });
 
   const onAfterMutate = useCallback(
@@ -74,25 +90,35 @@ const SalesList = () => {
     }
   }, [selectedSale, deleteSale]);
 
-  if (isFetching || isLoading) {
-    return (
-      <div className="flex justify-center">
-        <Spinner />
-      </div>
-    );
-  }
+  const toggleServiceType = (serviceType: string) => {
+    setSelectedServiceTypes((prev) => {
+      if (prev.includes(serviceType)) {
+        return prev.filter((item) => item !== serviceType);
+      } else {
+        return [...prev, serviceType];
+      }
+    });
+  };
 
   return (
     <>
+      <ServiceTypeFilter
+        selectedTypes={selectedServiceTypes}
+        onToggle={toggleServiceType}
+      />
       <div className="space-y-4">
         <div className="flex flex-col gap-4">
-          {sales.length === 0 ? (
+          {loading ? (
+            <div className="flex justify-center">
+              <Spinner />
+            </div>
+          ) : sales.length === 0 ? (
             <EmptySales
               isLoading={isLoading}
               onClickButton={() => setOpenDialog(true)}
             />
           ) : (
-            sales.map((sale) => (
+            filteredSales.map((sale) => (
               <SalesItem
                 key={sale.id}
                 {...sale}

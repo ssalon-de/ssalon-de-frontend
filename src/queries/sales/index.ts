@@ -1,7 +1,14 @@
 import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { CreateSaleDto, GetSalesParams, Sale, UpdateSaleDto } from "./type";
 import { KEYS } from "@/shared/constants/query-keys";
-import { createSale, deleteSale, getSale, getSales, updateSale } from "./api";
+import {
+  createSale,
+  deleteSale,
+  getSale,
+  getSales,
+  getTotalAmount,
+  updateSale,
+} from "./api";
 import { MutationOptions } from "@/shared/types/query";
 
 export const useSales = (
@@ -23,6 +30,17 @@ export const useSale = (
     ...options,
     queryKey: [KEYS.sales.list, saleId],
     queryFn: () => getSale(saleId),
+  });
+};
+
+export const useTotalAmount = (
+  date: string,
+  options?: Omit<UseQueryOptions<number>, "queryKey" | "queryFn">
+) => {
+  return useQuery<number>({
+    ...options,
+    queryKey: [KEYS.sales.totalAmount, date],
+    queryFn: () => getTotalAmount(date),
   });
 };
 

@@ -19,6 +19,14 @@ export function getSale(saleId: string) {
   }
 }
 
+export function getTotalAmount(date: string) {
+  try {
+    return apiClient.get<number>(`/sales/total-amount?date=${date}`);
+  } catch (error) {
+    throw error;
+  }
+}
+
 export const createSale = (dto: CreateSaleDto): Promise<unknown> => {
   try {
     return apiClient.post("/sales", dto);

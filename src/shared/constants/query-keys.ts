@@ -1,11 +1,12 @@
 export const KEYS = {
   serviceTypes: {
-    list: "SERVICE_TYPES",
+    list: "SERVICE-TYPES",
   },
   sales: {
     list: "SALES",
+    totalAmount: "TOTAL-AMOUNT",
   },
   user: {
-    info: "USER_INFO",
+    info: "USER-INFO",
   },
 };
