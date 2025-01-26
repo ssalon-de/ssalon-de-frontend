@@ -2,11 +2,11 @@ import { StateCreator } from "zustand";
 import { PersistOptions } from "zustand/middleware";
 
 export interface DateStates {
-  date: Date;
+  date: string; // format "YYYY-MM-DD"
 }
 
 export interface DateActions {
-  setDate: (date: Date) => void;
+  setDate: (date: string) => void;
 }
 
 export type DatePersist = (

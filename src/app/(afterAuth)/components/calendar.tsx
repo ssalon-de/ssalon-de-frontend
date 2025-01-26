@@ -1,53 +1,45 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import useDateStore from "@/zustand/date";
-import { useStore } from "@/shared/hooks/use-store";
+import dayjs, { Dayjs } from "dayjs";
 
 export default function Calendar() {
-  const today = new Date();
-  const { setDate } = useDateStore();
-  const date = useStore(useDateStore, (state) => state.date);
-  const [selectedDate, setSelectedDate] = useState(date ?? today);
-  const [currentDate, setCurrentDate] = useState(date ?? today);
+  const today = dayjs();
+  const days = ["일", "월", "화", "수", "목", "금", "토"];
+  const { setDate, date } = useDateStore();
+  const [selectedDate, setSelectedDate] = useState(dayjs(date) ?? today);
+  const [currentDate, setCurrentDate] = useState(dayjs(date) ?? today);
 
-  const daysInMonth = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth() + 1,
-    0
-  ).getDate();
+  const daysInMonth = currentDate.daysInMonth();
 
-  const firstDayOfMonth = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    1
-  ).getDay();
+  const firstDayOfMonth = useMemo(
+    () => Array.from({ length: currentDate.startOf("month").day() }),
+    [currentDate]
+  );
+
+  const dates = Array.from({ length: daysInMonth });
 
   const prevMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
-    );
+    setCurrentDate(currentDate.subtract(1, "month").startOf("month"));
   };
 
   const nextMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
-    );
+    setCurrentDate(currentDate.add(1, "month").startOf("month"));
   };
 
-  const isToday = (date: Date) => {
-    return date.toDateString() === today.toDateString();
+  const isToday = (date: Dayjs) => {
+    return today.isSame(date, "date");
   };
 
-  const isSelected = (date: Date) => {
-    const nowDate = selectedDate ?? new Date();
-    return date.toDateString() === nowDate.toDateString();
+  const isSelected = (date: Dayjs) => {
+    return date.isSame(selectedDate, "date");
   };
 
   useEffect(() => {
-    setDate(selectedDate);
+    setDate(selectedDate.format("YYYY-MM-DD"));
   }, [setDate, selectedDate]);
 
   return (
@@ -62,10 +54,7 @@ export default function Calendar() {
           <ChevronLeft size={20} />
         </Button>
         <span className="font-semibold text-gray-700">
-          {currentDate.toLocaleString("default", {
-            month: "long",
-            year: "numeric",
-          })}
+          {currentDate.format("YYYY년 MM월")}
         </span>
         <Button
           variant="ghost"
@@ -77,23 +66,21 @@ export default function Calendar() {
         </Button>
       </div>
       <div className="grid grid-cols-7 gap-1 text-center">
-        {["일", "월", "화", "수", "목", "금", "토"].map((day) => (
+        {days.map((day) => (
           <div key={day} className="text-xs font-semibold text-gray-500">
             {day}
           </div>
         ))}
-        {Array.from({ length: firstDayOfMonth }).map((_, index) => (
+        {firstDayOfMonth.map((_, index) => (
           <div key={`empty-${index}`} />
         ))}
-        {Array.from({ length: daysInMonth }).map((_, index) => {
-          const date = new Date(
-            currentDate.getFullYear(),
-            currentDate.getMonth(),
-            index + 1
-          );
+        {dates.map((_, index) => {
+          const date = dayjs(currentDate)
+            .startOf("month")
+            .set("date", index + 1);
           return (
             <div
-              key={index + 1}
+              key={`${date.format("YYYY-MM-DD")}`}
               className={`text-sm p-1 rounded-full transition-colors cursor-pointer ${
                 isSelected(date)
                   ? "bg-blue-500 text-white"
