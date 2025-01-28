@@ -14,7 +14,12 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Gender, Sale } from "@/queries/sales/type";
+import {
+  CreateSaleDto,
+  Gender,
+  Sale,
+  UpdateSaleDto,
+} from "@/queries/sales/type";
 import { useForm, useWatch } from "react-hook-form";
 import { useToast } from "@/shared/hooks/use-toast";
 import { useCreateSale, useSale, useUpdateSale } from "@/queries/sales";
@@ -31,7 +36,7 @@ type SaleForm = Omit<Sale, "services" | "paymentType" | "id"> & {
 };
 
 const defaultValues: SaleForm = {
-  date: "",
+  date: dayjs().format("YYYY-MM-DD"),
   amount: 0,
   services: [],
   description: "",
@@ -63,7 +68,6 @@ const SaleEditPage = () => {
 
   const gender = useWatch({ control, name: "gender" });
   const amount = useWatch({ control, name: "amount" });
-  const date = useWatch({ control, name: "date" });
   const selectedServices = useWatch({ control, name: "services" });
   const selectedPaymentType = useWatch({ control, name: "paymentType" });
   const selectedTime = useWatch({ control, name: "time" });
@@ -136,7 +140,7 @@ const SaleEditPage = () => {
           return prev;
         }, [] as string[]);
 
-        const dto = {
+        const dto: CreateSaleDto | UpdateSaleDto = {
           date: dayjs(`${inputData.date}T${inputData.time}`).format(
             "YYYY-MM-DDTHH:mm"
           ),
@@ -241,10 +245,7 @@ const SaleEditPage = () => {
                 />
               </div>
               <div className="space-y-2">
-                <RequiredLabel
-                  htmlFor="date"
-                  required={!!date || !!selectedTime}
-                >
+                <RequiredLabel htmlFor="date" required>
                   날짜
                 </RequiredLabel>
                 <Input {...register("date")} id="date" type="date" />
@@ -285,9 +286,7 @@ const SaleEditPage = () => {
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="time">
                 <AccordionTrigger>
-                  <RequiredLabel required={!!date || !!selectedTime}>
-                    시간 선택
-                  </RequiredLabel>
+                  <RequiredLabel required>시간 선택</RequiredLabel>
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="grid grid-cols-4 gap-2">
