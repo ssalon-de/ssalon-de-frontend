@@ -1,3 +1,5 @@
+"use client";
+
 import Spinner from "@/components/ui/spinner";
 import { useTotalAmount } from "@/queries/sales";
 import useDateStore from "@/zustand/date";

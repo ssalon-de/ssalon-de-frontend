@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import dayjs from "dayjs";
 
 import { useDeleteSale, useSales } from "@/queries/sales";
@@ -8,22 +8,21 @@ import { MutateType } from "@/shared/types/query";
 
 import SalesItem from "./sales-item";
 import EmptySales from "./empty-sales";
-import CreateEditSaleDialog from "./create-edit-sale-dialog";
 import DeleteSaleAlert from "./delete-sale-alert";
 import useDateStore from "@/zustand/date";
 import { useQueryClient } from "@tanstack/react-query";
 import { KEYS } from "@/shared/constants/query-keys";
 import Spinner from "@/components/ui/spinner";
 import { ServiceTypeFilter } from "./service-type-filter";
+import { useRouter } from "next/navigation";
+import { Filter } from "@/shared/types/filter";
 
 const SalesList = () => {
   const client = useQueryClient();
-  const [openDialog, setOpenDialog] = useState(false);
+  const router = useRouter();
   const [openDeleteAlert, setOpenDeleteAlert] = useState(false);
   const [selectedSale, setSelectedSale] = useState<string>();
-  const [selectedServiceTypes, setSelectedServiceTypes] = useState<string[]>(
-    []
-  );
+  const [selectedFilters, setSelectedFilters] = useState<Filter[]>([]);
   const { date } = useDateStore();
 
   const {
@@ -46,15 +45,42 @@ const SalesList = () => {
 
   const loading = isLoading || isFetching;
 
-  const filteredSales = sales.filter((sale) => {
-    if (selectedServiceTypes.length === 0) {
-      return true;
-    }
+  const filteredSales = useMemo(
+    () =>
+      sales.filter((sale) => {
+        const selectedServices = selectedFilters
+          .filter((filter) => filter.type === "serviceType")
+          .map(({ id }) => id);
 
-    return sale.services.some((service) =>
-      selectedServiceTypes.includes(service.id)
-    );
-  });
+        // 서비스 타입이 있다면 필터링
+        if (selectedServices.length > 0) {
+          return sale.services.some((service) =>
+            selectedServices.includes(service.id)
+          );
+        }
+
+        const selectedGenders = selectedFilters
+          .filter((filter) => filter.type === "gender")
+          .map(({ id }) => id);
+
+        // 성별이 있다면 필터링
+        if (selectedGenders.length > 0) {
+          return selectedGenders.includes(sale.gender);
+        }
+
+        const selectedPaymentTypes = selectedFilters
+          .filter((filter) => filter.type === "paymentType")
+          .map(({ id }) => id);
+
+        // 결제 유형이 있다면 필터링
+        if (selectedPaymentTypes.length > 0) {
+          return selectedPaymentTypes.includes(sale.paymentType.id);
+        }
+
+        return true;
+      }),
+    [sales, selectedFilters]
+  );
 
   const onAfterMutate = useCallback(
     (type: MutateType) => {
@@ -64,9 +90,8 @@ const SalesList = () => {
 
       if (type === "DELETE") {
         setOpenDeleteAlert(false);
-      } else if (type === "UPDATE") {
-        setOpenDialog(false);
       }
+
       setSelectedSale(undefined);
     },
     [client]
@@ -78,10 +103,10 @@ const SalesList = () => {
       if (type === "DELETE") {
         setOpenDeleteAlert(true);
       } else if (type === "UPDATE") {
-        setOpenDialog(true);
+        router.push(`/sales/edit?saleId=${id}`);
       }
     },
-    []
+    [router]
   );
 
   const handleConfirmDelete = useCallback(() => {
@@ -90,12 +115,12 @@ const SalesList = () => {
     }
   }, [selectedSale, deleteSale]);
 
-  const toggleServiceType = (serviceType: string) => {
-    setSelectedServiceTypes((prev) => {
-      if (prev.includes(serviceType)) {
-        return prev.filter((item) => item !== serviceType);
+  const toggleFilterType = (filter: Filter) => {
+    setSelectedFilters((prev) => {
+      if (prev.some(({ id }) => id === filter.id)) {
+        return prev.filter((item) => item.id !== filter.id);
       } else {
-        return [...prev, serviceType];
+        return [...prev, filter];
       }
     });
   };
@@ -103,8 +128,8 @@ const SalesList = () => {
   return (
     <>
       <ServiceTypeFilter
-        selectedTypes={selectedServiceTypes}
-        onToggle={toggleServiceType}
+        selectedFilters={selectedFilters}
+        onToggle={toggleFilterType}
       />
       <div className="space-y-4">
         <div className="flex flex-col gap-4">
@@ -115,26 +140,20 @@ const SalesList = () => {
           ) : sales.length === 0 ? (
             <EmptySales
               isLoading={isLoading}
-              onClickButton={() => setOpenDialog(true)}
+              onClickButton={() => router.push("/sales/edit")}
             />
           ) : (
             filteredSales.map((sale) => (
               <SalesItem
                 key={sale.id}
-                {...sale}
-                onClickDelete={handleAction("DELETE")}
                 onClickEdit={handleAction("UPDATE")}
+                onClickDelete={handleAction("DELETE")}
+                {...sale}
               />
             ))
           )}
         </div>
       </div>
-      <CreateEditSaleDialog
-        id={selectedSale}
-        open={openDialog}
-        onOpenChange={setOpenDialog}
-        onAfterMutate={onAfterMutate}
-      />
       <DeleteSaleAlert
         open={openDeleteAlert}
         setOpen={setOpenDeleteAlert}

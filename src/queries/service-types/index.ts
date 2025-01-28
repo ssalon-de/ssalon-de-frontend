@@ -9,7 +9,9 @@ import {
 import { CreateServiceType, ServiceType } from "./type";
 import { MutationOptions } from "@/shared/types/query";
 
-export const useServiceTypes = (options?: UseQueryOptions<ServiceType[]>) => {
+export const useServiceTypes = (
+  options?: Omit<UseQueryOptions<ServiceType[]>, "queryKey" | "queryFn">
+) => {
   return useQuery<ServiceType[]>({
     ...options,
     queryKey: [KEYS.serviceTypes.list],

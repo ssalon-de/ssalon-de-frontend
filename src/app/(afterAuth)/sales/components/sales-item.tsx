@@ -3,6 +3,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { PaymentType } from "@/queries/payment-types/type";
+import { Gender } from "@/queries/sales/type";
 import { ServiceType } from "@/queries/service-types/type";
 import { Edit2, Trash2 } from "lucide-react";
 import { memo } from "react";
@@ -12,6 +14,8 @@ type Props = {
   date: string;
   amount: number;
   services: ServiceType[];
+  paymentType: PaymentType;
+  gender: Gender;
   description?: string;
   onClickEdit: (id: string) => void;
   onClickDelete: (id: string) => void;
@@ -23,6 +27,8 @@ const SalesItem: React.FC<Props> = ({
   amount,
   services,
   description,
+  paymentType,
+  gender,
   onClickEdit,
   onClickDelete,
 }) => {
@@ -37,17 +43,26 @@ const SalesItem: React.FC<Props> = ({
           <p className="font-bold text-lg">{amount.toLocaleString()}원</p>
         </div>
         <div className="flex gap-1">
+          <Badge variant="outline">{paymentType.name}</Badge>
+          <Badge variant="outline">{gender === "M" ? "남성" : "여성"}</Badge>
           {services.map((service) => (
             <Badge key={service.id}>{service.name}</Badge>
           ))}
         </div>
-        <div className="flex justify-end space-x-2">
-          <Button onClick={() => onClickEdit(id)} size="sm" variant="outline">
-            <Edit2 className="w-4 h-4 mr-1" />
-          </Button>
-          <Button onClick={() => onClickDelete(id)} size="sm" variant="outline">
-            <Trash2 className="w-4 h-4 mr-1" />
-          </Button>
+        <div className="flex justify-between items-center">
+          <div className="flex items-center"></div>
+          <div className="flex space-x-2">
+            <Button onClick={() => onClickEdit(id)} size="sm" variant="outline">
+              <Edit2 className="w-4 h-4 mr-1" />
+            </Button>
+            <Button
+              onClick={() => onClickDelete(id)}
+              size="sm"
+              variant="outline"
+            >
+              <Trash2 className="w-4 h-4 mr-1" />
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

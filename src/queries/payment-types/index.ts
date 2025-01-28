@@ -4,7 +4,9 @@ import { MutationOptions } from "@/shared/types/query";
 import { CreatePaymentType, PaymentType, UpdatePaymentType } from "./type";
 import { createPaymentType, getPaymentTypes, updatePaymentType } from "./api";
 
-export const usePaymentTypes = (options?: UseQueryOptions<PaymentType[]>) => {
+export const usePaymentTypes = (
+  options?: Omit<UseQueryOptions<PaymentType[]>, "queryKey" | "queryFn">
+) => {
   return useQuery<PaymentType[]>({
     ...options,
     queryKey: [KEYS.paymentTypes.list],

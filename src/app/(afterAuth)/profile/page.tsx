@@ -4,13 +4,13 @@ import {
   Card,
   CardContent,
   CardHeader,
-  CardTitle,
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
 import { cookies } from "next/headers";
 import { User } from "@/queries/auth/type";
 import { BASE_URL } from "@/shared/utils/api";
+import PageTitle from "@/components/ui/page-title";
 
 export default async function ProfilePage() {
   const store = await cookies();
@@ -23,10 +23,10 @@ export default async function ProfilePage() {
   }).then((res) => res.json());
 
   return (
-    <div className="container p-4 mx-auto">
-      <Card className="max-w-2xl mx-auto">
+    <div className="container">
+      <PageTitle title="개인정보 확인" className="mb-4" />
+      <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">개인정보 확인</CardTitle>
           <CardDescription>귀하의 개인정보를 확인하세요.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

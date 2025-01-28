@@ -83,6 +83,7 @@ class ApiClient {
 
 const globalHandler = (error: Error) => {
   if (error.status === 401) {
+    console.log(error);
     // reissue
   } else {
     console.log(error);

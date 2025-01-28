@@ -9,7 +9,6 @@ import {
   Card,
   CardContent,
   CardHeader,
-  CardTitle,
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
@@ -20,6 +19,7 @@ import { User } from "@/queries/auth/type";
 import { useUpdateUserInfo, useUserInfo } from "@/queries/auth";
 import { useToast } from "@/shared/hooks/use-toast";
 import useUserStore from "@/zustand/user";
+import PageTitle from "@/components/ui/page-title";
 
 export default function EditProfilePage() {
   const router = useRouter();
@@ -76,10 +76,10 @@ export default function EditProfilePage() {
   }, [isSuccess, isError, userInfo, reset, toast]);
 
   return (
-    <div className="container p-4 mx-auto">
-      <Card className="max-w-2xl mx-auto">
+    <div className="container">
+      <PageTitle title="개인정보 수정" className="mb-4" />
+      <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">개인정보 수정</CardTitle>
           <CardDescription>
             개인 정보와 계정 설정을 업데이트하세요.
           </CardDescription>

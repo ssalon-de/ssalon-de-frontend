@@ -1,29 +1,55 @@
 import { Badge } from "@/components/ui/badge";
+import Spinner from "@/components/ui/spinner";
+import { usePaymentTypes } from "@/queries/payment-types";
 import { useServiceTypes } from "@/queries/service-types";
+import { Filter } from "@/shared/types/filter";
 
 type ServiceTypeFilterProps = {
-  selectedTypes: string[];
-  onToggle: (type: string) => void;
+  selectedFilters: Filter[];
+  onToggle: (filter: Filter) => void;
 };
 
 export function ServiceTypeFilter({
-  selectedTypes,
+  selectedFilters,
   onToggle,
 }: ServiceTypeFilterProps) {
-  const { data: serviceTypes = [] } = useServiceTypes();
+  const { data: serviceTypes = [], isFetching: isServiceTypeFetching } =
+    useServiceTypes({
+      select: (data) =>
+        data.map((service) => ({ ...service, type: "serviceType" })),
+    });
+  const { data: paymentTypes = [], isFetching: isPaymentTypeFetching } =
+    usePaymentTypes({
+      select: (data) =>
+        data.map((paymentType) => ({ ...paymentType, type: "paymentType" })),
+    });
+  const genders = [
+    { id: "M", name: "남성", type: "gender" },
+    { id: "F", name: "여성", type: "gender" },
+  ];
+
+  const filterList = [...serviceTypes, ...paymentTypes, ...genders] as Filter[];
 
   return (
     <div className="flex flex-wrap gap-2">
-      {serviceTypes.map(({ id, name }) => (
-        <Badge
-          key={id}
-          variant={selectedTypes.includes(id) ? "default" : "outline"}
-          className="cursor-pointer"
-          onClick={() => onToggle(id)}
-        >
-          {name}
-        </Badge>
-      ))}
+      {isServiceTypeFetching || isPaymentTypeFetching ? (
+        <Spinner />
+      ) : (
+        filterList.map(({ id, name, type }) => (
+          <Badge
+            key={id}
+            variant={
+              selectedFilters.some((filter) => filter.id === id)
+                ? "default"
+                : "outline"
+            }
+            className="cursor-pointer"
+            onClick={() => onToggle({ id, type, name })}
+          >
+            {name}
+          </Badge>
+        ))
+      )}
     </div>
   );
 }
