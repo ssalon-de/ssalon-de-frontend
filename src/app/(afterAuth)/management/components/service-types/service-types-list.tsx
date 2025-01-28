@@ -2,7 +2,6 @@ import { ServiceType } from "@/queries/service-types/type";
 import { BASE_URL } from "@/shared/utils/api";
 import ServiceItem from "./service-types-item";
 import { cookies } from "next/headers";
-import EmptyServiceTypes from "./empty-service-types";
 import {
   Table,
   TableBody,
@@ -10,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import EmptyTypes from "../empty-types";
 
 export default async function ServiceList() {
   const store = await cookies();
@@ -24,7 +24,7 @@ export default async function ServiceList() {
   return (
     <>
       {serviceTypes.length === 0 ? (
-        <EmptyServiceTypes />
+        <EmptyTypes />
       ) : (
         <Table>
           <TableHeader>

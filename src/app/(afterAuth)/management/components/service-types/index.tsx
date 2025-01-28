@@ -1,9 +1,9 @@
-import ServiceList from "./components/service-types-list";
-import ServiceTypesHeader from "./components/service-types-header";
 import { Suspense } from "react";
 import Spinner from "@/components/ui/spinner";
+import ServiceTypesHeader from "./service-types-header";
+import ServiceList from "./service-types-list";
 
-export default function Page() {
+export default function ServiceTypes() {
   return (
     <div className="space-y-6">
       <ServiceTypesHeader />
