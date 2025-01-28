@@ -16,15 +16,13 @@ import { ServiceType } from "@/queries/service-types/type";
 type Props = PropsWithChildren<{
   id: string;
   name: string;
-  price: number;
 }>;
 
-const ServiceItem: React.FC<Props> = ({ id, name, price }) => {
+const ServiceItem: React.FC<Props> = ({ id, name }) => {
   const router = useRouter();
   const [isEdit, setIsEdit] = useState(false);
   const [editingId, setEditingId] = useState<string>("");
   const [editingName, setEditingName] = useState("");
-  const [editingPrice, setEditingPrice] = useState(0);
 
   const { mutate: deleteServiceType } = useDeleteServiceType({
     onSuccess: () => {
@@ -37,7 +35,6 @@ const ServiceItem: React.FC<Props> = ({ id, name, price }) => {
       setIsEdit(false);
       setEditingId("");
       setEditingName("");
-      setEditingPrice(0);
       afterMutateServiceType();
     },
   });
@@ -50,16 +47,14 @@ const ServiceItem: React.FC<Props> = ({ id, name, price }) => {
     setIsEdit(true);
     setEditingId(serviceType.id);
     setEditingName(serviceType.name);
-    setEditingPrice(serviceType.price);
   }, []);
 
   const handleClickSave = useCallback(() => {
     updateServiceType({
       id: editingId,
       name: editingName,
-      price: editingPrice,
     });
-  }, [editingId, editingName, editingPrice, updateServiceType]);
+  }, [editingId, editingName, updateServiceType]);
 
   const handleClickDelete = useCallback(
     (id: string) => {
@@ -80,17 +75,6 @@ const ServiceItem: React.FC<Props> = ({ id, name, price }) => {
           name
         )}
       </TableCell>
-      <TableCell>
-        {editingId === id ? (
-          <Input
-            type="number"
-            value={editingPrice}
-            onChange={(e) => setEditingPrice(+e.target.value)}
-          />
-        ) : (
-          `${price.toLocaleString()}원`
-        )}
-      </TableCell>
       <TableCell className="flex justify-end gap-1 text-right">
         {isEdit && editingId === id ? (
           <Button size="sm" onClick={handleClickSave} variant="outline">
@@ -99,7 +83,7 @@ const ServiceItem: React.FC<Props> = ({ id, name, price }) => {
         ) : (
           <>
             <Button
-              onClick={() => handleClickEdit({ id, name, price })}
+              onClick={() => handleClickEdit({ id, name })}
               size="sm"
               variant="outline"
             >

@@ -13,7 +13,6 @@ export const createServiceType = (dto: CreateServiceType): Promise<unknown> => {
   try {
     return apiClient.post("/service-types", {
       name: dto.name,
-      price: dto.price,
     });
   } catch (error) {
     throw error;
@@ -24,7 +23,6 @@ export const updateServiceType = async (dto: ServiceType): Promise<unknown> => {
   try {
     const body = {
       name: dto.name,
-      price: dto.price,
     };
     return apiClient.put(`/service-types/${dto.id}`, body);
   } catch (error) {

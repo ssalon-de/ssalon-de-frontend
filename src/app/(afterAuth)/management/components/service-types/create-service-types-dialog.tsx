@@ -26,7 +26,6 @@ const CreateServiceTypesDialog: React.FC<Props> = ({
   afterCreateServiceType,
 }) => {
   const [name, setName] = useState("");
-  const [price, setPrice] = useState(0);
 
   const { mutate: createServiceType } = useCreateServiceType({
     onSuccess: () => {
@@ -39,14 +38,13 @@ const CreateServiceTypesDialog: React.FC<Props> = ({
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      createServiceType({ name, price });
+      createServiceType({ name });
     },
-    [name, price, createServiceType]
+    [name, createServiceType]
   );
 
   const resetForm = useCallback(() => {
     setName("");
-    setPrice(0);
   }, []);
 
   return (
@@ -73,23 +71,11 @@ const CreateServiceTypesDialog: React.FC<Props> = ({
                 className="col-span-3"
               />
             </div>
-            <div className="grid items-center grid-cols-4 gap-4">
-              <Label htmlFor="price" className="text-right">
-                가격
-              </Label>
-              <Input
-                id="price"
-                placeholder="가격"
-                type="number"
-                value={price}
-                onChange={(e) => setPrice(+e.target.value)}
-                required
-                className="col-span-3"
-              />
-            </div>
           </div>
           <DialogFooter>
-            <Button type="submit">추가</Button>
+            <Button type="submit" size="sm">
+              추가
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
