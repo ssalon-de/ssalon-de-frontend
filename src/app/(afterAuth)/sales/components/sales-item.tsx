@@ -3,18 +3,18 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { PaymentType } from "@/queries/payment-types/type";
 import { Gender } from "@/queries/sales/type";
 import { ServiceType } from "@/queries/service-types/type";
+import dayjs from "dayjs";
 import { Edit2, Trash2 } from "lucide-react";
 import { memo } from "react";
 
 type Props = {
   id: string;
   date: string;
-  amount: number;
+  amount: string;
   services: ServiceType[];
-  paymentType: PaymentType;
+  payments: string[];
   gender: Gender;
   description?: string;
   onClickEdit: (id: string) => void;
@@ -27,7 +27,7 @@ const SalesItem: React.FC<Props> = ({
   amount,
   services,
   description,
-  paymentType,
+  payments,
   gender,
   onClickEdit,
   onClickDelete,
@@ -37,16 +37,20 @@ const SalesItem: React.FC<Props> = ({
       <CardContent className="p-4">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <p className="font-semibold">{new Date(date).toLocaleString()}</p>
+            <p className="font-semibold">
+              {dayjs(date).format("YY/MM/DD HH:mm")}
+            </p>
             <p className="text-sm text-gray-500">{description}</p>
           </div>
           <p className="font-bold text-lg">{amount.toLocaleString()}원</p>
         </div>
-        <div className="flex gap-1">
-          <Badge variant="outline">{paymentType.name}</Badge>
+        <div className="flex gap-1 mb-4">
+          {payments.map((payment) => (
+            <Badge key={`${id}${payment}`}>{payment}</Badge>
+          ))}
           <Badge variant="outline">{gender === "M" ? "남성" : "여성"}</Badge>
           {services.map((service) => (
-            <Badge key={service.id}>{service.name}</Badge>
+            <Badge key={`${id}${service.id}`}>{service.name}</Badge>
           ))}
         </div>
         <div className="flex justify-between items-center">

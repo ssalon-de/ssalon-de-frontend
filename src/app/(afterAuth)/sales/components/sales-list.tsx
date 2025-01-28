@@ -74,7 +74,9 @@ const SalesList = () => {
 
         // 결제 유형이 있다면 필터링
         if (selectedPaymentTypes.length > 0) {
-          return selectedPaymentTypes.includes(sale.paymentType.id);
+          return selectedFilters.some(({ id }) =>
+            sale.payments.some(({ typeId }) => typeId === id)
+          );
         }
 
         return true;
@@ -143,14 +145,18 @@ const SalesList = () => {
               onClickButton={() => router.push("/sales/edit")}
             />
           ) : (
-            filteredSales.map((sale) => (
-              <SalesItem
-                key={sale.id}
-                onClickEdit={handleAction("UPDATE")}
-                onClickDelete={handleAction("DELETE")}
-                {...sale}
-              />
-            ))
+            filteredSales.map((sale) => {
+              const payments = sale.payments.map(({ name }) => name);
+              return (
+                <SalesItem
+                  {...sale}
+                  key={sale.id}
+                  onClickEdit={handleAction("UPDATE")}
+                  onClickDelete={handleAction("DELETE")}
+                  payments={payments}
+                />
+              );
+            })
           )}
         </div>
       </div>

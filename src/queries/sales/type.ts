@@ -1,4 +1,3 @@
-import { PaymentType } from "../payment-types/type";
 import { ServiceType } from "../service-types/type";
 
 export type Gender = "M" | "F";
@@ -7,18 +6,24 @@ export type GetSalesParams = {
   endTime: number;
 };
 
+export type Payment = {
+  amount: string;
+  typeId: string;
+  name: string;
+};
+
 export type Sale = {
   id: string;
   date: string; // 날짜
-  amount: number;
+  amount: string;
   services: ServiceType[];
-  paymentType: PaymentType;
+  payments: Payment[];
   gender: Gender;
   description?: string;
 };
 
 export type CreateSaleDto = Omit<Sale, "id" | "services" | "paymentType"> & {
   services: string[];
-  paymentType: string;
+  payments: Payment[];
 };
 export type UpdateSaleDto = CreateSaleDto & { id: string };

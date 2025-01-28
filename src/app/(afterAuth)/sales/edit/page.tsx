@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   CreateSaleDto,
   Gender,
+  Payment,
   Sale,
   UpdateSaleDto,
 } from "@/queries/sales/type";
@@ -28,20 +29,20 @@ import dayjs from "dayjs";
 import { usePaymentTypes } from "@/queries/payment-types";
 import { RequiredLabel } from "@/components/ui/required-label";
 
-type SaleForm = Omit<Sale, "services" | "paymentType" | "id"> & {
+type SaleForm = Omit<Sale, "services" | "payments" | "id"> & {
   time: string;
   services: string[];
-  paymentType: string;
+  payments: Payment[];
   id?: string;
 };
 
 const defaultValues: SaleForm = {
   date: dayjs().format("YYYY-MM-DD"),
-  amount: 0,
+  amount: "",
   services: [],
   description: "",
   id: "",
-  paymentType: "",
+  payments: [],
   gender: "M",
   time: "",
 };
@@ -52,24 +53,15 @@ const SaleEditPage = () => {
   const id = searchParams.get("saleId") ?? "";
   const isEdit = !!id;
   const { toast } = useToast();
-  const {
-    register,
-    handleSubmit,
-    formState,
-    reset,
-    setValue,
-    control,
-    setError,
-    clearErrors,
-  } = useForm<SaleForm>({
-    defaultValues,
-    mode: "onChange",
-  });
+  const { register, handleSubmit, formState, reset, setValue, control } =
+    useForm<SaleForm>({
+      defaultValues,
+      mode: "onChange",
+    });
 
   const gender = useWatch({ control, name: "gender" });
-  const amount = useWatch({ control, name: "amount" });
   const selectedServices = useWatch({ control, name: "services" });
-  const selectedPaymentType = useWatch({ control, name: "paymentType" });
+  const selectedPayments = useWatch({ control, name: "payments" });
   const selectedTime = useWatch({ control, name: "time" });
 
   const { data: sale } = useSale(id, {
@@ -79,10 +71,10 @@ const SaleEditPage = () => {
   const { data: serviceTypes = [] } = useServiceTypes();
   const { data: paymentTypes = [] } = usePaymentTypes();
 
-  const onSuccessCallback = () => {
+  const onSuccessCallback = useCallback(() => {
     reset(defaultValues);
     router.push("/sales");
-  };
+  }, [reset, router]);
 
   const { mutate: createSale } = useCreateSale({
     onSuccess: onSuccessCallback,
@@ -96,11 +88,11 @@ const SaleEditPage = () => {
       message: "",
       flag: true,
     };
-    if (data.amount === 0) {
-      validate.message = "총 금액을 입력해주세요.";
+    if (+data.amount === 0) {
+      validate.message = "결제 유형을 통해 금액을 입력해주세요.";
       validate.flag = false;
       return validate;
-    } else if (data.paymentType === "") {
+    } else if (data.payments.length === 0) {
       validate.message = "결제 유형을 선택해주세요.";
       validate.flag = false;
       return validate;
@@ -126,7 +118,7 @@ const SaleEditPage = () => {
         services: sale.services,
         description: sale.description,
         gender: sale.gender,
-        paymentType: sale.paymentType,
+        payments: sale.payments,
       };
 
       const { message, flag } = validateForm(inputData);
@@ -148,7 +140,7 @@ const SaleEditPage = () => {
           services,
           description: inputData.description,
           gender: inputData.gender,
-          paymentType: inputData.paymentType,
+          payments: inputData.payments.filter((payment) => !!payment),
         };
 
         if (isEdit) {
@@ -184,6 +176,18 @@ const SaleEditPage = () => {
     return formState.isSubmitting || hasError;
   }, [formState]);
 
+  const timeSlots = useMemo(
+    () =>
+      Array.from({ length: 27 }, (_, i) => {
+        const hour = Math.floor(i / 2) + 9;
+        const minute = i % 2 === 0 ? "00" : "30";
+        return `${hour.toString().padStart(2, "0")}:${minute}`;
+      }),
+    []
+  );
+
+  const title = isEdit ? "매출 수정" : "매출 등록";
+
   useEffect(() => {
     if (isEdit && sale) {
       reset({
@@ -192,20 +196,24 @@ const SaleEditPage = () => {
         amount: sale.amount,
         services: sale.services.map((service) => service.id),
         gender: sale.gender,
-        paymentType: sale.paymentType.id,
+        payments: sale.payments,
         description: sale.description ?? "",
         id: sale.id,
       });
     }
   }, [isEdit, reset, sale]);
 
-  const timeSlots = Array.from({ length: 27 }, (_, i) => {
-    const hour = Math.floor(i / 2) + 9;
-    const minute = i % 2 === 0 ? "00" : "30";
-    return `${hour.toString().padStart(2, "0")}:${minute}`;
-  });
-
-  const title = isEdit ? "매출 수정" : "매출 등록";
+  useEffect(() => {
+    if (selectedPayments.length === 0) {
+      setValue("amount", "");
+    } else {
+      const totalAmount = selectedPayments.reduce(
+        (prev, { amount }) => prev + +amount,
+        0
+      );
+      setValue("amount", `${totalAmount}`);
+    }
+  }, [selectedPayments, setValue]);
 
   return (
     <div className="space-y-6">
@@ -221,28 +229,7 @@ const SaleEditPage = () => {
                 <RequiredLabel htmlFor="amount" required>
                   총 금액
                 </RequiredLabel>
-                <Input
-                  {...register("amount")}
-                  id="amount"
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (value !== "" && !/^\d+$/.test(value)) {
-                      const message = "총 금액은 숫자만 입력 가능합니다.";
-                      setError("amount", {
-                        message,
-                      });
-                      return toast({
-                        variant: "destructive",
-                        description: message,
-                      });
-                    } else {
-                      clearErrors("amount");
-                      setValue("amount", +e.target.value);
-                    }
-                  }}
-                  isError={!!formState.errors.amount}
-                  required
-                />
+                <Input {...register("amount")} id="amount" disabled required />
               </div>
               <div className="space-y-2">
                 <RequiredLabel htmlFor="date" required>
@@ -251,20 +238,49 @@ const SaleEditPage = () => {
                 <Input {...register("date")} id="date" type="date" />
               </div>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-4">
               <RequiredLabel required>결제 유형</RequiredLabel>
-              <RadioGroup
-                value={selectedPaymentType}
-                onValueChange={(value) => setValue("paymentType", value)}
-                required
-              >
-                {paymentTypes.map(({ id, name }) => (
-                  <div key={id} className="flex items-center space-x-2">
-                    <RadioGroupItem value={id} id={`payment${id}`} />
-                    <Label htmlFor={`payment${id}`}>{name}</Label>
+              {paymentTypes.map(({ id, name }, idx) => {
+                return (
+                  <div
+                    key={id}
+                    className="flex items-center space-x-4 min-h-[36px]"
+                  >
+                    <Checkbox
+                      id={`payment${id}`}
+                      checked={selectedPayments.some(
+                        ({ typeId }) => typeId === id
+                      )}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setValue(`payments.${idx}`, {
+                            typeId: id,
+                            amount: "",
+                            name,
+                          });
+                        } else {
+                          setValue(
+                            "payments",
+                            selectedPayments.filter(
+                              ({ typeId }) => typeId !== id
+                            )
+                          );
+                        }
+                      }}
+                    />
+                    <Label htmlFor={`payment-${name}`} className="w-24">
+                      {name}
+                    </Label>
+                    {selectedPayments.some(({ typeId }) => typeId === id) && (
+                      <Input
+                        {...register(`payments.${idx}.amount` as const)}
+                        placeholder="금액"
+                        className="w-32"
+                      />
+                    )}
                   </div>
-                ))}
-              </RadioGroup>
+                );
+              })}
             </div>
             <div className="space-y-2">
               <RequiredLabel required>성별</RequiredLabel>
@@ -310,7 +326,6 @@ const SaleEditPage = () => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="serviceTypes">
                 <AccordionTrigger>서비스 유형</AccordionTrigger>
@@ -324,18 +339,12 @@ const SaleEditPage = () => {
                         <Checkbox
                           id={`service-${service.id}`}
                           checked={selectedServices.includes(service.id)}
-                          onCheckedChange={(checked) => {
-                            if (checked) {
-                              const price =
-                                serviceTypes.find((s) => s.id === service.id)
-                                  ?.price ?? 0;
-                              setValue("amount", +price + +amount);
-                            }
+                          onCheckedChange={() => {
                             handleServiceChange(service.id);
                           }}
                         />
                         <Label htmlFor={`service-${service.id}`}>
-                          {service.name} ({service.price.toLocaleString()}원)
+                          {service.name}
                         </Label>
                       </div>
                     ))}
@@ -343,9 +352,8 @@ const SaleEditPage = () => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-
             <div className="space-y-2">
-              <Label htmlFor="customerInfo">고객 정보</Label>
+              <Label htmlFor="customerInfo">설명</Label>
               <Input
                 {...register("description")}
                 id="customerInfo"
