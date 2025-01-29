@@ -13,4 +13,9 @@ export const KEYS = {
     info: "USER-INFO",
     signUp: "SIGN_UP",
   },
+  dashboard: {
+    widget: {
+      monthlySales: "MONTHLY-SALES",
+    },
+  },
 };

@@ -6,6 +6,7 @@ import localeData from "dayjs/plugin/localeData";
 import updateLocale from "dayjs/plugin/updateLocale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useMonthlySales } from "@/queries/dashboard";
 
 dayjs.extend(localeData);
 dayjs.extend(updateLocale);
@@ -17,23 +18,45 @@ dayjs.updateLocale("ko", {
 
 export function CalendarWidget() {
   const [currentDate, setCurrentDate] = useState(dayjs());
+  const { data: monthlySales = [] } = useMonthlySales(
+    currentDate.format("YYYY-MM")
+  );
 
   const daysInMonth = Array.from(
     { length: currentDate.daysInMonth() },
-    (_, i) => currentDate.startOf("month").add(i, "day")
+    (_, i) => {
+      const date = currentDate.startOf("month").add(i, "day");
+      const sale = monthlySales.find((sale) =>
+        dayjs(sale.date).isSame(date, "day")
+      );
+      return {
+        date,
+        amount: sale ? sale.amount : null,
+      };
+    }
   );
 
   const prevMonth = () => setCurrentDate(currentDate.subtract(1, "month"));
   const nextMonth = () => setCurrentDate(currentDate.add(1, "month"));
 
-  // Mock data for sales comparison
-  const getSalesDifference = (date: Dayjs) => {
-    // const random = Math.random();
-    console.log(date);
-    const amount = Math.floor(0 * 100000);
-    return 0 > 0.5
-      ? { value: `+${amount}`, color: "text-blue-500" }
-      : { value: `-${amount}`, color: "text-red-500" };
+  const getSalesDifference = (date: Dayjs, amount: number | null) => {
+    const object = {
+      value: amount ?? "null",
+      color: "text-blue-500",
+    };
+
+    if (amount !== null) {
+      const previousDaySale =
+        monthlySales.find((sale) =>
+          dayjs(sale.date).isSame(date.subtract(1, "day"), "day")
+        )?.amount || 0;
+      const difference = amount - previousDaySale;
+
+      object.value = `${difference >= 0 ? "+" : ""}${difference}`;
+      object.color = difference >= 0 ? "text-blue-500" : "text-red-500";
+    }
+
+    return object;
   };
 
   return (
@@ -57,9 +80,10 @@ export function CalendarWidget() {
             {day}
           </div>
         ))}
-        {daysInMonth.map((date, index) => {
-          const { value, color } = getSalesDifference(date);
+        {daysInMonth.map(({ date, amount }, index) => {
+          const { value, color } = getSalesDifference(date, amount);
           const parsedValue = Number(value).toLocaleString();
+          const isEmpty = value === "null";
           const isToday = date.isSame(dayjs(), "day");
           return (
             <div
@@ -76,7 +100,9 @@ export function CalendarWidget() {
               >
                 {date.format("D")}
               </div>
-              <div className={`text-[7px] ${color}`}>{parsedValue}</div>
+              {!isEmpty && (isToday || !date.isAfter(dayjs(), "day")) ? (
+                <div className={`text-[7px] ${color}`}>{parsedValue}</div>
+              ) : null}
             </div>
           );
         })}
