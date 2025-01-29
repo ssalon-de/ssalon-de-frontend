@@ -1,5 +1,5 @@
 import apiClient from "@/shared/utils/api";
-import { AuthDto, User } from "./type";
+import { AuthDto, SignUpDTO, User } from "./type";
 import { encryptPassword } from "@/shared/utils/encrypt";
 
 export const login = async (dto: AuthDto): Promise<{ user: User }> => {
@@ -41,6 +41,19 @@ export async function getUserInfo() {
 export async function updateUserInfo(dto: User) {
   try {
     return apiClient.put<User>("/auth/info", dto);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function signUp(dto: SignUpDTO) {
+  try {
+    const encryptedPassword = encryptPassword(dto.password);
+
+    return apiClient.post<User>("/auth/sign-up", {
+      ...dto,
+      password: encryptedPassword,
+    });
   } catch (error) {
     throw error;
   }

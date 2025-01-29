@@ -11,5 +11,6 @@ export const KEYS = {
   },
   user: {
     info: "USER-INFO",
+    signUp: "SIGN_UP",
   },
 };

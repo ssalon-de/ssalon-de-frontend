@@ -16,3 +16,11 @@ export type User = {
   company: string;
   createdAt: string;
 };
+
+export type SignUpDTO = {
+  email: string;
+  name: string;
+  company: string;
+  password: string;
+  // confirmPassword: string;
+};
