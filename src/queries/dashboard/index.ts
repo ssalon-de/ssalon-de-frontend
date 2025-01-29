@@ -1,6 +1,6 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
-import { DailySale, MonthlyTotalSales } from "./type";
-import { getMonthlySales, getMonthlyTotalSales } from "./api";
+import { DailySale, GenderRatio, MonthlyTotalSales } from "./type";
+import { getGenderRatio, getMonthlySales, getMonthlyTotalSales } from "./api";
 import { KEYS } from "@/shared/constants/query-keys";
 
 export const useMonthlySales = (
@@ -22,5 +22,16 @@ export const useMonthlyTotalSales = (
     ...options,
     queryKey: [KEYS.dashboard.widget.monthlyTotalSales, targetMonth],
     queryFn: () => getMonthlyTotalSales(targetMonth),
+  });
+};
+
+export const useGenderRatio = (
+  targetMonth: string,
+  options?: Omit<UseQueryOptions<GenderRatio>, "queryKey" | "queryFn">
+) => {
+  return useQuery<GenderRatio>({
+    ...options,
+    queryKey: [KEYS.dashboard.widget.genderRatio, targetMonth],
+    queryFn: () => getGenderRatio(targetMonth),
   });
 };

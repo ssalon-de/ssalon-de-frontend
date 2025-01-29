@@ -1,12 +1,24 @@
 "use client";
 
+import { useGenderRatio } from "@/queries/dashboard";
+import { GenderRatio } from "@/queries/dashboard/type";
+import dayjs from "dayjs";
+import { useMemo } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from "recharts";
 
 export function GenderRatioWidget() {
-  const data = [
-    { name: "남성", value: 60 },
-    { name: "여성", value: 40 },
-  ];
+  const { data } = useGenderRatio(dayjs().format("YYYY-MM"));
+
+  const chartData = useMemo(
+    () =>
+      data
+        ? Object.keys(data).map((gender) => ({
+            name: gender === "male" ? "남성" : "여성",
+            value: data[gender as keyof GenderRatio],
+          }))
+        : [],
+    [data]
+  );
 
   const COLORS = ["#0088FE", "#FF8042"];
 
@@ -14,7 +26,7 @@ export function GenderRatioWidget() {
     <ResponsiveContainer width="100%" height={200}>
       <PieChart>
         <Pie
-          data={data}
+          data={chartData}
           cx="50%"
           cy="50%"
           labelLine={false}
@@ -22,7 +34,7 @@ export function GenderRatioWidget() {
           fill="#8884d8"
           dataKey="value"
         >
-          {data.map((entry, index) => (
+          {chartData.map((_, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>

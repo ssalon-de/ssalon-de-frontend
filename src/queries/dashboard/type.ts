@@ -8,3 +8,8 @@ export type MonthlyTotalSales = {
   amount: number;
   payments: { type: string; amount: number }[];
 };
+
+export type GenderRatio = {
+  female: number;
+  male: number;
+};
