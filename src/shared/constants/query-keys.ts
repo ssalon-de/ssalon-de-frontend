@@ -16,6 +16,7 @@ export const KEYS = {
   dashboard: {
     widget: {
       monthlySales: "MONTHLY-SALES",
+      monthlyTotalSales: "MONTHLY-TOTAL-SALES",
     },
   },
 };
