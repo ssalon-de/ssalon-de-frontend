@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       const error: ApiError = await res.json();
       return NextResponse.json(
         { code: error.code, message: error.message },
-        { status: res.status }
+        { status: error.status }
       );
     }
 
@@ -46,10 +46,9 @@ export async function POST(req: NextRequest) {
     return response;
   } catch (error) {
     const err = error as ApiError;
-
     return NextResponse.json(
       { code: err.code, message: err.message },
-      { status: err.status || 500 }
+      { status: err.status }
     );
   }
 }
