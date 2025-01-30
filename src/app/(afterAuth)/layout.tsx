@@ -9,7 +9,7 @@ export default function BeforeAuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="max-w-[1200px] flex h-screen overflow-hidden mx-auto flex-col md:flex-row border-gray-200 border">
+    <div className="max-w-[1200px] flex h-screen overflow-hidden mx-auto flex-col md:flex-row border-gray-200 border relative mt-[70px]">
       <Sidebar />
       <MobileMenu />
       <main className="flex-1 overflow-auto p-6 bg-white">
