@@ -35,6 +35,7 @@ const SalesItem: React.FC<Props> = ({
   onClickEdit,
   onClickDelete,
 }) => {
+  console.log(dayjsKST(date));
   return (
     <Card key={id}>
       <CardContent className="p-4">
