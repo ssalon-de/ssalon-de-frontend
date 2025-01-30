@@ -9,6 +9,11 @@ export type MonthlyTotalSales = {
   payments: { type: string; amount: number }[];
 };
 
+export type TargetTotalSales = {
+  targetSales: number;
+  totalSales: number;
+};
+
 export type GenderRatio = {
   female: number;
   male: number;

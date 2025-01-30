@@ -1,11 +1,9 @@
-"use client";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "./components/calendar-widget";
-import { TotalSalesWidget } from "./components/total-sales-widget";
-import { SalesTargetWidget } from "./components/sales-target-widget";
 import { GenderRatioWidget } from "./components/gender-ratio-widget";
 import { DailySalesLineChart } from "./components/daily-sales-line-chart";
+import { TotalSalesWidget } from "./components/total-sales-widget";
+import { TargetTotalSalesWidget } from "./components/target-total-sales-widget";
 
 export default function Dashboard() {
   return (
@@ -33,7 +31,7 @@ export default function Dashboard() {
             <CardTitle>목표 매출</CardTitle>
           </CardHeader>
           <CardContent>
-            <SalesTargetWidget />
+            <TargetTotalSalesWidget />
           </CardContent>
         </Card>
         <Card>

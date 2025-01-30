@@ -1,5 +1,10 @@
 import apiClient from "@/shared/utils/api";
-import { DailySale, GenderRatio, MonthlyTotalSales } from "./type";
+import {
+  DailySale,
+  GenderRatio,
+  MonthlyTotalSales,
+  TargetTotalSales,
+} from "./type";
 
 export function getMonthlySales(targetMonth: string) {
   try {
@@ -15,6 +20,16 @@ export function getMonthlyTotalSales(targetMonth: string) {
   try {
     return apiClient.get<MonthlyTotalSales>(
       `/dashboard/monthly-total-sales?targetMonth=${targetMonth}`
+    );
+  } catch (error) {
+    throw error;
+  }
+}
+
+export function getTargetTotalSales(targetMonth: string) {
+  try {
+    return apiClient.get<TargetTotalSales>(
+      `/dashboard/target-total-sales?targetMonth=${targetMonth}`
     );
   } catch (error) {
     throw error;

@@ -17,6 +17,7 @@ export const KEYS = {
     widget: {
       monthlySales: "MONTHLY-SALES",
       monthlyTotalSales: "MONTHLY-TOTAL-SALES",
+      targetTotalSales: "TARGET-TOTAL-SALES",
       genderRatio: "GENDER-RATIO",
     },
   },
