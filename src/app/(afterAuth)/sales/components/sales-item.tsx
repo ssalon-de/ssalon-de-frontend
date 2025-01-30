@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Gender } from "@/queries/sales/type";
 import { ServiceType } from "@/queries/service-types/type";
+import { dayjsKST } from "@/shared/utils/dayjs";
 import dayjs from "dayjs";
 import { Edit2, Trash2 } from "lucide-react";
 import { memo } from "react";
@@ -40,7 +41,7 @@ const SalesItem: React.FC<Props> = ({
         <div className="flex justify-between items-start mb-4">
           <div>
             <p className="font-semibold">
-              {dayjs(date).format("YY/MM/DD HH:mm")}
+              {dayjsKST(date).format("YY/MM/DD HH:mm")}
             </p>
             <p className="text-sm text-gray-500">{description}</p>
           </div>
