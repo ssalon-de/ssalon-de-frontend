@@ -9,6 +9,8 @@ import dayjs from "dayjs";
 import { Edit2, Trash2 } from "lucide-react";
 import { memo } from "react";
 
+dayjs.locale("ko");
+
 type Props = {
   id: string;
   date: string;
