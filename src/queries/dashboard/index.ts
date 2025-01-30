@@ -1,11 +1,13 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import {
   DailySale,
+  DailySaleAmountCount,
   GenderRatio,
   MonthlyTotalSales,
   TargetTotalSales,
 } from "./type";
 import {
+  getDailySalesAmountCount,
   getGenderRatio,
   getMonthlySales,
   getMonthlyTotalSales,
@@ -43,6 +45,20 @@ export const useTargetTotalSales = (
     ...options,
     queryKey: [KEYS.dashboard.widget.targetTotalSales, targetMonth],
     queryFn: () => getTargetTotalSales(targetMonth),
+  });
+};
+
+export const useDailySalesAmountCount = (
+  targetMonth: string,
+  options?: Omit<
+    UseQueryOptions<DailySaleAmountCount[]>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  return useQuery<DailySaleAmountCount[]>({
+    ...options,
+    queryKey: [KEYS.dashboard.widget.dailySalesAmountCount, targetMonth],
+    queryFn: () => getDailySalesAmountCount(targetMonth),
   });
 };
 

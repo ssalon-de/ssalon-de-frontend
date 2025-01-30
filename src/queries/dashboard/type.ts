@@ -18,3 +18,7 @@ export type GenderRatio = {
   female: number;
   male: number;
 };
+
+export type DailySaleAmountCount = DailySale & {
+  count: number;
+};

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogOut, Scissors } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { DialogTitle } from "@radix-ui/react-dialog";
 
@@ -50,10 +49,6 @@ export function MobileMenu() {
               </Link>
             </div>
             <div className="flex items-center space-x-4 py-4 px-6 border-b">
-              <Avatar>
-                <AvatarImage alt="User" />
-                <AvatarFallback>{user.name.slice(0, 2)}</AvatarFallback>
-              </Avatar>
               <div>
                 <p className="font-medium text-gray-700">{user?.name}</p>
                 <p className="text-sm text-gray-500">{user?.email}</p>

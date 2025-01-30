@@ -1,5 +1,7 @@
 "use client";
 
+import { useDailySalesAmountCount } from "@/queries/dashboard";
+import dayjs from "dayjs";
 import {
   Line,
   XAxis,
@@ -13,15 +15,7 @@ import {
 } from "recharts";
 
 export function DailySalesLineChart() {
-  const data = [
-    { date: "5/1", salesCount: 10, salesAmount: 500000 },
-    { date: "5/2", salesCount: 15, salesAmount: 750000 },
-    { date: "5/3", salesCount: 8, salesAmount: 400000 },
-    { date: "5/4", salesCount: 12, salesAmount: 600000 },
-    { date: "5/5", salesCount: 20, salesAmount: 1000000 },
-    { date: "5/6", salesCount: 18, salesAmount: 900000 },
-    { date: "5/7", salesCount: 25, salesAmount: 1250000 },
-  ];
+  const { data = [] } = useDailySalesAmountCount(dayjs().format("YYYY-MM"));
 
   return (
     <ResponsiveContainer width="100%" height={300}>
@@ -32,16 +26,11 @@ export function DailySalesLineChart() {
         <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
         <Tooltip />
         <Legend />
-        <Bar
-          yAxisId="right"
-          dataKey="salesAmount"
-          fill="#82ca9d"
-          name="매출 금액"
-        />
+        <Bar yAxisId="right" dataKey="amount" fill="#82ca9d" name="매출 금액" />
         <Line
           yAxisId="left"
           type="monotone"
-          dataKey="salesCount"
+          dataKey="count"
           stroke="#8884d8"
           name="매출 건수"
         />

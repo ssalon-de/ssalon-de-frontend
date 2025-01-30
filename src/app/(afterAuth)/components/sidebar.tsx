@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Scissors, LogOut } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useLogout } from "@/shared/hooks/use-logout";
 import { useStore } from "@/shared/hooks/use-store";
@@ -30,10 +29,6 @@ export function Sidebar() {
 
       <div className="flex-none p-4 border-b border-gray-200">
         <div className="flex items-center space-x-3">
-          <Avatar>
-            <AvatarImage alt="user" />
-            <AvatarFallback>{user?.name}</AvatarFallback>
-          </Avatar>
           <div>
             <p className="font-medium text-gray-700">{user?.name}</p>
             <p className="text-sm text-gray-500">{user?.email}</p>

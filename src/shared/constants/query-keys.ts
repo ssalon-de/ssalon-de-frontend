@@ -19,6 +19,7 @@ export const KEYS = {
       monthlyTotalSales: "MONTHLY-TOTAL-SALES",
       targetTotalSales: "TARGET-TOTAL-SALES",
       genderRatio: "GENDER-RATIO",
+      dailySalesAmountCount: "DAILY-SALES-AMOUNT-COUNT",
     },
   },
   settings: {
