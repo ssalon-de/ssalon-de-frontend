@@ -20,4 +20,7 @@ export const KEYS = {
       genderRatio: "GENDER-RATIO",
     },
   },
+  settings: {
+    list: "SETTINGS",
+  },
 };
