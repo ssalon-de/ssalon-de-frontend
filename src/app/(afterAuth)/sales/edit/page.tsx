@@ -235,7 +235,12 @@ const SaleEditPage = () => {
                 <RequiredLabel htmlFor="date" required>
                   날짜
                 </RequiredLabel>
-                <Input {...register("date")} id="date" type="date" />
+                <Input
+                  {...register("date")}
+                  id="date"
+                  type="date"
+                  placeholder="결제 유형을 클릭해 매출을 입력해주세요."
+                />
               </div>
             </div>
             <div className="space-y-4">

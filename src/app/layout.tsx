@@ -4,6 +4,8 @@ import "./globals.css";
 import QueryProvider from "@/components/providers/react-query.provider";
 import { Toaster } from "@/components/ui/toaster";
 
+import "@/shared/utils/dayjs";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
