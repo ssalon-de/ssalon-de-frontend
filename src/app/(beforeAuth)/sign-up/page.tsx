@@ -40,7 +40,8 @@ export default function SignUp() {
   const { mutate: signUp } = useSignUp({
     onSuccess: () => {
       toast({
-        description: "회원가입을 축하합니다. 로그인 페이지로 이동합니다.",
+        description:
+          "회원가입을 축하합니다. 입력한 이메일에서 계정을 인증해주세요.",
       });
       router.push("/login");
     },
