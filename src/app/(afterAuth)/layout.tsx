@@ -14,7 +14,9 @@ export default function BeforeAuthLayout({
       <MobileMenu />
       <main className="flex-1 overflow-auto p-6 bg-white">
         <Suspense fallback={<Spinner />}>
-          <div className="container mx-auto w-full">{children}</div>
+          <div className="container mx-auto w-full mt-[70px] md:mt-0">
+            {children}
+          </div>
         </Suspense>
       </main>
     </div>
