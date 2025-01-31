@@ -13,7 +13,7 @@ export type Payment = {
 
 export type Sale = {
   id: string;
-  date: number; // unix timestamp
+  date: string;
   amount: string;
   services: ServiceType[];
   payments: Payment[];
