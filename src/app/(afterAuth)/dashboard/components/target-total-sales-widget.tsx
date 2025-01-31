@@ -3,7 +3,7 @@
 import { Progress } from "@/components/ui/progress";
 import { useTargetTotalSales } from "@/queries/dashboard";
 import { TargetTotalSales } from "@/queries/dashboard/type";
-import dayjs from "dayjs";
+import dayjs from "@/shared/utils/dayjs";
 
 const initialData: TargetTotalSales = {
   targetSales: 0,

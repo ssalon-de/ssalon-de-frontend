@@ -3,7 +3,7 @@
 import Spinner from "@/components/ui/spinner";
 import { useTotalAmount } from "@/queries/sales";
 import useDateStore from "@/zustand/date";
-import dayjs from "dayjs";
+import dayjs from "@/shared/utils/dayjs";
 
 export function TotalSales() {
   const { date } = useDateStore();

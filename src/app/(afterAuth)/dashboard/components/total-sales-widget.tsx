@@ -1,6 +1,6 @@
 "use client";
 
-import dayjs from "dayjs";
+import dayjs from "@/shared/utils/dayjs";
 import Spinner from "@/components/ui/spinner";
 import { useMonthlyTotalSales } from "@/queries/dashboard";
 

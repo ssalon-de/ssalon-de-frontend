@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useCallback, useMemo, useState } from "react";
-import dayjs from "dayjs";
+import dayjs from "@/shared/utils/dayjs";
 
 import { useDeleteSale, useSales } from "@/queries/sales";
 import { MutateType } from "@/shared/types/query";

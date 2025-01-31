@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { DatePersist } from "./type";
-import dayjs from "dayjs";
+import dayjs from "@/shared/utils/dayjs";
 
 const key = "date-store";
 

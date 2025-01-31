@@ -5,17 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Gender } from "@/queries/sales/type";
 import { ServiceType } from "@/queries/service-types/type";
-import { dayjsKST } from "@/shared/utils/dayjs";
-import dayjs from "dayjs";
 import { Edit2, Trash2 } from "lucide-react";
 import { memo } from "react";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
 
-dayjs.locale("ko");
-dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.tz.setDefault("Asia/Seoul");
+import dayjs from "@/shared/utils/dayjs";
 
 type Props = {
   id: string;
@@ -40,14 +33,13 @@ const SalesItem: React.FC<Props> = ({
   onClickEdit,
   onClickDelete,
 }) => {
-  console.log(dayjsKST(date));
   return (
     <Card key={id}>
       <CardContent className="p-4">
         <div className="flex justify-between items-start mb-4">
           <div>
             <p className="font-semibold">
-              {dayjsKST(date).format("YY/MM/DD HH:mm")}
+              {dayjs(date).format("YY/MM/DD HH:mm")}
             </p>
             <p className="text-sm text-gray-500">{description}</p>
           </div>

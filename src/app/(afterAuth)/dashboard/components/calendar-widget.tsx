@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import dayjs, { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 import localeData from "dayjs/plugin/localeData";
 import updateLocale from "dayjs/plugin/updateLocale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMonthlySales } from "@/queries/dashboard";
+import dayjs from "@/shared/utils/dayjs";
 
 dayjs.extend(localeData);
 dayjs.extend(updateLocale);

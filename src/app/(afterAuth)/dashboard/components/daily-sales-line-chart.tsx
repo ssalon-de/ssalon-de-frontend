@@ -1,7 +1,7 @@
 "use client";
 
 import { useDailySalesAmountCount } from "@/queries/dashboard";
-import dayjs from "dayjs";
+import dayjs from "@/shared/utils/dayjs";
 import {
   Line,
   XAxis,

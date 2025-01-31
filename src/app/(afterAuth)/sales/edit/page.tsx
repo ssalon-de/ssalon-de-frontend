@@ -25,7 +25,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { useToast } from "@/shared/hooks/use-toast";
 import { useCreateSale, useSale, useUpdateSale } from "@/queries/sales";
 import { useServiceTypes } from "@/queries/service-types";
-import dayjs from "dayjs";
+import dayjs from "@/shared/utils/dayjs";
 import { usePaymentTypes } from "@/queries/payment-types";
 import { RequiredLabel } from "@/components/ui/required-label";
 
