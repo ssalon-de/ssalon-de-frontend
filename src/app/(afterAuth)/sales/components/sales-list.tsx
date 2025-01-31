@@ -38,8 +38,6 @@ const SalesList = () => {
     }
   );
 
-  console.log(dayjs(date).format("YYYY-MM-DD"));
-
   const { mutate: deleteSale } = useDeleteSale({
     onSuccess: () => onAfterMutate("DELETE"),
   });

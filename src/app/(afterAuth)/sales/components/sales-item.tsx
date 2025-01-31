@@ -11,7 +11,7 @@ import { memo } from "react";
 
 type Props = {
   id: string;
-  date: string;
+  date: number;
   amount: string;
   services: ServiceType[];
   payments: string[];
@@ -38,7 +38,7 @@ const SalesItem: React.FC<Props> = ({
         <div className="flex justify-between items-start mb-4">
           <div>
             <p className="font-semibold">
-              {dayjs(date).format("YY/MM/DD HH:mm")}
+              {dayjs.unix(date).format("YY/MM/DD HH:mm")}
             </p>
             <p className="text-sm text-gray-500">{description}</p>
           </div>

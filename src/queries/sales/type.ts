@@ -13,7 +13,7 @@ export type Payment = {
 
 export type Sale = {
   id: string;
-  date: string; // 날짜
+  date: number; // unix timestamp
   amount: string;
   services: ServiceType[];
   payments: Payment[];
@@ -21,7 +21,11 @@ export type Sale = {
   description?: string;
 };
 
-export type CreateSaleDto = Omit<Sale, "id" | "services" | "paymentType"> & {
+export type CreateSaleDto = Omit<
+  Sale,
+  "id" | "services" | "paymentType" | "date"
+> & {
+  date: string;
   services: string[];
   payments: Payment[];
 };

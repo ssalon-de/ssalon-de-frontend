@@ -29,7 +29,8 @@ import { usePaymentTypes } from "@/queries/payment-types";
 import { RequiredLabel } from "@/components/ui/required-label";
 import dayjs from "dayjs";
 
-type SaleForm = Omit<Sale, "services" | "payments" | "id"> & {
+type SaleForm = Omit<Sale, "services" | "payments" | "id" | "date"> & {
+  date: string;
   time: string;
   services: string[];
   payments: Payment[];
