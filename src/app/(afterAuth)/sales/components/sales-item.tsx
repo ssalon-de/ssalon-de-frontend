@@ -33,7 +33,7 @@ const SalesItem: React.FC<Props> = ({
   onClickEdit,
   onClickDelete,
 }) => {
-  console.log(dayjs(date).locale("ko").format("YY/MM/DD HH:mm"));
+  console.log(date, dayjs(date));
   return (
     <Card key={id}>
       <CardContent className="p-4">
