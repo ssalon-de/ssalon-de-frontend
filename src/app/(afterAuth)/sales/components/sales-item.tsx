@@ -8,7 +8,7 @@ import { ServiceType } from "@/queries/service-types/type";
 import { Edit2, Trash2 } from "lucide-react";
 import { memo } from "react";
 
-import dayjs, { dayjsKST } from "@/shared/utils/dayjs";
+import { dayjsKST } from "@/shared/utils/dayjs";
 
 type Props = {
   id: string;
@@ -33,7 +33,7 @@ const SalesItem: React.FC<Props> = ({
   onClickEdit,
   onClickDelete,
 }) => {
-  console.log(date, dayjs(date));
+  console.log(date, dayjsKST(date));
   return (
     <Card key={id}>
       <CardContent className="p-4">

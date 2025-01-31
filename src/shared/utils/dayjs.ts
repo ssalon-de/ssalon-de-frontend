@@ -7,11 +7,12 @@ import "dayjs/locale/ko";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
 dayjs.locale("ko");
 dayjs.extend(localeData);
 dayjs.extend(updateLocale);
 
 export const dayjsKST = (date?: string | number | Date) =>
-  dayjs.utc(date).tz("Asia/Seoul");
+  dayjs(date).tz("Asia/Seoul");
 
 export default dayjs;
