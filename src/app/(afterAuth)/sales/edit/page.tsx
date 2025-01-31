@@ -139,7 +139,9 @@ const SaleEditPage = () => {
           services,
           description: inputData.description,
           gender: inputData.gender,
-          payments: inputData.payments.filter((payment) => !!payment),
+          payments: inputData.payments.filter(
+            (payment) => !!payment.amount && !!payment.name && !!payment.typeId
+          ),
         };
 
         if (isEdit) {

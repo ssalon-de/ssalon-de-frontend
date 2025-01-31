@@ -6,6 +6,7 @@ export type GetSalesParams = {
 };
 
 export type Payment = {
+  id?: string;
   amount: string;
   typeId: string;
   name: string;
