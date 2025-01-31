@@ -2,7 +2,7 @@
 
 import { useGenderRatio } from "@/queries/dashboard";
 import { GenderRatio } from "@/queries/dashboard/type";
-import dayjs from "@/shared/utils/dayjs";
+import dayjs from "dayjs";
 import { useMemo } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from "recharts";
 

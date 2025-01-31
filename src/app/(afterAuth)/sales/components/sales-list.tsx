@@ -1,7 +1,6 @@
 "use client";
 
 import { memo, useCallback, useMemo, useState } from "react";
-import dayjs from "@/shared/utils/dayjs";
 
 import { useDeleteSale, useSales } from "@/queries/sales";
 import { MutateType } from "@/shared/types/query";
@@ -16,6 +15,7 @@ import Spinner from "@/components/ui/spinner";
 import { ServiceTypeFilter } from "./service-type-filter";
 import { useRouter } from "next/navigation";
 import { Filter } from "@/shared/types/filter";
+import dayjs from "dayjs";
 
 const SalesList = () => {
   const client = useQueryClient();
@@ -31,13 +31,14 @@ const SalesList = () => {
     isFetching,
   } = useSales(
     {
-      startTime: dayjs(date).startOf("day").unix(),
-      endTime: dayjs(date).endOf("day").unix(),
+      date: dayjs(date).format("YYYY-MM-DD"),
     },
     {
       enabled: !!date,
     }
   );
+
+  console.log(dayjs(date).format("YYYY-MM-DD"));
 
   const { mutate: deleteSale } = useDeleteSale({
     onSuccess: () => onAfterMutate("DELETE"),

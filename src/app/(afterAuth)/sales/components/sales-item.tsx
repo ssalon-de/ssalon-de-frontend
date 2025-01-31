@@ -5,10 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Gender } from "@/queries/sales/type";
 import { ServiceType } from "@/queries/service-types/type";
+import dayjs from "dayjs";
 import { Edit2, Trash2 } from "lucide-react";
 import { memo } from "react";
-
-import { dayjsKST } from "@/shared/utils/dayjs";
 
 type Props = {
   id: string;
@@ -33,14 +32,13 @@ const SalesItem: React.FC<Props> = ({
   onClickEdit,
   onClickDelete,
 }) => {
-  console.log(date, dayjsKST(date));
   return (
     <Card key={id}>
       <CardContent className="p-4">
         <div className="flex justify-between items-start mb-4">
           <div>
             <p className="font-semibold">
-              {dayjsKST(date).format("YY/MM/DD HH:mm")}
+              {dayjs(date).format("YY/MM/DD HH:mm")}
             </p>
             <p className="text-sm text-gray-500">{description}</p>
           </div>

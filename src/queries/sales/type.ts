@@ -2,8 +2,7 @@ import { ServiceType } from "../service-types/type";
 
 export type Gender = "M" | "F";
 export type GetSalesParams = {
-  startTime: number;
-  endTime: number;
+  date: string;
 };
 
 export type Payment = {

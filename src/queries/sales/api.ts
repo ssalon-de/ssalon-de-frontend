@@ -3,9 +3,7 @@ import { CreateSaleDto, GetSalesParams, Sale, UpdateSaleDto } from "./type";
 
 export function getSales(params: GetSalesParams) {
   try {
-    return apiClient.get<Sale[]>(
-      `/sales?startTime=${params.startTime}&endTime=${params.endTime}`
-    );
+    return apiClient.get<Sale[]>(`/sales?date=${params.date}`);
   } catch (error) {
     throw error;
   }

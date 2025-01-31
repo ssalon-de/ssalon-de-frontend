@@ -25,9 +25,9 @@ import { useForm, useWatch } from "react-hook-form";
 import { useToast } from "@/shared/hooks/use-toast";
 import { useCreateSale, useSale, useUpdateSale } from "@/queries/sales";
 import { useServiceTypes } from "@/queries/service-types";
-import dayjsKST from "@/shared/utils/dayjs";
 import { usePaymentTypes } from "@/queries/payment-types";
 import { RequiredLabel } from "@/components/ui/required-label";
+import dayjs from "dayjs";
 
 type SaleForm = Omit<Sale, "services" | "payments" | "id"> & {
   time: string;
@@ -37,7 +37,7 @@ type SaleForm = Omit<Sale, "services" | "payments" | "id"> & {
 };
 
 const defaultValues: SaleForm = {
-  date: dayjsKST().format("YYYY-MM-DD"),
+  date: dayjs().format("YYYY-MM-DD"),
   amount: "",
   services: [],
   description: "",
@@ -53,13 +53,11 @@ const SaleEditPage = () => {
   const id = searchParams.get("saleId") ?? "";
   const isEdit = !!id;
   const { toast } = useToast();
-  const { register, handleSubmit, formState, reset, setValue, control, watch } =
+  const { register, handleSubmit, formState, reset, setValue, control } =
     useForm<SaleForm>({
       defaultValues,
       mode: "onChange",
     });
-
-  const { time, date } = watch();
 
   const gender = useWatch({ control, name: "gender" });
   const selectedServices = useWatch({ control, name: "services" });
@@ -111,8 +109,6 @@ const SaleEditPage = () => {
     return validate;
   }, []);
 
-  console.log(dayjsKST(`${date}${time}`));
-
   const onSubmit = useCallback(
     (sale: SaleForm) => {
       const inputData = {
@@ -137,9 +133,7 @@ const SaleEditPage = () => {
         }, [] as string[]);
 
         const dto: CreateSaleDto | UpdateSaleDto = {
-          date: dayjsKST(`${inputData.date}${inputData.time}`).format(
-            "YYYY-MM-DDTHH:mm"
-          ),
+          date: dayjs(`${inputData.date} ${inputData.time}`).format(),
           amount: inputData.amount,
           services,
           description: inputData.description,
@@ -195,8 +189,8 @@ const SaleEditPage = () => {
   useEffect(() => {
     if (isEdit && sale) {
       reset({
-        time: dayjsKST(sale.date).format("HH:mm"),
-        date: dayjsKST(sale.date).format("YYYY-MM-DD"),
+        time: dayjs(sale.date).format("HH:mm"),
+        date: dayjs(sale.date).format("YYYY-MM-DD"),
         amount: sale.amount,
         services: sale.services.map((service) => service.id),
         gender: sale.gender,

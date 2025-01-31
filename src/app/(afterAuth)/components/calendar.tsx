@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import useDateStore from "@/zustand/date";
 import { Dayjs } from "dayjs";
-import dayjs from "@/shared/utils/dayjs";
+import dayjs from "dayjs";
 
 export default function Calendar() {
   const today = dayjs();

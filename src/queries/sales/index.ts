@@ -17,7 +17,7 @@ export const useSales = (
 ) => {
   return useQuery<Sale[]>({
     ...options,
-    queryKey: [KEYS.sales.list, params.startTime, params.endTime],
+    queryKey: [KEYS.sales.list, params.date],
     queryFn: () => getSales(params),
   });
 };
