@@ -61,8 +61,8 @@ export default function Page() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen overflow-hidden bg-gray-50">
-      <Card className="w-full h-full md:rounded-lg md:w-[400px] md:h-auto rounded-none">
+    <div className="flex items-center justify-center h-screen bg-gray-50">
+      <Card className="w-full h-full rounded-none md:rounded-lg md:w-[400px] md:h-auto">
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-center mb-6">
             <Scissors className="w-12 h-12 text-blue-600" />
