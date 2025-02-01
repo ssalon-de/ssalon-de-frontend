@@ -28,6 +28,7 @@ import { useServiceTypes } from "@/queries/service-types";
 import { usePaymentTypes } from "@/queries/payment-types";
 import { RequiredLabel } from "@/components/ui/required-label";
 import dayjs from "dayjs";
+import useDateStore from "@/zustand/date";
 
 type SaleForm = Omit<Sale, "services" | "payments" | "id" | "date"> & {
   date: string;
@@ -37,23 +38,33 @@ type SaleForm = Omit<Sale, "services" | "payments" | "id" | "date"> & {
   id?: string;
 };
 
-const defaultValues: SaleForm = {
-  date: dayjs().format("YYYY-MM-DD"),
-  amount: "",
-  services: [],
-  description: "",
-  id: "",
-  payments: [],
-  gender: "M",
-  time: "",
-};
+const genderItems = [
+  { label: "남성", value: "M" },
+  { label: "여성", value: "F" },
+];
 
 const SaleEditPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { toast } = useToast();
+  const { date } = useDateStore();
+
   const id = searchParams.get("saleId") ?? "";
   const isEdit = !!id;
-  const { toast } = useToast();
+  const defaultValues: SaleForm = useMemo(
+    () => ({
+      date: dayjs(date).format("YYYY-MM-DD"),
+      amount: "",
+      services: [],
+      description: "",
+      id: "",
+      payments: [],
+      gender: "M",
+      time: "",
+    }),
+    [date]
+  );
+
   const { register, handleSubmit, formState, reset, setValue, control } =
     useForm<SaleForm>({
       defaultValues,
@@ -76,7 +87,7 @@ const SaleEditPage = () => {
   const onSuccessCallback = useCallback(() => {
     reset(defaultValues);
     router.push("/sales");
-  }, [reset, router]);
+  }, [defaultValues, reset, router]);
 
   const { mutate: createSale } = useCreateSale({
     onSuccess: onSuccessCallback,
@@ -277,7 +288,20 @@ const SaleEditPage = () => {
                     </Label>
                     {isChecked && (
                       <Input
-                        {...register(`payments.${targetIndex}.amount` as const)}
+                        value={payments[targetIndex].amount}
+                        onChange={(event) => {
+                          if (!isNaN(Number(event.target.value))) {
+                            setValue(
+                              `payments.${targetIndex}.amount`,
+                              event.target.value
+                            );
+                          } else {
+                            toast({
+                              description: "숫자만 입력해주세요.",
+                              variant: "destructive",
+                            });
+                          }
+                        }}
                         key={`payments.${targetIndex}.amount`}
                         placeholder="금액"
                         className="w-32"
@@ -294,14 +318,12 @@ const SaleEditPage = () => {
                 onValueChange={(value) => setValue("gender", value as Gender)}
                 required
               >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="M" id="gender-male" />
-                  <Label htmlFor="gender-male">남성</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="F" id="gender-female" />
-                  <Label htmlFor="gender-female">여성</Label>
-                </div>
+                {genderItems.map(({ label, value }) => (
+                  <div key={value} className="flex items-center space-x-2">
+                    <RadioGroupItem value={value} id={`gender-${value}`} />
+                    <Label htmlFor={`gender-${value}`}>{label}</Label>
+                  </div>
+                ))}
               </RadioGroup>
             </div>
             <Accordion
