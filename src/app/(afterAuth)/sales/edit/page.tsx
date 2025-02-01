@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -71,6 +71,7 @@ const SaleEditPage = () => {
 
   const { data: serviceTypes = [] } = useServiceTypes();
   const { data: paymentTypes = [] } = usePaymentTypes();
+  const [timeAccordion, setTimeAccordion] = useState("");
 
   const onSuccessCallback = useCallback(() => {
     reset(defaultValues);
@@ -303,10 +304,18 @@ const SaleEditPage = () => {
                 </div>
               </RadioGroup>
             </div>
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion
+              type="single"
+              collapsible
+              className="w-full"
+              value={timeAccordion}
+              onValueChange={setTimeAccordion}
+            >
               <AccordionItem value="time">
                 <AccordionTrigger>
-                  <RequiredLabel required>시간 선택</RequiredLabel>
+                  <RequiredLabel required value={selectedTime}>
+                    시간 선택
+                  </RequiredLabel>
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="grid grid-cols-4 gap-2">
@@ -321,6 +330,7 @@ const SaleEditPage = () => {
                           } else {
                             setValue("time", time);
                           }
+                          setTimeAccordion("");
                         }}
                       >
                         {time}
