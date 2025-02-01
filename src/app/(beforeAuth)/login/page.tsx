@@ -61,66 +61,62 @@ export default function Page() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-50">
-      <Card className="w-full h-full rounded-none md:rounded-lg md:w-[400px] md:h-auto">
-        <CardHeader className="space-y-1">
-          <div className="flex items-center justify-center mb-6">
-            <Scissors className="w-12 h-12 text-blue-600" />
-            <span className="ml-2 text-2xl font-bold text-gray-800">
-              HairSalon
-            </span>
+    <Card className="w-full h-full rounded-none md:rounded-lg md:w-[400px] md:h-auto">
+      <CardHeader className="space-y-1">
+        <div className="flex items-center justify-center mb-6">
+          <Scissors className="w-12 h-12 text-blue-600" />
+          <span className="ml-2 text-2xl font-bold text-gray-800">
+            HairSalon
+          </span>
+        </div>
+        <CardTitle className="text-2xl font-bold text-center">로그인</CardTitle>
+        <CardDescription className="text-center">
+          계정에 로그인하여 매출을 관리하세요
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">이메일</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="name@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
-          <CardTitle className="text-2xl font-bold text-center">
-            로그인
-          </CardTitle>
-          <CardDescription className="text-center">
-            계정에 로그인하여 매출을 관리하세요
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">이메일</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">비밀번호</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-          </form>
-        </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
-          <Button className="w-full" onClick={handleLogin}>
-            {isLoading && <Spinner className="mr-2" />}
-            로그인
-          </Button>
-          <div className="space-y-2 text-sm text-center">
-            <a href="#" className="text-blue-600 hover:underline">
-              비밀번호를 잊으셨나요?
-            </a>
-            <div className="flex gap-1">
-              계정이 없으신가요?
-              <Link href="/sign-up" className="text-blue-600 hover:underline">
-                회원가입
-              </Link>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">비밀번호</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
-        </CardFooter>
-      </Card>
-    </div>
+        </form>
+      </CardContent>
+      <CardFooter className="flex flex-col space-y-4">
+        <Button className="w-full" onClick={handleLogin}>
+          {isLoading && <Spinner className="mr-2" />}
+          로그인
+        </Button>
+        <div className="space-y-2 text-sm text-center">
+          <a href="#" className="text-blue-600 hover:underline">
+            비밀번호를 잊으셨나요?
+          </a>
+          <div className="flex gap-1">
+            계정이 없으신가요?
+            <Link href="/sign-up" className="text-blue-600 hover:underline">
+              회원가입
+            </Link>
+          </div>
+        </div>
+      </CardFooter>
+    </Card>
   );
 }
