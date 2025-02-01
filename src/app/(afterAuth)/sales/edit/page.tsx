@@ -62,7 +62,7 @@ const SaleEditPage = () => {
 
   const gender = useWatch({ control, name: "gender" });
   const selectedServices = useWatch({ control, name: "services" });
-  const selectedPayments = useWatch({ control, name: "payments" });
+  const payments = useWatch({ control, name: "payments" });
   const selectedTime = useWatch({ control, name: "time" });
 
   const { data: sale } = useSale(id, {
@@ -139,9 +139,7 @@ const SaleEditPage = () => {
           services,
           description: inputData.description,
           gender: inputData.gender,
-          payments: inputData.payments.filter(
-            (payment) => !!payment.amount && !!payment.name && !!payment.typeId
-          ),
+          payments: inputData.payments,
         };
 
         if (isEdit) {
@@ -205,16 +203,16 @@ const SaleEditPage = () => {
   }, [isEdit, reset, sale]);
 
   useEffect(() => {
-    if (selectedPayments.length === 0) {
+    if (payments.length === 0) {
       setValue("amount", "");
     } else {
-      const totalAmount = selectedPayments.reduce(
+      const totalAmount = payments.reduce(
         (prev, { amount }) => prev + +amount,
         0
       );
       setValue("amount", `${totalAmount}`);
     }
-  }, [selectedPayments, setValue]);
+  }, [payments, setValue]);
 
   return (
     <div className="space-y-6">
@@ -246,30 +244,29 @@ const SaleEditPage = () => {
             </div>
             <div className="space-y-4">
               <RequiredLabel required>결제 유형</RequiredLabel>
-              {paymentTypes.map(({ id, name }, idx) => {
+              {paymentTypes.map(({ id, name }) => {
+                const targetIndex = payments.findIndex(
+                  ({ typeId }) => typeId === id
+                );
+                const isChecked = targetIndex !== -1;
                 return (
                   <div
-                    key={id}
+                    key={`payments${id}`}
                     className="flex items-center space-x-4 min-h-[36px]"
                   >
                     <Checkbox
                       id={`payment${id}`}
-                      checked={selectedPayments.some(
-                        ({ typeId }) => typeId === id
-                      )}
+                      checked={isChecked}
                       onCheckedChange={(checked) => {
                         if (checked) {
-                          setValue(`payments.${idx}`, {
-                            typeId: id,
-                            amount: "",
-                            name,
-                          });
+                          setValue("payments", [
+                            ...payments,
+                            { typeId: id, name, amount: "" },
+                          ]);
                         } else {
                           setValue(
                             "payments",
-                            selectedPayments.filter(
-                              ({ typeId }) => typeId !== id
-                            )
+                            payments.filter(({ typeId }) => typeId !== id)
                           );
                         }
                       }}
@@ -277,9 +274,10 @@ const SaleEditPage = () => {
                     <Label htmlFor={`payment-${name}`} className="w-24">
                       {name}
                     </Label>
-                    {selectedPayments.some(({ typeId }) => typeId === id) && (
+                    {isChecked && (
                       <Input
-                        {...register(`payments.${idx}.amount` as const)}
+                        {...register(`payments.${targetIndex}.amount` as const)}
+                        key={`payments.${targetIndex}.amount`}
                         placeholder="금액"
                         className="w-32"
                       />
@@ -332,9 +330,16 @@ const SaleEditPage = () => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion
+              type="single"
+              collapsible
+              className="w-full"
+              disabled={serviceTypes.length === 0}
+            >
               <AccordionItem value="serviceTypes">
-                <AccordionTrigger>서비스 유형</AccordionTrigger>
+                <AccordionTrigger disabled={serviceTypes.length === 0}>
+                  서비스 유형
+                </AccordionTrigger>
                 <AccordionContent>
                   <div className="grid grid-cols-2 gap-4">
                     {serviceTypes.map((service) => (
