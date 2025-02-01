@@ -35,25 +35,36 @@ const SalesItem: React.FC<Props> = ({
   return (
     <Card key={id}>
       <CardContent className="p-4">
-        <div className="flex justify-between items-start mb-4">
+        <div className="flex items-start justify-between mb-4">
           <div>
             <p className="font-semibold">
               {dayjs(date).format("YY/MM/DD HH:mm")}
             </p>
             <p className="text-sm text-gray-500">{description}</p>
           </div>
-          <p className="font-bold text-lg">{amount.toLocaleString()}원</p>
+          <p className="text-lg font-bold">{amount.toLocaleString()}원</p>
         </div>
         <div className="flex gap-1 mb-4">
-          {payments.map((payment) => (
-            <Badge key={`${id}${payment}`}>{payment}</Badge>
-          ))}
           <Badge variant="outline">{gender === "M" ? "남성" : "여성"}</Badge>
+          {payments.map((payment) => (
+            <Badge
+              key={`${id}${payment}`}
+              className="text-blue-800 bg-blue-200"
+            >
+              {payment}
+            </Badge>
+          ))}
           {services.map((service) => (
-            <Badge key={`${id}${service.id}`}>{service.name}</Badge>
+            <Badge
+              key={`${id}${service.id}`}
+              variant="secondary"
+              className="text-pink-800 bg-pink-200"
+            >
+              {service.name}
+            </Badge>
           ))}
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <div className="flex items-center"></div>
           <div className="flex space-x-2">
             <Button onClick={() => onClickEdit(id)} size="sm" variant="outline">
