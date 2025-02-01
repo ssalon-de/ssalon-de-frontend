@@ -7,6 +7,8 @@ import updateLocale from "dayjs/plugin/updateLocale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMonthlySales } from "@/queries/dashboard";
+import useDateStore from "@/zustand/date";
+import { useRouter } from "next/navigation";
 
 dayjs.extend(localeData);
 dayjs.extend(updateLocale);
@@ -17,6 +19,8 @@ dayjs.updateLocale("ko", {
 });
 
 export function CalendarWidget() {
+  const router = useRouter();
+  const { setDate } = useDateStore();
   const [currentDate, setCurrentDate] = useState(dayjs());
   const { data: monthlySales = [] } = useMonthlySales(
     currentDate.format("YYYY-MM")
@@ -67,16 +71,16 @@ export function CalendarWidget() {
         </h2>
         <div className="space-x-2">
           <Button onClick={prevMonth} size="icon" variant="outline">
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="w-4 h-4" />
           </Button>
           <Button onClick={nextMonth} size="icon" variant="outline">
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="w-4 h-4" />
           </Button>
         </div>
       </div>
       <div className="grid grid-cols-7 gap-2">
         {["일", "월", "화", "수", "목", "금", "토"].map((day) => (
-          <div key={day} className="text-center font-semibold">
+          <div key={day} className="font-semibold text-center">
             {day}
           </div>
         ))}
@@ -88,11 +92,15 @@ export function CalendarWidget() {
           return (
             <div
               key={date.toString()}
-              className={`aspect-square p-1 text-center flex flex-col justify-between ${
+              className={`aspect-square p-1 text-center flex flex-col justify-between cursor-pointer ${
                 isToday ? "bg-blue-100" : ""
               }`}
               style={{
                 gridColumnStart: index === 0 ? date.day() + 1 : "auto",
+              }}
+              onClick={() => {
+                setDate(date.format("YYYY-MM-DD"));
+                router.push("/sales");
               }}
             >
               <div
