@@ -61,12 +61,12 @@ export default function Page() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
-      <Card className="w-full max-w-md">
+    <div className="flex items-center justify-center h-screen bg-gray-50">
+      <Card className="w-full h-full pt-8 md:pt-0 md:rounded-lg md:w-[400px] md:h-auto rounded-none">
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-center mb-6">
             <Scissors className="w-12 h-12 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-800 ml-2">
+            <span className="ml-2 text-2xl font-bold text-gray-800">
               HairSalon
             </span>
           </div>
@@ -108,7 +108,7 @@ export default function Page() {
             {isLoading && <Spinner className="mr-2" />}
             로그인
           </Button>
-          <div className="text-sm text-center space-y-2">
+          <div className="space-y-2 text-sm text-center">
             <a href="#" className="text-blue-600 hover:underline">
               비밀번호를 잊으셨나요?
             </a>
