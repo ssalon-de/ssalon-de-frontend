@@ -13,9 +13,16 @@ import {
   ComposedChart,
   Legend,
 } from "recharts";
+import EmptyWidget from "./empty-widget";
+import { useRouter } from "next/navigation";
 
 export function DailySalesLineChart() {
+  const router = useRouter();
   const { data = [] } = useDailySalesAmountCount(dayjs().format("YYYY-MM"));
+
+  if (data.length === 0) {
+    return <EmptyWidget onClick={() => router.push("/sales/edit")} />;
+  }
 
   return (
     <ResponsiveContainer width="100%" height={300}>

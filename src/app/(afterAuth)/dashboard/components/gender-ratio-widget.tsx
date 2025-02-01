@@ -3,10 +3,13 @@
 import { useGenderRatio } from "@/queries/dashboard";
 import { GenderRatio } from "@/queries/dashboard/type";
 import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from "recharts";
+import EmptyWidget from "./empty-widget";
 
 export function GenderRatioWidget() {
+  const router = useRouter();
   const { data } = useGenderRatio(dayjs().format("YYYY-MM"));
 
   const chartData = useMemo(
@@ -21,6 +24,12 @@ export function GenderRatioWidget() {
   );
 
   const COLORS = ["#0088FE", "#FF8042"];
+
+  const isEmpty = Object.values(data ?? {}).every((value) => !value);
+
+  if (isEmpty) {
+    return <EmptyWidget onClick={() => router.push("/sales/edit")} />;
+  }
 
   return (
     <ResponsiveContainer width="100%" height={200}>
