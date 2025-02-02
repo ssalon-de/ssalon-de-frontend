@@ -24,6 +24,20 @@ export async function logout() {
     const { status } = await fetch("/api/logout", {
       method: "POST",
     });
+    console.log("logout status", status);
+    return status;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function reissue() {
+  try {
+    const { status } = await fetch("/api/reissue", {
+      method: "POST",
+    });
+
+    console.log("reissue status", status);
     return status;
   } catch (error) {
     throw error;

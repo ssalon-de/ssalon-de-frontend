@@ -184,8 +184,8 @@ const SaleEditPage = () => {
 
   const isFormDisabled = useMemo(() => {
     const hasError = Object.keys(formState.errors).length > 0;
-    return formState.isSubmitting || hasError;
-  }, [formState]);
+    return paymentTypes.length === 0 || formState.isSubmitting || hasError;
+  }, [paymentTypes, formState]);
 
   const timeSlots = useMemo(
     () =>
@@ -256,6 +256,12 @@ const SaleEditPage = () => {
             </div>
             <div className="space-y-4">
               <RequiredLabel required>결제 유형</RequiredLabel>
+              {paymentTypes.length === 0 && (
+                <div className="flex flex-col items-center py-4 space-y-2 text-xs text-gray-500">
+                  <p>결제 유형이 존재하지 않습니다.</p>
+                  <p>관리 메뉴에서 결제 유형을 생성해주세요.</p>
+                </div>
+              )}
               {paymentTypes.map(({ id, name }) => {
                 const targetIndex = payments.findIndex(
                   ({ typeId }) => typeId === id

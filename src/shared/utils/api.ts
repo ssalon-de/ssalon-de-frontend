@@ -1,3 +1,5 @@
+import { reissue } from "@/queries/auth/api";
+
 export const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 
 type Error = {
@@ -81,10 +83,9 @@ class ApiClient {
   }
 }
 
-const globalHandler = (error: Error) => {
+const globalHandler = async (error: Error) => {
   if (error.status === 401) {
-    console.log(error);
-    // reissue
+    await reissue();
   } else {
     console.log(error);
   }
