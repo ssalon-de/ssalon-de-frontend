@@ -21,6 +21,8 @@ import { KEYS } from "@/shared/constants/query-keys";
 import Spinner from "@/components/ui/spinner";
 import { SignUpDTO } from "@/queries/auth/type";
 import { useCallback } from "react";
+import { ApiError } from "@/shared/types/error";
+import { ERROR_MESSAGE } from "@/shared/constants/api-error";
 
 type SignUpForm = SignUpDTO & {
   confirmPassword: string;
@@ -42,14 +44,23 @@ export default function SignUp() {
       toast({
         description:
           "회원가입을 축하합니다. 입력한 이메일에서 계정을 인증해주세요.",
+        variant: "destructive",
       });
       router.push("/login");
     },
-    onError: () => {
-      toast({
-        description: "error",
-        variant: "destructive",
-      });
+    onError: (error) => {
+      const apiError = error as ApiError;
+      if (apiError.code === ERROR_MESSAGE.EMAIL_DUPLICATED.code) {
+        return toast({
+          description: ERROR_MESSAGE.EMAIL_DUPLICATED.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          description: "알 수 없는 애러가 발생했습니다.",
+          variant: "destructive",
+        });
+      }
     },
   });
 
@@ -80,7 +91,7 @@ export default function SignUp() {
         <div className="flex items-center justify-center mb-6">
           <Scissors className="w-12 h-12 text-blue-600" />
           <span className="ml-2 text-2xl font-bold text-gray-800">
-            Ssalon de
+            ssalon de
           </span>
         </div>
         <CardTitle className="text-2xl font-bold text-center">
@@ -114,35 +125,51 @@ export default function SignUp() {
               isError={!!formState.errors.email}
               required
             />
+            <p className="text-xs text-red-500">
+              이메일을 생성 후 메일함에서 인증 메일을 클릭해주세요.
+            </p>
           </div>
-          <p className="text-xs text-red-500">
-            이메일을 생성 후 메일함에서 인증 메일을 클릭해주세요.
-          </p>
           <div className="space-y-2">
             <RequiredLabel
-              htmlFor="email"
+              htmlFor="name"
               required
               errorMessage={formState.errors.name?.message}
             >
               이름
             </RequiredLabel>
             <Input
-              {...register("name", { required: "이름을 입력해주세요." })}
+              {...register("name", {
+                required: "이름을 입력해주세요.",
+                maxLength: {
+                  value: 8,
+                  message: "이름은 8글자 이내로 입력해주세요.",
+                },
+              })}
+              maxLength={8}
               id="name"
               required
+              placeholder="8 글자 이내로 이름을 입력해주세요."
               isError={!!formState.errors.name}
             />
           </div>
           <div className="space-y-2">
             <RequiredLabel
-              htmlFor="email"
+              htmlFor="company"
               required
               errorMessage={formState.errors.company?.message}
             >
               매장
             </RequiredLabel>
             <Input
-              {...register("company", { required: "매장명을 입력해주세요." })}
+              {...register("company", {
+                required: "매장명을 입력해주세요.",
+                maxLength: {
+                  value: 20,
+                  message: "매장명은 20글자 이내로 입력해주세요.",
+                },
+              })}
+              maxLength={20}
+              placeholder="20 글자 이내로 매장명을 입력해주세요."
               id="company"
               required
               isError={!!formState.errors.company}
@@ -160,9 +187,13 @@ export default function SignUp() {
               {...register("password", {
                 required: "비밀번호를 입력해주세요.",
                 pattern: {
-                  value: /^(?=.*[!@#$%^&*])/,
+                  value: /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/,
                   message:
-                    "비밀번호는 반드시 특수문자가 하나 이상 포함되어야 합니다.",
+                    "비밀번호는 반드시 특수문자가 하나 이상 포함되어야 하며 영 대소문자만 입력이 가능합니다.",
+                },
+                maxLength: {
+                  value: 29,
+                  message: "비밀번호는 20자 이내로 입력해주세요.",
                 },
               })}
               id="password"
