@@ -9,6 +9,7 @@ import {
 import EmptyTypes from "../empty-types";
 import PaymentTypesItem from "./payment-types-item";
 import { PaymentType } from "@/queries/payment-types/type";
+import { reissue } from "@/queries/auth/api";
 import { BASE_URL } from "@/shared/lib/axios";
 
 export default async function PaymentTypeList() {
@@ -19,7 +20,13 @@ export default async function PaymentTypeList() {
       Authorization: `Bearer ${token}`,
     },
     method: "GET",
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch(async (error) => {
+      if (error.status === 401) {
+        await reissue();
+      }
+    });
 
   return (
     <>
