@@ -1,50 +1,59 @@
-import apiClient from "@/shared/utils/api";
+import api from "@/shared/lib/axios";
+
 import { CreateSaleDto, GetSalesParams, Sale, UpdateSaleDto } from "./type";
 
-export function getSales(params: GetSalesParams) {
-  try {
-    return apiClient.get<Sale[]>(`/sales?date=${params.date}`);
-  } catch (error) {
-    throw error;
-  }
+export async function getSales(params: GetSalesParams) {
+  const { data } = await api({
+    method: "GET",
+    url: "/sales",
+    params: {
+      date: params.date,
+    },
+  });
+
+  return data as Sale[];
 }
 
-export function getSale(saleId: string) {
-  try {
-    return apiClient.get<Sale>(`/sales/${saleId}`);
-  } catch (error) {
-    throw error;
-  }
+export async function getSale(saleId: string) {
+  const { data } = await api({
+    method: "GET",
+    url: `/sales/${saleId}`,
+  });
+
+  return data as Sale;
 }
 
-export function getTotalAmount(date: string) {
-  try {
-    return apiClient.get<number>(`/sales/total-amount?date=${date}`);
-  } catch (error) {
-    throw error;
-  }
+export async function getTotalAmount(date: string) {
+  const { data } = await api({
+    method: "GET",
+    url: `/sales/total-amount?date=${date}`,
+  });
+
+  return data as number;
 }
 
-export const createSale = (dto: CreateSaleDto): Promise<unknown> => {
-  try {
-    return apiClient.post("/sales", dto);
-  } catch (error) {
-    throw error;
-  }
+export const createSale = async (dto: CreateSaleDto): Promise<unknown> => {
+  const { data } = await api({
+    method: "POST",
+    url: "/sales",
+    data: dto,
+  });
+  return data;
 };
 
 export const updateSale = async (dto: UpdateSaleDto): Promise<unknown> => {
-  try {
-    return apiClient.put(`/sales/${dto.id}`, dto);
-  } catch (error) {
-    throw error;
-  }
+  const { data } = await api({
+    method: "PUT",
+    url: `/sales/${dto.id}`,
+    data: dto,
+  });
+  return data;
 };
 
 export const deleteSale = async (id: string): Promise<unknown> => {
-  try {
-    return apiClient.delete(`/sales/${id}`);
-  } catch (error) {
-    throw error;
-  }
+  const { data } = await api({
+    method: "DELETE",
+    url: `/sales/${id}`,
+  });
+  return data;
 };

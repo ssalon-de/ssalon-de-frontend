@@ -1,4 +1,4 @@
-import apiClient from "@/shared/utils/api";
+import api from "@/shared/lib/axios";
 import {
   DailySale,
   DailySaleAmountCount,
@@ -7,52 +7,46 @@ import {
   TargetTotalSales,
 } from "./type";
 
-export function getMonthlySales(targetMonth: string) {
-  try {
-    return apiClient.get<DailySale[]>(
-      `/dashboard/monthly-sales?targetMonth=${targetMonth}`
-    );
-  } catch (error) {
-    throw error;
-  }
+export async function getMonthlySales(targetMonth: string) {
+  const { data } = await api({
+    method: "GET",
+    url: `/dashboard/monthly-sales?targetMonth=${targetMonth}`,
+  });
+  return data as DailySale[];
 }
 
-export function getMonthlyTotalSales(targetMonth: string) {
-  try {
-    return apiClient.get<MonthlyTotalSales>(
-      `/dashboard/monthly-total-sales?targetMonth=${targetMonth}`
-    );
-  } catch (error) {
-    throw error;
-  }
+export async function getMonthlyTotalSales(targetMonth: string) {
+  const { data } = await api({
+    method: "GET",
+    url: `/dashboard/monthly-total-sales?targetMonth=${targetMonth}`,
+  });
+
+  return data as MonthlyTotalSales;
 }
 
-export function getTargetTotalSales(targetMonth: string) {
-  try {
-    return apiClient.get<TargetTotalSales>(
-      `/dashboard/target-total-sales?targetMonth=${targetMonth}`
-    );
-  } catch (error) {
-    throw error;
-  }
+export async function getTargetTotalSales(targetMonth: string) {
+  const { data } = await api({
+    method: "GET",
+    url: `/dashboard/target-total-sales?targetMonth=${targetMonth}`,
+  });
+
+  return data as TargetTotalSales;
 }
 
-export function getDailySalesAmountCount(targetMonth: string) {
-  try {
-    return apiClient.get<DailySaleAmountCount[]>(
-      `/dashboard/daily-sales-amount-count?targetMonth=${targetMonth}`
-    );
-  } catch (error) {
-    throw error;
-  }
+export async function getDailySalesAmountCount(targetMonth: string) {
+  const { data } = await api({
+    method: "GET",
+    url: `/dashboard/daily-sales-amount-count?targetMonth=${targetMonth}`,
+  });
+
+  return data as DailySaleAmountCount[];
 }
 
-export function getGenderRatio(targetMonth: string) {
-  try {
-    return apiClient.get<GenderRatio>(
-      `/dashboard/gender-ratio?targetMonth=${targetMonth}`
-    );
-  } catch (error) {
-    throw error;
-  }
+export async function getGenderRatio(targetMonth: string) {
+  const { data } = await api({
+    method: "GET",
+    url: `/dashboard/gender-ratio?targetMonth=${targetMonth}`,
+  });
+
+  return data as GenderRatio;
 }

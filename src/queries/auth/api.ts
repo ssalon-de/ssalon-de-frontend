@@ -1,4 +1,5 @@
-import apiClient from "@/shared/utils/api";
+import api from "@/shared/lib/axios";
+
 import { AuthDto, SignUpDTO, User } from "./type";
 import { encryptPassword } from "@/shared/utils/encrypt";
 
@@ -31,30 +32,35 @@ export async function logout() {
 }
 
 export async function getUserInfo() {
-  try {
-    return apiClient.get<User>("/auth/info");
-  } catch (error) {
-    throw error;
-  }
+  const { data } = await api({
+    method: "GET",
+    url: "/auth/info",
+  });
+
+  return data;
 }
 
 export async function updateUserInfo(dto: User) {
-  try {
-    return apiClient.put<User>("/auth/info", dto);
-  } catch (error) {
-    throw error;
-  }
+  const { data } = await api({
+    method: "PUT",
+    url: "/auth/info",
+    data: dto,
+  });
+
+  return data;
 }
 
 export async function signUp(dto: SignUpDTO) {
-  try {
-    const encryptedPassword = encryptPassword(dto.password);
+  const encryptedPassword = encryptPassword(dto.password);
 
-    return apiClient.post<User>("/auth/sign-up", {
+  const { data } = await api({
+    method: "POST",
+    url: "/auth/sign-up",
+    data: {
       ...dto,
       password: encryptedPassword,
-    });
-  } catch (error) {
-    throw error;
-  }
+    },
+  });
+
+  return data;
 }

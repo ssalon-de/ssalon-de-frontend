@@ -1,4 +1,3 @@
-import { BASE_URL } from "@/shared/utils/api";
 import { cookies } from "next/headers";
 import {
   Table,
@@ -10,6 +9,7 @@ import {
 import EmptyTypes from "../empty-types";
 import PaymentTypesItem from "./payment-types-item";
 import { PaymentType } from "@/queries/payment-types/type";
+import { BASE_URL } from "@/shared/lib/axios";
 
 export default async function PaymentTypeList() {
   const store = await cookies();

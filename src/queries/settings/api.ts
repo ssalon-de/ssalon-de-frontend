@@ -1,18 +1,19 @@
-import apiClient from "@/shared/utils/api";
+import api from "@/shared/lib/axios";
 import { Setting } from "./type";
 
 export const getSettings = async (): Promise<Setting[]> => {
-  try {
-    return apiClient.get<Setting[]>("/settings");
-  } catch (error) {
-    throw error;
-  }
+  const { data } = await api({
+    method: "GET",
+    url: "/settings",
+  });
+  return data as Setting[];
 };
 
 export const editSettings = async (dto: Setting[]) => {
-  try {
-    return apiClient.post("/settings", dto);
-  } catch (error) {
-    throw error;
-  }
+  const { data } = await api({
+    method: "POST",
+    url: "/settings",
+    data: dto,
+  });
+  return data;
 };

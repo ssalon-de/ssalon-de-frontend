@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/card";
 import { cookies } from "next/headers";
 import { User } from "@/queries/auth/type";
-import { BASE_URL } from "@/shared/utils/api";
 import PageTitle from "@/components/ui/page-title";
+import { BASE_URL } from "@/shared/lib/axios";
 
 export default async function ProfilePage() {
   const store = await cookies();

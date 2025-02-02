@@ -1,5 +1,4 @@
 import { ServiceType } from "@/queries/service-types/type";
-import { BASE_URL } from "@/shared/utils/api";
 import ServiceItem from "./service-types-item";
 import { cookies } from "next/headers";
 import {
@@ -10,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import EmptyTypes from "../empty-types";
+import { BASE_URL } from "@/shared/lib/axios";
 
 export default async function ServiceList() {
   const store = await cookies();

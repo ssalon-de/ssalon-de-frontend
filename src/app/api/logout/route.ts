@@ -1,4 +1,4 @@
-import { BASE_URL } from "@/shared/utils/api";
+import { BASE_URL } from "@/shared/lib/axios";
 import { NextResponse } from "next/server";
 
 export async function POST() {

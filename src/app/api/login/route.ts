@@ -1,5 +1,5 @@
+import { BASE_URL } from "@/shared/lib/axios";
 import { ApiError } from "@/shared/types/error";
-import { BASE_URL } from "@/shared/utils/api";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {

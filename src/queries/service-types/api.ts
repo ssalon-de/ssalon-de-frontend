@@ -1,39 +1,41 @@
-import apiClient from "@/shared/utils/api";
+import api from "@/shared/lib/axios";
 import { CreateServiceType, ServiceType } from "./type";
 
 export const getServiceTypes = async (): Promise<ServiceType[]> => {
-  try {
-    return apiClient.get<ServiceType[]>("/service-types");
-  } catch (error) {
-    throw error;
-  }
+  const { data } = await api({
+    method: "GET",
+    url: "/service-types",
+  });
+
+  return data as ServiceType[];
 };
 
-export const createServiceType = (dto: CreateServiceType): Promise<unknown> => {
-  try {
-    return apiClient.post("/service-types", {
-      name: dto.name,
-    });
-  } catch (error) {
-    throw error;
-  }
+export const createServiceType = async (
+  dto: CreateServiceType
+): Promise<unknown> => {
+  const { data } = await api({
+    method: "POST",
+    url: "/service-types",
+    data: dto,
+  });
+  return data;
 };
 
 export const updateServiceType = async (dto: ServiceType): Promise<unknown> => {
-  try {
-    const body = {
+  const { data } = await api({
+    method: "PUT",
+    url: `/service-types/${dto.id}`,
+    data: {
       name: dto.name,
-    };
-    return apiClient.put(`/service-types/${dto.id}`, body);
-  } catch (error) {
-    throw error;
-  }
+    },
+  });
+  return data;
 };
 
 export const deleteServiceType = async (id: string): Promise<unknown> => {
-  try {
-    return apiClient.delete(`/service-types/${id}`);
-  } catch (error) {
-    throw error;
-  }
+  const { data } = await api({
+    method: "DELETE",
+    url: `/service-types/${id}`,
+  });
+  return data;
 };
