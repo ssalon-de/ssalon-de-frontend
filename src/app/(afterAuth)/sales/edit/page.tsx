@@ -200,6 +200,14 @@ const SaleEditPage = () => {
   const title = isEdit ? "매출 수정" : "매출 등록";
 
   useEffect(() => {
+    if (paymentTypes.length > 0) {
+      setValue("payments", [
+        { typeId: paymentTypes[0].id, name: paymentTypes[0].name, amount: "" },
+      ]);
+    }
+  }, [paymentTypes, setValue]);
+
+  useEffect(() => {
     if (isEdit && sale) {
       reset({
         time: dayjs(sale.date).format("HH:mm"),
@@ -254,7 +262,7 @@ const SaleEditPage = () => {
                 />
               </div>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-2">
               <RequiredLabel required>결제 유형</RequiredLabel>
               {paymentTypes.length === 0 && (
                 <div className="flex flex-col items-center py-4 space-y-2 text-xs text-gray-500">
