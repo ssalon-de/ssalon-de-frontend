@@ -60,7 +60,7 @@ const SaleEditPage = () => {
       id: "",
       payments: [],
       gender: "M",
-      time: "",
+      time: "09:00",
     }),
     [date]
   );
@@ -317,21 +317,6 @@ const SaleEditPage = () => {
                 );
               })}
             </div>
-            <div className="space-y-2">
-              <RequiredLabel required>성별</RequiredLabel>
-              <RadioGroup
-                value={gender}
-                onValueChange={(value) => setValue("gender", value as Gender)}
-                required
-              >
-                {genderItems.map(({ label, value }) => (
-                  <div key={value} className="flex items-center space-x-2">
-                    <RadioGroupItem value={value} id={`gender-${value}`} />
-                    <Label htmlFor={`gender-${value}`}>{label}</Label>
-                  </div>
-                ))}
-              </RadioGroup>
-            </div>
             <Accordion
               type="single"
               collapsible
@@ -368,6 +353,29 @@ const SaleEditPage = () => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="serviceTypes">
+                <AccordionTrigger>성별</AccordionTrigger>
+                <AccordionContent>
+                  <RadioGroup
+                    value={gender}
+                    onValueChange={(value) =>
+                      setValue("gender", value as Gender)
+                    }
+                    className="flex gap-4"
+                    required
+                  >
+                    {genderItems.map(({ label, value }) => (
+                      <div key={value} className="flex items-center space-x-2">
+                        <RadioGroupItem value={value} id={`gender-${value}`} />
+                        <Label htmlFor={`gender-${value}`}>{label}</Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+
             <Accordion
               type="single"
               collapsible
