@@ -20,7 +20,22 @@ export default async function ProfilePage() {
       Authorization: `Bearer ${token}`,
     },
     method: "GET",
-  }).then((res) => res.json());
+  }).then(async (res) => {
+    // console.log(res);
+    if (res.status === 401) {
+      // redirect("/login")
+      console.log(res.status);
+      const refreshToken = store.get("refreshToken")?.value ?? "";
+
+      console.log("refreshToken", refreshToken);
+      // await reissue(refreshToken);
+
+      await fetch(`${BASE_URL}/auth/reissue`);
+    }
+    return res.json();
+  });
+
+  console.log(userInfo);
 
   return (
     <div className="container">

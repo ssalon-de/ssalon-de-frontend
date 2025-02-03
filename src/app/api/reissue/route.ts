@@ -1,15 +1,23 @@
 import { BASE_URL } from "@/shared/lib/axios";
 import { ApiError } from "@/shared/types/error";
+import { NextApiRequest, NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 
-export async function POST() {
+export async function POST(req: NextApiRequest, res: NextApiResponse) {
   try {
+    const token = req.body.token;
+
+    console.log("route token: ", token);
+
     const res = await fetch(`${BASE_URL}/auth/reissue`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ token }),
     });
+
+    console.log(res.ok, res.status, token);
 
     if (!res.ok) {
       const error: ApiError = await res.json();
@@ -42,7 +50,7 @@ export async function POST() {
     });
 
     return response;
-  } catch (error) {
-    return NextResponse.json({ error });
+  } catch {
+    return NextResponse.error();
   }
 }

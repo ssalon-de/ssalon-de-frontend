@@ -1,7 +1,8 @@
-import api from "@/shared/lib/axios";
+import api, { BASE_URL, getCookie } from "@/shared/lib/axios";
 
 import { AuthDto, SignUpDTO, User } from "./type";
 import { encryptPassword } from "@/shared/utils/encrypt";
+import { isServer } from "@/shared/utils/isServer";
 
 export const login = async (dto: AuthDto): Promise<{ user: User }> => {
   try {
@@ -25,6 +26,7 @@ export async function logout() {
     const { status } = await fetch("/api/logout", {
       method: "POST",
     });
+
     console.log("logout status", status);
     return status;
   } catch (error) {
@@ -32,10 +34,16 @@ export async function logout() {
   }
 }
 
-export async function reissue() {
+export async function reissue(token: string) {
+  console.log(token);
   try {
-    const { status } = await fetch("/api/reissue", {
+    const body = JSON.stringify({ token: token });
+
+    console.log(body);
+
+    const { status } = await fetch(`${BASE_URL}/auth/reissue`, {
       method: "POST",
+      body,
     });
 
     console.log("reissue status", status);

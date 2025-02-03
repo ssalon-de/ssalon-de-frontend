@@ -1,9 +1,9 @@
-import { logout } from "@/queries/auth/api";
+import { logout, reissue } from "@/queries/auth/api";
 import axios, { AxiosRequestConfig } from "axios";
 
 import qs from "qs";
 
-export const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+const URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 const api = createApiInstance();
 
 function paramsSerializer(params: unknown): string {
@@ -12,7 +12,7 @@ function paramsSerializer(params: unknown): string {
 
 function createApiInstance(bearerJwt = "", options: AxiosRequestConfig = {}) {
   const api = axios.create({
-    baseURL: BASE_URL,
+    baseURL: URL,
     timeout: 0,
     paramsSerializer: {
       serialize: paramsSerializer,
@@ -21,17 +21,6 @@ function createApiInstance(bearerJwt = "", options: AxiosRequestConfig = {}) {
   });
   api.defaults.headers.common["Authorization"] = bearerJwt;
   return api;
-}
-
-function getCookie(name: string): string | null {
-  const cookies = document.cookie.split("; "); // 쿠키를 개별 키-값 쌍으로 분리
-  for (const cookie of cookies) {
-    const [key, value] = cookie.split("="); // 키와 값 분리
-    if (key === name) {
-      return decodeURIComponent(value); // URI 인코딩된 값 디코딩
-    }
-  }
-  return null;
 }
 
 api.interceptors.request.use(
@@ -59,16 +48,24 @@ api.interceptors.response.use(
     if (error === undefined) throw error;
     if (error.response?.status === 401) {
       try {
-        // const token = await useRefresh();
-        // const refreshToken = await
-        const retryConfig = {
-          ...error.config,
-          headers: {
-            ...error.config.headers,
-            // Authorization: `Bearer ${token}`,
-          },
-        };
-        return api(retryConfig);
+        const refreshToken = getCookie("refreshToken");
+        if (refreshToken) {
+          const res = await reissue(refreshToken ?? "");
+
+          console.log(res);
+
+          const accessToken = getCookie("accessToken");
+          const retryConfig = {
+            ...error.config,
+            headers: {
+              ...error.config.headers,
+              Authorization: `Bearer ${accessToken}`,
+            },
+          };
+          return api(retryConfig);
+        }
+
+        throw error;
       } catch {
         return logout();
       }
@@ -81,4 +78,16 @@ api.interceptors.response.use(
   }
 );
 
+export function getCookie(name: string): string | null {
+  const cookies = document.cookie.split("; "); // 쿠키를 개별 키-값 쌍으로 분리
+  for (const cookie of cookies) {
+    const [key, value] = cookie.split("="); // 키와 값 분리
+    if (key === name) {
+      return decodeURIComponent(value); // URI 인코딩된 값 디코딩
+    }
+  }
+  return null;
+}
+
+export const BASE_URL = URL;
 export default api;
