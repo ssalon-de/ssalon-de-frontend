@@ -44,7 +44,9 @@ const SalesItem: React.FC<Props> = ({
             </p>
             <p className="text-sm text-gray-500">{description}</p>
           </div>
-          <p className="text-lg font-bold">{amount.toLocaleString()}원</p>
+          <p className="text-lg font-bold">
+            {Number(amount).toLocaleString()}원
+          </p>
         </div>
         <div className="flex gap-1 mb-4">
           {isFirst && <Badge>첫 방문</Badge>}
