@@ -61,14 +61,16 @@ api.interceptors.response.use(
       try {
         // const token = await useRefresh();
         // const refreshToken = await
-        const retryConfig = {
-          ...error.config,
-          headers: {
-            ...error.config.headers,
-            // Authorization: `Bearer ${token}`,
-          },
-        };
-        return api(retryConfig);
+        // const retryConfig = {
+        //   ...error.config,
+        //   headers: {
+        //     ...error.config.headers,
+        //     // Authorization: `Bearer ${token}`,
+        //   },
+        // };
+        // return api(retryConfig);
+        // logout();
+        alert("로그인이 필요합니다.");
       } catch {
         return logout();
       }
