@@ -202,6 +202,10 @@ export default function SignUp() {
               isError={!!formState.errors.password}
               required
             />
+            <p className="text-xs text-red-500">
+              비밀번호는 영문자와 숫자, 특수문자를 포함한 20자 이내로
+              입력해주세요.
+            </p>
           </div>
           <div className="space-y-2">
             <RequiredLabel
