@@ -47,6 +47,14 @@ const SalesList = () => {
   const filteredSales = useMemo(
     () =>
       sales.filter((sale) => {
+        const isSelectFirst = selectedFilters.some(
+          ({ id }) => id === "isFirst"
+        );
+
+        if (isSelectFirst) {
+          return sale.isFirst;
+        }
+
         const selectedServices = selectedFilters
           .filter((filter) => filter.type === "serviceType")
           .map(({ id }) => id);

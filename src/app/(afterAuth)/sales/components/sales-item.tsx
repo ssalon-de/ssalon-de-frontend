@@ -17,6 +17,7 @@ type Props = {
   payments: string[];
   gender: Gender;
   description?: string;
+  isFirst: boolean;
   onClickEdit: (id: string) => void;
   onClickDelete: (id: string) => void;
 };
@@ -29,6 +30,7 @@ const SalesItem: React.FC<Props> = ({
   description,
   payments,
   gender,
+  isFirst,
   onClickEdit,
   onClickDelete,
 }) => {
@@ -45,6 +47,7 @@ const SalesItem: React.FC<Props> = ({
           <p className="text-lg font-bold">{amount.toLocaleString()}원</p>
         </div>
         <div className="flex gap-1 mb-4">
+          {isFirst && <Badge>첫 방문</Badge>}
           <Badge variant="outline">{gender === "M" ? "남성" : "여성"}</Badge>
           {payments.map((payment) => (
             <Badge

@@ -61,6 +61,7 @@ const SaleEditPage = () => {
       payments: [],
       gender: "M",
       time: "09:00",
+      isFirst: false,
     }),
     [date]
   );
@@ -75,6 +76,7 @@ const SaleEditPage = () => {
   const selectedServices = useWatch({ control, name: "services" });
   const payments = useWatch({ control, name: "payments" });
   const selectedTime = useWatch({ control, name: "time" });
+  const checkIsFirst = useWatch({ control, name: "isFirst" });
 
   const { data: sale } = useSale(id, {
     enabled: isEdit,
@@ -132,6 +134,7 @@ const SaleEditPage = () => {
         description: sale.description,
         gender: sale.gender,
         payments: sale.payments,
+        isFirst: sale.isFirst,
       };
 
       const { message, flag } = validateForm(inputData);
@@ -152,6 +155,7 @@ const SaleEditPage = () => {
           description: inputData.description,
           gender: inputData.gender,
           payments: inputData.payments,
+          isFirst: inputData.isFirst,
         };
 
         if (isEdit) {
@@ -218,6 +222,7 @@ const SaleEditPage = () => {
         payments: sale.payments,
         description: sale.description ?? "",
         id: sale.id,
+        isFirst: sale.isFirst,
       });
     }
   }, [isEdit, reset, sale]);
@@ -245,9 +250,7 @@ const SaleEditPage = () => {
           <CardContent className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <RequiredLabel htmlFor="amount" required>
-                  총 금액
-                </RequiredLabel>
+                <RequiredLabel htmlFor="amount">합산 금액</RequiredLabel>
                 <Input {...register("amount")} id="amount" disabled required />
               </div>
               <div className="space-y-2">
@@ -278,7 +281,7 @@ const SaleEditPage = () => {
                 return (
                   <div
                     key={`payments${id}`}
-                    className="flex items-center space-x-4 min-h-[36px]"
+                    className="flex items-center space-x-3 min-h-[36px]"
                   >
                     <Checkbox
                       id={`payment${id}`}
@@ -383,7 +386,6 @@ const SaleEditPage = () => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-
             <Accordion
               type="single"
               collapsible
@@ -414,6 +416,23 @@ const SaleEditPage = () => {
                       </div>
                     ))}
                   </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="isFirst">
+                <AccordionTrigger>
+                  <RequiredLabel>신규 여부</RequiredLabel>
+                </AccordionTrigger>
+                <AccordionContent className="flex gap-2 items-center">
+                  <Checkbox
+                    id="isFirst"
+                    checked={checkIsFirst}
+                    onCheckedChange={(checked) => {
+                      setValue("isFirst", checked as boolean);
+                    }}
+                  />
+                  <Label htmlFor="isFirst">신규</Label>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
