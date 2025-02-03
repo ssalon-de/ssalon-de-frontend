@@ -70,7 +70,8 @@ api.interceptors.response.use(
         // };
         // return api(retryConfig);
         // logout();
-        alert("로그인이 필요합니다.");
+        // alert("로그인이 필요합니다.");
+        logout();
       } catch {
         return logout();
       }
