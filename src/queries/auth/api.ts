@@ -1,8 +1,7 @@
-import api, { BASE_URL, getCookie } from "@/shared/lib/axios";
+import api, { BASE_URL } from "@/shared/lib/axios";
 
 import { AuthDto, SignUpDTO, User } from "./type";
 import { encryptPassword } from "@/shared/utils/encrypt";
-import { isServer } from "@/shared/utils/isServer";
 
 export const login = async (dto: AuthDto): Promise<{ user: User }> => {
   try {
@@ -39,11 +38,13 @@ export async function reissue(token: string) {
   try {
     const body = JSON.stringify({ token: token });
 
-    console.log(body);
-
     const { status } = await fetch(`${BASE_URL}/auth/reissue`, {
       method: "POST",
       body,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     console.log("reissue status", status);

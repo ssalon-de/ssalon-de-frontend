@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import {
   Table,
   TableBody,
@@ -9,24 +8,10 @@ import {
 import EmptyTypes from "../empty-types";
 import PaymentTypesItem from "./payment-types-item";
 import { PaymentType } from "@/queries/payment-types/type";
-import { reissue } from "@/queries/auth/api";
-import { BASE_URL } from "@/shared/lib/axios";
+import { serverFetch } from "@/shared/lib/serverFetch";
 
 export default async function PaymentTypeList() {
-  const store = await cookies();
-  const token = store.get("accessToken")?.value ?? "";
-  const paymentTypes: PaymentType[] = await fetch(`${BASE_URL}/payment-types`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    method: "GET",
-  })
-    .then((res) => res.json())
-    .catch(async (error) => {
-      if (error.status === 401) {
-        await reissue();
-      }
-    });
+  const paymentTypes = await serverFetch<PaymentType[]>("/payment-types");
 
   return (
     <>

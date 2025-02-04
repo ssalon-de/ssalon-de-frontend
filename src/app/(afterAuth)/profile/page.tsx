@@ -7,35 +7,12 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
-import { cookies } from "next/headers";
 import { User } from "@/queries/auth/type";
 import PageTitle from "@/components/ui/page-title";
-import { BASE_URL } from "@/shared/lib/axios";
+import { serverFetch } from "@/shared/lib/serverFetch";
 
 export default async function ProfilePage() {
-  const store = await cookies();
-  const token = store.get("accessToken")?.value ?? "";
-  const userInfo: User = await fetch(`${BASE_URL}/auth/info`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    method: "GET",
-  }).then(async (res) => {
-    // console.log(res);
-    if (res.status === 401) {
-      // redirect("/login")
-      console.log(res.status);
-      const refreshToken = store.get("refreshToken")?.value ?? "";
-
-      console.log("refreshToken", refreshToken);
-      // await reissue(refreshToken);
-
-      await fetch(`${BASE_URL}/auth/reissue`);
-    }
-    return res.json();
-  });
-
-  console.log(userInfo);
+  const userInfo = await serverFetch<User>("/auth/info");
 
   return (
     <div className="container">

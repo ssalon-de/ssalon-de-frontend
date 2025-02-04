@@ -17,30 +17,20 @@ function createApiInstance(bearerJwt = "", options: AxiosRequestConfig = {}) {
     paramsSerializer: {
       serialize: paramsSerializer,
     },
+    withCredentials: true,
     ...options,
   });
   api.defaults.headers.common["Authorization"] = bearerJwt;
   return api;
 }
 
-api.interceptors.request.use(
-  (config) => {
-    try {
-      const accessToken = getCookie("accessToken"); // accessToken 읽기
-
-      if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
-      }
-    } catch (error) {
-      console.error("Error getting accessToken:", error);
-    }
-
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
+api.interceptors.request.use((config) => {
+  const accessToken = getCookie("accessToken");
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
   }
-);
+  return config;
+});
 
 api.interceptors.response.use(
   (result) => result,
@@ -49,23 +39,23 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       try {
         const refreshToken = getCookie("refreshToken");
+
         if (refreshToken) {
-          const res = await reissue(refreshToken ?? "");
+          const status = await reissue(refreshToken);
 
-          console.log(res);
-
-          const accessToken = getCookie("accessToken");
-          const retryConfig = {
-            ...error.config,
-            headers: {
-              ...error.config.headers,
-              Authorization: `Bearer ${accessToken}`,
-            },
-          };
-          return api(retryConfig);
+          console.log(status);
+          if (status === 200) {
+            const accessToken = getCookie("accessToken");
+            const retryConfig = {
+              ...error.config,
+              headers: {
+                ...error.config.headers,
+                Authorization: `Bearer ${accessToken}`,
+              },
+            };
+            return api(retryConfig);
+          }
         }
-
-        throw error;
       } catch {
         return logout();
       }
@@ -74,7 +64,7 @@ api.interceptors.response.use(
       throw e;
     }
 
-    throw error;
+    return Promise.reject(error);
   }
 );
 
