@@ -66,7 +66,7 @@ export default function Page() {
         <div className="flex items-center justify-center mb-6">
           <Scissors className="w-12 h-12 text-blue-600" />
           <span className="ml-2 text-2xl font-bold text-gray-800">
-            HairSalon
+            ssalon de
           </span>
         </div>
         <CardTitle className="text-2xl font-bold text-center">로그인</CardTitle>

@@ -46,8 +46,6 @@ api.interceptors.response.use(
           isRefreshing = true;
           const res = await reissue();
 
-          console.log(res);
-
           if (res.status === 200) {
             const accessToken = getCookie("accessToken");
             const retryConfig = {
@@ -62,8 +60,7 @@ api.interceptors.response.use(
             throw new Error("Unauthorized: Invalid token");
           }
         }
-      } catch (error) {
-        console.log(error);
+      } catch {
         await logout();
         window.location.href = "/login";
       } finally {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import localeData from "dayjs/plugin/localeData";
 import updateLocale from "dayjs/plugin/updateLocale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -43,26 +43,6 @@ export function CalendarWidget() {
   const prevMonth = () => setCurrentDate(currentDate.subtract(1, "month"));
   const nextMonth = () => setCurrentDate(currentDate.add(1, "month"));
 
-  const getSalesDifference = (date: Dayjs, amount: number | null) => {
-    const object = {
-      value: amount ?? "null",
-      color: "text-blue-500",
-    };
-
-    if (amount !== null) {
-      const previousDaySale =
-        monthlySales.find((sale) =>
-          dayjs(sale.date).isSame(date.subtract(1, "day"), "day")
-        )?.amount || 0;
-      const difference = amount - previousDaySale;
-
-      object.value = `${difference >= 0 ? "+" : ""}${difference}`;
-      object.color = difference >= 0 ? "text-blue-500" : "text-red-500";
-    }
-
-    return object;
-  };
-
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -85,9 +65,6 @@ export function CalendarWidget() {
           </div>
         ))}
         {daysInMonth.map(({ date, amount }, index) => {
-          const { value, color } = getSalesDifference(date, amount);
-          const parsedValue = Number(value).toLocaleString();
-          const isEmpty = value === "null";
           const isToday = date.isSame(dayjs(), "day");
           return (
             <div
@@ -108,8 +85,10 @@ export function CalendarWidget() {
               >
                 {date.format("D")}
               </div>
-              {!isEmpty && (isToday || !date.isAfter(dayjs(), "day")) ? (
-                <div className={`text-[7px] ${color}`}>{parsedValue}</div>
+              {isToday || !date.isAfter(dayjs(), "day") ? (
+                <div className="text-[7px] text-orange-500">
+                  {amount?.toLocaleString()}
+                </div>
               ) : null}
             </div>
           );

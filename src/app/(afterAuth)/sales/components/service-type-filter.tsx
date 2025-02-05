@@ -23,12 +23,19 @@ export function ServiceTypeFilter({
       select: (data) =>
         data.map((paymentType) => ({ ...paymentType, type: "paymentType" })),
     });
+
+  const isFirst = { id: "isFirst", name: "첫 방문", type: "firstVisitType" };
   const genders = [
     { id: "M", name: "남성", type: "gender" },
     { id: "F", name: "여성", type: "gender" },
   ];
 
-  const filterList = [...serviceTypes, ...paymentTypes, ...genders] as Filter[];
+  const filterList = [
+    isFirst,
+    ...serviceTypes,
+    ...paymentTypes,
+    ...genders,
+  ] as Filter[];
 
   return (
     <div className="flex flex-wrap gap-2">

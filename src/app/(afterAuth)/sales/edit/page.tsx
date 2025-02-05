@@ -60,7 +60,8 @@ const SaleEditPage = () => {
       id: "",
       payments: [],
       gender: "M",
-      time: "",
+      time: "09:00",
+      isFirst: false,
     }),
     [date]
   );
@@ -75,6 +76,7 @@ const SaleEditPage = () => {
   const selectedServices = useWatch({ control, name: "services" });
   const payments = useWatch({ control, name: "payments" });
   const selectedTime = useWatch({ control, name: "time" });
+  const checkIsFirst = useWatch({ control, name: "isFirst" });
 
   const { data: sale } = useSale(id, {
     enabled: isEdit,
@@ -132,6 +134,7 @@ const SaleEditPage = () => {
         description: sale.description,
         gender: sale.gender,
         payments: sale.payments,
+        isFirst: sale.isFirst,
       };
 
       const { message, flag } = validateForm(inputData);
@@ -152,6 +155,7 @@ const SaleEditPage = () => {
           description: inputData.description,
           gender: inputData.gender,
           payments: inputData.payments,
+          isFirst: inputData.isFirst,
         };
 
         if (isEdit) {
@@ -200,6 +204,14 @@ const SaleEditPage = () => {
   const title = isEdit ? "매출 수정" : "매출 등록";
 
   useEffect(() => {
+    if (paymentTypes.length > 0) {
+      setValue("payments", [
+        { typeId: paymentTypes[0].id, name: paymentTypes[0].name, amount: "" },
+      ]);
+    }
+  }, [paymentTypes, setValue]);
+
+  useEffect(() => {
     if (isEdit && sale) {
       reset({
         time: dayjs(sale.date).format("HH:mm"),
@@ -210,6 +222,7 @@ const SaleEditPage = () => {
         payments: sale.payments,
         description: sale.description ?? "",
         id: sale.id,
+        isFirst: sale.isFirst,
       });
     }
   }, [isEdit, reset, sale]);
@@ -237,9 +250,7 @@ const SaleEditPage = () => {
           <CardContent className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <RequiredLabel htmlFor="amount" required>
-                  총 금액
-                </RequiredLabel>
+                <RequiredLabel htmlFor="amount">합산 금액</RequiredLabel>
                 <Input {...register("amount")} id="amount" disabled required />
               </div>
               <div className="space-y-2">
@@ -254,7 +265,7 @@ const SaleEditPage = () => {
                 />
               </div>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-2">
               <RequiredLabel required>결제 유형</RequiredLabel>
               {paymentTypes.length === 0 && (
                 <div className="flex flex-col items-center py-4 space-y-2 text-xs text-gray-500">
@@ -270,7 +281,7 @@ const SaleEditPage = () => {
                 return (
                   <div
                     key={`payments${id}`}
-                    className="flex items-center space-x-4 min-h-[36px]"
+                    className="flex items-center space-x-3 min-h-[36px]"
                   >
                     <Checkbox
                       id={`payment${id}`}
@@ -317,21 +328,6 @@ const SaleEditPage = () => {
                 );
               })}
             </div>
-            <div className="space-y-2">
-              <RequiredLabel required>성별</RequiredLabel>
-              <RadioGroup
-                value={gender}
-                onValueChange={(value) => setValue("gender", value as Gender)}
-                required
-              >
-                {genderItems.map(({ label, value }) => (
-                  <div key={value} className="flex items-center space-x-2">
-                    <RadioGroupItem value={value} id={`gender-${value}`} />
-                    <Label htmlFor={`gender-${value}`}>{label}</Label>
-                  </div>
-                ))}
-              </RadioGroup>
-            </div>
             <Accordion
               type="single"
               collapsible
@@ -368,6 +364,28 @@ const SaleEditPage = () => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="serviceTypes">
+                <AccordionTrigger>성별</AccordionTrigger>
+                <AccordionContent>
+                  <RadioGroup
+                    value={gender}
+                    onValueChange={(value) =>
+                      setValue("gender", value as Gender)
+                    }
+                    className="flex gap-4"
+                    required
+                  >
+                    {genderItems.map(({ label, value }) => (
+                      <div key={value} className="flex items-center space-x-2">
+                        <RadioGroupItem value={value} id={`gender-${value}`} />
+                        <Label htmlFor={`gender-${value}`}>{label}</Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
             <Accordion
               type="single"
               collapsible
@@ -398,6 +416,23 @@ const SaleEditPage = () => {
                       </div>
                     ))}
                   </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="isFirst">
+                <AccordionTrigger>
+                  <RequiredLabel>신규 여부</RequiredLabel>
+                </AccordionTrigger>
+                <AccordionContent className="flex gap-2 items-center">
+                  <Checkbox
+                    id="isFirst"
+                    checked={checkIsFirst}
+                    onCheckedChange={(checked) => {
+                      setValue("isFirst", checked as boolean);
+                    }}
+                  />
+                  <Label htmlFor="isFirst">신규</Label>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

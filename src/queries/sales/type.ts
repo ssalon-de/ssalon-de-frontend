@@ -19,6 +19,7 @@ export type Sale = {
   payments: Payment[];
   gender: Gender;
   description?: string;
+  isFirst: boolean;
 };
 
 export type CreateSaleDto = Omit<
