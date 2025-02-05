@@ -1,9 +1,13 @@
-import { logout } from "@/queries/auth/api";
+import { logout, reissue } from "@/queries/auth/api";
 import axios, { AxiosRequestConfig } from "axios";
 
 import qs from "qs";
 
-export const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+import Cookies from "js-cookie";
+
+let isRefreshing = false;
+
+const URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 const api = createApiInstance();
 
 function paramsSerializer(params: unknown): string {
@@ -12,46 +16,25 @@ function paramsSerializer(params: unknown): string {
 
 function createApiInstance(bearerJwt = "", options: AxiosRequestConfig = {}) {
   const api = axios.create({
-    baseURL: BASE_URL,
+    baseURL: URL,
     timeout: 0,
     paramsSerializer: {
       serialize: paramsSerializer,
     },
+    withCredentials: true,
     ...options,
   });
   api.defaults.headers.common["Authorization"] = bearerJwt;
   return api;
 }
 
-function getCookie(name: string): string | null {
-  const cookies = document.cookie.split("; "); // 쿠키를 개별 키-값 쌍으로 분리
-  for (const cookie of cookies) {
-    const [key, value] = cookie.split("="); // 키와 값 분리
-    if (key === name) {
-      return decodeURIComponent(value); // URI 인코딩된 값 디코딩
-    }
+api.interceptors.request.use((config) => {
+  const accessToken = getCookie("accessToken");
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
   }
-  return null;
-}
-
-api.interceptors.request.use(
-  (config) => {
-    try {
-      const accessToken = getCookie("accessToken"); // accessToken 읽기
-
-      if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
-      }
-    } catch (error) {
-      console.error("Error getting accessToken:", error);
-    }
-
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+  return config;
+});
 
 api.interceptors.response.use(
   (result) => result,
@@ -59,29 +42,50 @@ api.interceptors.response.use(
     if (error === undefined) throw error;
     if (error.response?.status === 401) {
       try {
-        // const token = await useRefresh();
-        // const refreshToken = await
-        // const retryConfig = {
-        //   ...error.config,
-        //   headers: {
-        //     ...error.config.headers,
-        //     // Authorization: `Bearer ${token}`,
-        //   },
-        // };
-        // return api(retryConfig);
-        // logout();
-        // alert("로그인이 필요합니다.");
-        logout();
+        if (!isRefreshing) {
+          isRefreshing = true;
+          const res = await reissue();
+
+          if (res.status === 200) {
+            const accessToken = getCookie("accessToken");
+            const retryConfig = {
+              ...error.config,
+              headers: {
+                ...error.config.headers,
+                Authorization: `Bearer ${accessToken}`,
+              },
+            };
+            return api(retryConfig);
+          } else {
+            throw new Error("Unauthorized: Invalid token");
+          }
+        }
       } catch {
-        return logout();
+        await logout();
+        window.location.href = "/login";
+      } finally {
+        isRefreshing = false;
       }
     } else if (error) {
       const e = { ...error.response?.data, status: error.response?.status };
       throw e;
     }
 
-    throw error;
+    return Promise.reject(error);
   }
 );
 
+export function setCookie(
+  key: string,
+  value: string,
+  options: Cookies.CookieAttributes
+) {
+  Cookies.set(key, value, options);
+}
+
+export function getCookie(key: string) {
+  return Cookies.get(key);
+}
+
+export const BASE_URL = URL;
 export default api;
