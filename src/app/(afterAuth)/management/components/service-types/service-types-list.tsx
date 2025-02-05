@@ -1,6 +1,5 @@
 import { ServiceType } from "@/queries/service-types/type";
 import ServiceItem from "./service-types-item";
-import { cookies } from "next/headers";
 import {
   Table,
   TableBody,
@@ -9,17 +8,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import EmptyTypes from "../empty-types";
-import { BASE_URL } from "@/shared/lib/axios";
+import { serverFetch } from "@/shared/lib/serverFetch";
 
 export default async function ServiceList() {
-  const store = await cookies();
-  const token = store.get("accessToken")?.value ?? "";
-  const serviceTypes: ServiceType[] = await fetch(`${BASE_URL}/service-types`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    method: "GET",
-  }).then((res) => res.json());
+  const serviceTypes = await serverFetch<ServiceType[]>("/service-types");
 
   return (
     <>

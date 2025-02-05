@@ -3,6 +3,10 @@ import axios, { AxiosRequestConfig } from "axios";
 
 import qs from "qs";
 
+import Cookies from "js-cookie";
+
+let isRefreshing = false;
+
 const URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 const api = createApiInstance();
 
@@ -38,13 +42,13 @@ api.interceptors.response.use(
     if (error === undefined) throw error;
     if (error.response?.status === 401) {
       try {
-        const refreshToken = getCookie("refreshToken");
+        if (!isRefreshing) {
+          isRefreshing = true;
+          const res = await reissue();
 
-        if (refreshToken) {
-          const status = await reissue(refreshToken);
+          console.log(res);
 
-          console.log(status);
-          if (status === 200) {
+          if (res.status === 200) {
             const accessToken = getCookie("accessToken");
             const retryConfig = {
               ...error.config,
@@ -54,10 +58,16 @@ api.interceptors.response.use(
               },
             };
             return api(retryConfig);
+          } else {
+            throw new Error("Unauthorized: Invalid token");
           }
         }
-      } catch {
-        return logout();
+      } catch (error) {
+        console.log(error);
+        await logout();
+        window.location.href = "/login";
+      } finally {
+        isRefreshing = false;
       }
     } else if (error) {
       const e = { ...error.response?.data, status: error.response?.status };
@@ -68,15 +78,16 @@ api.interceptors.response.use(
   }
 );
 
-export function getCookie(name: string): string | null {
-  const cookies = document.cookie.split("; "); // 쿠키를 개별 키-값 쌍으로 분리
-  for (const cookie of cookies) {
-    const [key, value] = cookie.split("="); // 키와 값 분리
-    if (key === name) {
-      return decodeURIComponent(value); // URI 인코딩된 값 디코딩
-    }
-  }
-  return null;
+export function setCookie(
+  key: string,
+  value: string,
+  options: Cookies.CookieAttributes
+) {
+  Cookies.set(key, value, options);
+}
+
+export function getCookie(key: string) {
+  return Cookies.get(key);
 }
 
 export const BASE_URL = URL;

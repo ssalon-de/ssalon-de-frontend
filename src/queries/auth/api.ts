@@ -1,4 +1,4 @@
-import api, { BASE_URL } from "@/shared/lib/axios";
+import api from "@/shared/lib/axios";
 
 import { AuthDto, SignUpDTO, User } from "./type";
 import { encryptPassword } from "@/shared/utils/encrypt";
@@ -33,22 +33,16 @@ export async function logout() {
   }
 }
 
-export async function reissue(token: string) {
-  console.log(token);
+export async function reissue() {
   try {
-    const body = JSON.stringify({ token: token });
-
-    const { status } = await fetch(`${BASE_URL}/auth/reissue`, {
-      method: "POST",
-      body,
+    const res = await fetch("/api/reissue", {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
     });
 
-    console.log("reissue status", status);
-    return status;
+    return res;
   } catch (error) {
     throw error;
   }
