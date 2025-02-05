@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { User } from "@/queries/auth/type";
 import PageTitle from "@/components/ui/page-title";
-import { serverFetch } from "@/shared/lib/serverFetch";
+import { serverFetch } from "@/shared/utils/serverFetch";
 
 export default async function ProfilePage() {
   const userInfo = await serverFetch<User>("/auth/info");

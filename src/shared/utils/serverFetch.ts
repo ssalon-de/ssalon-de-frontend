@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { BASE_URL } from "./axios";
+import { BASE_URL } from "../lib/axios";
 import { redirect } from "next/navigation";
 
 async function reissue(token: string) {
