@@ -48,7 +48,7 @@ const SalesItem: React.FC<Props> = ({
             {Number(amount).toLocaleString()}원
           </p>
         </div>
-        <div className="flex gap-1 mb-4">
+        <div className="flex gap-1 mb-4 flex-wrap">
           {isFirst && <Badge>첫 방문</Badge>}
           <Badge variant="outline">{gender === "M" ? "남성" : "여성"}</Badge>
           {payments.map((payment) => (
