@@ -34,7 +34,7 @@ class SupabaseService {
   }
 
   async logout() {
-    await this.supabase.auth.signOut({ scope: "global" });
+    return this.supabase.auth.signOut({ scope: "global" });
   }
 }
 

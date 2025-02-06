@@ -1,17 +1,20 @@
 import { logout } from "@/queries/auth/api";
 import useUserStore from "@/zustand/user";
-import { useRouter } from "next/navigation";
 import { useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 export const useLogout = () => {
-  const router = useRouter();
   const { setUser } = useUserStore();
+  const router = useRouter();
 
   const handleLogout = useCallback(async () => {
-    await logout();
-    setUser({ email: "", name: "", company: "", createdAt: "" });
-    router.push("/");
-  }, [router, setUser]);
+    const res = await logout();
+
+    if (res.ok) {
+      setUser({ email: "", name: "", company: "", createdAt: "" });
+      router.push("/login");
+    }
+  }, [setUser, router]);
 
   return handleLogout;
 };

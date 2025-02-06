@@ -22,12 +22,11 @@ export const login = async (dto: AuthDto): Promise<{ user: User }> => {
 
 export async function logout() {
   try {
-    const { status } = await fetch("/api/logout", {
+    const res = await fetch("/api/logout", {
       method: "POST",
     });
 
-    console.log("logout status", status);
-    return status;
+    return res;
   } catch (error) {
     throw error;
   }
