@@ -8,11 +8,9 @@ export const useLogout = () => {
   const { setUser } = useUserStore();
 
   const handleLogout = useCallback(async () => {
-    const status = await logout();
-    if (status === 200) {
-      setUser({ email: "", name: "", company: "", createdAt: "" });
-      router.push("/");
-    }
+    await logout();
+    setUser({ email: "", name: "", company: "", createdAt: "" });
+    router.push("/");
   }, [router, setUser]);
 
   return handleLogout;

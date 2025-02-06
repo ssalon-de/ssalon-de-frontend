@@ -1,14 +1,23 @@
-// 프론트엔드에서 validate 처리하기 (굳이 서버까지 갈 필요가 없음)
 import { NextRequest, NextResponse } from "next/server";
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import { supabaseService } from "./shared/lib/supabase";
 
 const AUTH_PAGES = ["/", "/login", "/sign-up", "/find-password"];
+
+const logout = async (url: string) => {
+  const response = NextResponse.redirect(new URL("/login", url));
+  await supabaseService.logout();
+
+  response.cookies.delete("accessToken");
+  response.cookies.delete("refreshToken");
+  return response;
+};
 
 export async function middleware(req: NextRequest) {
   const { nextUrl, cookies } = req;
 
   const accessToken = cookies.get("accessToken")?.value;
+  const refreshToken = cookies.get("refreshToken")?.value ?? "";
+
   const isBeforeAuthPage = AUTH_PAGES.includes(nextUrl.pathname);
 
   if (nextUrl.pathname === "/") {
@@ -28,42 +37,29 @@ export async function middleware(req: NextRequest) {
   }
 
   if (!accessToken) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return logout(req.url);
   }
 
-  // accessToken이 유효한지 확인
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/validate`,
-    {
-      method: "POST",
-      headers: { Authorization: `Bearer ${accessToken}` },
-      credentials: "include",
-    }
-  );
+  const isValid = await supabaseService.isValidToken(accessToken);
 
-  if (res.ok) {
+  console.log(req.url + " token 검증: " + isValid);
+
+  if (isValid) {
     return NextResponse.next();
   }
 
-  const refreshToken = cookies.get("refreshToken")?.value;
+  if (!refreshToken) {
+    return logout(req.url);
+  }
 
-  // accessToken이 만료되었을 경우 reissue 시도
-  const reissueRes = await fetch(`${BASE_URL}/auth/reissue`, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      Authorization: `Bearer ${refreshToken}`,
-    },
-  });
+  const { data, error } = await supabaseService.reissueToken(refreshToken);
 
-  if (reissueRes.ok) {
-    const data = (await reissueRes.json()) as {
-      accessToken: string;
-      refreshToken: string;
-    };
+  if (data) {
     const response = NextResponse.next();
+    const accessToken = data.session?.access_token ?? "";
+    const refreshToken = data.session?.refresh_token ?? "";
 
-    response.cookies.set("accessToken", data.accessToken, {
+    response.cookies.set("accessToken", accessToken, {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
@@ -71,7 +67,7 @@ export async function middleware(req: NextRequest) {
       maxAge: 60 * 60 * 1,
     });
 
-    response.cookies.set("refreshToken", data.refreshToken, {
+    response.cookies.set("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
@@ -82,11 +78,9 @@ export async function middleware(req: NextRequest) {
     return response;
   }
 
-  // reissue 실패 시 로그인 페이지로 이동 & 쿠키 삭제
-  const response = NextResponse.redirect(new URL("/login", req.url));
-  response.cookies.delete("accessToken");
-  response.cookies.delete("refreshToken");
-  return response;
+  if (error) {
+    return logout(req.url);
+  }
 }
 
 export const config = {
