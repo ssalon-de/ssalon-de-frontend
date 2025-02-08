@@ -42,7 +42,7 @@ export default function Dashboard() {
             <GenderRatioWidget />
           </CardContent>
         </Card>
-        <Card className="col-span-full">
+        <Card className="col-span-full hidden md:block">
           <CardHeader>
             <CardTitle>일별 매출 건수</CardTitle>
           </CardHeader>
