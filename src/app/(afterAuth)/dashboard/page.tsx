@@ -51,7 +51,7 @@ export default function Dashboard() {
             <VisitTypesRatioWidget />
           </CardContent>
         </Card>
-        <Card className="col-span-full hidden md:block">
+        <Card className="col-span-2 hidden md:block">
           <CardHeader>
             <CardTitle>일별 매출 건수</CardTitle>
           </CardHeader>

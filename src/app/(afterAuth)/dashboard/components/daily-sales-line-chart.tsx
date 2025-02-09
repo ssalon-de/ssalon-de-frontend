@@ -2,19 +2,19 @@
 
 import { useDailySalesAmountCount } from "@/queries/dashboard";
 import dayjs from "dayjs";
-import {
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Bar,
-  ComposedChart,
-  Legend,
-} from "recharts";
+import { Line, XAxis, Tooltip, LineChart, YAxis } from "recharts";
 import EmptyWidget from "./empty-widget";
 import { useRouter } from "next/navigation";
+import { CHART_COLORS } from "@/shared/constants/palette";
+
+import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
+
+const chartConfig = {
+  count: {
+    label: "매출 건",
+    color: CHART_COLORS[0],
+  },
+} satisfies ChartConfig;
 
 export function DailySalesLineChart() {
   const router = useRouter();
@@ -25,23 +25,18 @@ export function DailySalesLineChart() {
   }
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <ComposedChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" />
+    <ChartContainer config={chartConfig}>
+      <LineChart accessibilityLayer data={data}>
         <XAxis dataKey="date" />
-        <YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
-        <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
-        <Tooltip />
-        <Legend />
-        <Bar yAxisId="right" dataKey="amount" fill="#82ca9d" name="매출 금액" />
+        <YAxis yAxisId="count" dataKey="count" />
         <Line
-          yAxisId="left"
-          type="monotone"
+          yAxisId="count"
           dataKey="count"
-          stroke="#8884d8"
-          name="매출 건수"
+          fill="var(--color-count)"
+          radius={4}
         />
-      </ComposedChart>
-    </ResponsiveContainer>
+        <Tooltip />
+      </LineChart>
+    </ChartContainer>
   );
 }
