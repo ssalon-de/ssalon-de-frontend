@@ -4,6 +4,7 @@ import { GenderRatioWidget } from "./components/gender-ratio-widget";
 import { DailySalesLineChart } from "./components/daily-sales-line-chart";
 import { TotalSalesWidget } from "./components/total-sales-widget";
 import { TargetTotalSalesWidget } from "./components/target-total-sales-widget";
+import { VisitTypesRatioWidget } from "./components/visit-type-ratio-widget";
 
 export default function Dashboard() {
   return (
@@ -40,6 +41,14 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <GenderRatioWidget />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>방문 유형 비율</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <VisitTypesRatioWidget />
           </CardContent>
         </Card>
         <Card className="col-span-full hidden md:block">

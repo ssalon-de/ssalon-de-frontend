@@ -5,6 +5,7 @@ import {
   GenderRatio,
   MonthlyTotalSales,
   TargetTotalSales,
+  VisitTypesRatio,
 } from "./type";
 
 export async function getMonthlySales(targetMonth: string) {
@@ -49,4 +50,13 @@ export async function getGenderRatio(targetMonth: string) {
   });
 
   return data as GenderRatio;
+}
+
+export async function getVisitTypesRatio(targetMonth: string) {
+  const { data } = await api({
+    method: "GET",
+    url: `/dashboard/visit-types-ratio?targetMonth=${targetMonth}`,
+  });
+
+  return data as VisitTypesRatio;
 }

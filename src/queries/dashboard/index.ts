@@ -5,6 +5,7 @@ import {
   GenderRatio,
   MonthlyTotalSales,
   TargetTotalSales,
+  VisitTypesRatio,
 } from "./type";
 import {
   getDailySalesAmountCount,
@@ -12,6 +13,7 @@ import {
   getMonthlySales,
   getMonthlyTotalSales,
   getTargetTotalSales,
+  getVisitTypesRatio,
 } from "./api";
 import { KEYS } from "@/shared/constants/query-keys";
 
@@ -70,5 +72,16 @@ export const useGenderRatio = (
     ...options,
     queryKey: [KEYS.dashboard.widget.genderRatio, targetMonth],
     queryFn: () => getGenderRatio(targetMonth),
+  });
+};
+
+export const useVisitTypesRatio = (
+  targetMonth: string,
+  options?: Omit<UseQueryOptions<VisitTypesRatio>, "queryKey" | "queryFn">
+) => {
+  return useQuery<VisitTypesRatio>({
+    ...options,
+    queryKey: [KEYS.dashboard.widget.visitTypesRatio, targetMonth],
+    queryFn: () => getVisitTypesRatio(targetMonth),
   });
 };

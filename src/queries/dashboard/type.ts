@@ -22,3 +22,5 @@ export type GenderRatio = {
 export type DailySaleAmountCount = DailySale & {
   count: number;
 };
+
+export type VisitTypesRatio = Record<string, number>;
