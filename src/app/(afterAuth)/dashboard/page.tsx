@@ -11,11 +11,11 @@ export default function Dashboard() {
     <div className="space-y-6">
       <h2 className="text-3xl font-bold text-gray-800">대시보드</h2>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
+        <Card className="max-h-[300px] flex flex-col">
           <CardHeader>
             <CardTitle>이달의 총 매출</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="overflow-auto">
             <TotalSalesWidget />
           </CardContent>
         </Card>
