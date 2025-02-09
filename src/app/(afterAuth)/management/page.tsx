@@ -3,8 +3,9 @@ import ServiceTypes from "./components/service-types";
 import PaymentTypes from "./components/payment-types";
 import Settings from "./components/settings";
 import React from "react";
+import VisitTypes from "./components/visit-types";
 
-type Content = "settings" | "service-types" | "payment-types";
+type Content = "settings" | "service-types" | "payment-types" | "visit-types";
 
 const contents: Record<Content, { label: string; content: React.ReactNode }> = {
   settings: {
@@ -15,10 +16,13 @@ const contents: Record<Content, { label: string; content: React.ReactNode }> = {
     label: "결제 유형",
     content: <PaymentTypes />,
   },
-
   "service-types": {
     label: "서비스 유형",
     content: <ServiceTypes />,
+  },
+  "visit-types": {
+    label: "방문 유형",
+    content: <VisitTypes />,
   },
 };
 

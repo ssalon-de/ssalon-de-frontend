@@ -1,6 +1,13 @@
 import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
-import { Setting } from "./type";
-import { editSettings, getSettings } from "./api";
+import { Setting, UpdateVisitTypeDto, VisitType } from "./type";
+import {
+  createVisitType,
+  deleteVisitType,
+  editSettings,
+  getSettings,
+  getVisitTypes,
+  updateVisitType,
+} from "./api";
 import { KEYS } from "@/shared/constants/query-keys";
 import { MutationOptions } from "@/shared/types/query";
 
@@ -18,5 +25,38 @@ export const useEditSettings = (options?: MutationOptions<Setting[]>) => {
   return useMutation({
     ...options,
     mutationFn: editSettings,
+  });
+};
+
+export const useVisitTypes = (
+  options?: Omit<UseQueryOptions<VisitType[]>, "queryKey" | "queryFn">
+) => {
+  return useQuery<VisitType[]>({
+    ...options,
+    queryKey: [KEYS.settings.visitTypes],
+    queryFn: getVisitTypes,
+  });
+};
+
+export const useCreateVisitType = (options?: MutationOptions<string>) => {
+  return useMutation({
+    ...options,
+    mutationFn: createVisitType,
+  });
+};
+
+export const useUpdateVisitType = (
+  options?: MutationOptions<UpdateVisitTypeDto>
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: updateVisitType,
+  });
+};
+
+export const useDeleteVisitType = (options?: MutationOptions<string>) => {
+  return useMutation({
+    ...options,
+    mutationFn: deleteVisitType,
   });
 };

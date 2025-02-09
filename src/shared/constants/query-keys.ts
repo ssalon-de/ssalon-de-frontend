@@ -23,6 +23,7 @@ export const KEYS = {
     },
   },
   settings: {
+    visitTypes: "VISIT-TYPES",
     list: "SETTINGS",
   },
 };
