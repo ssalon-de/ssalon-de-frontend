@@ -129,6 +129,7 @@ const SaleEditPage = () => {
 
   const onSubmit = useCallback(
     (sale: SaleForm) => {
+      const filteredPayments = sale.payments.filter(({ amount }) => !!amount);
       const inputData = {
         date: sale.date,
         time: sale.time,
@@ -136,7 +137,7 @@ const SaleEditPage = () => {
         services: sale.services,
         description: sale.description,
         gender: sale.gender,
-        payments: sale.payments,
+        payments: filteredPayments,
         visitTypes: sale.visitTypes,
       };
 
