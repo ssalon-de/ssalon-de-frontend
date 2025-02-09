@@ -12,7 +12,7 @@ import useDateStore from "@/zustand/date";
 import { useQueryClient } from "@tanstack/react-query";
 import { KEYS } from "@/shared/constants/query-keys";
 import Spinner from "@/components/ui/spinner";
-import { ServiceTypeFilter } from "./service-type-filter";
+import { SalesFilter } from "./sales-filter";
 import { useRouter } from "next/navigation";
 import { Filter } from "@/shared/types/filter";
 import dayjs from "dayjs";
@@ -47,12 +47,15 @@ const SalesList = () => {
   const filteredSales = useMemo(
     () =>
       sales.filter((sale) => {
-        const isSelectFirst = selectedFilters.some(
-          ({ id }) => id === "isFirst"
-        );
+        const selectedVisitTypes = selectedFilters
+          .filter((filter) => filter.type === "visitType")
+          .map(({ id }) => id);
 
-        if (isSelectFirst) {
-          return sale.isFirst;
+        // 방문 유형이 있다면 필터링
+        if (selectedVisitTypes.length > 0) {
+          return sale.visitTypes.some((visitType) =>
+            selectedVisitTypes.includes(visitType.id)
+          );
         }
 
         const selectedServices = selectedFilters
@@ -136,7 +139,7 @@ const SalesList = () => {
 
   return (
     <>
-      <ServiceTypeFilter
+      <SalesFilter
         selectedFilters={selectedFilters}
         onToggle={toggleFilterType}
       />

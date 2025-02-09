@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Gender } from "@/queries/sales/type";
 import { ServiceType } from "@/queries/service-types/type";
+import { VisitType } from "@/queries/settings/type";
 import dayjs from "dayjs";
 import { Edit2, Trash2 } from "lucide-react";
 import { memo } from "react";
@@ -17,7 +18,7 @@ type Props = {
   payments: string[];
   gender: Gender;
   description?: string;
-  isFirst: boolean;
+  visitTypes: VisitType[];
   onClickEdit: (id: string) => void;
   onClickDelete: (id: string) => void;
 };
@@ -30,7 +31,7 @@ const SalesItem: React.FC<Props> = ({
   description,
   payments,
   gender,
-  isFirst,
+  visitTypes,
   onClickEdit,
   onClickDelete,
 }) => {
@@ -49,8 +50,15 @@ const SalesItem: React.FC<Props> = ({
           </p>
         </div>
         <div className="flex gap-1 mb-4 flex-wrap">
-          {isFirst && <Badge>첫 방문</Badge>}
-          <Badge variant="outline">{gender === "M" ? "남성" : "여성"}</Badge>
+          {visitTypes.map((visitType) => (
+            <Badge
+              key={`${id}${visitType.id}`}
+              variant="outline"
+              className="text-green-800 bg-green-200"
+            >
+              {visitType.name}
+            </Badge>
+          ))}
           {payments.map((payment) => (
             <Badge
               key={`${id}${payment}`}
@@ -68,6 +76,7 @@ const SalesItem: React.FC<Props> = ({
               {service.name}
             </Badge>
           ))}
+          <Badge variant="outline">{gender === "M" ? "남성" : "여성"}</Badge>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center"></div>

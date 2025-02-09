@@ -29,11 +29,13 @@ import { usePaymentTypes } from "@/queries/payment-types";
 import { RequiredLabel } from "@/components/ui/required-label";
 import dayjs from "dayjs";
 import useDateStore from "@/zustand/date";
+import { useVisitTypes } from "@/queries/settings";
 
 type SaleForm = Omit<Sale, "services" | "payments" | "id" | "date"> & {
   date: string;
   time: string;
   services: string[];
+  visitTypes: string[];
   payments: Payment[];
   id?: string;
 };
@@ -59,9 +61,9 @@ const SaleEditPage = () => {
       description: "",
       id: "",
       payments: [],
+      visitTypes: [],
       gender: "M",
       time: "09:00",
-      isFirst: false,
     }),
     [date]
   );
@@ -74,9 +76,9 @@ const SaleEditPage = () => {
 
   const gender = useWatch({ control, name: "gender" });
   const selectedServices = useWatch({ control, name: "services" });
+  const selectedVisitTypes = useWatch({ control, name: "visitTypes" });
   const payments = useWatch({ control, name: "payments" });
   const selectedTime = useWatch({ control, name: "time" });
-  const checkIsFirst = useWatch({ control, name: "isFirst" });
 
   const { data: sale } = useSale(id, {
     enabled: isEdit,
@@ -84,6 +86,7 @@ const SaleEditPage = () => {
 
   const { data: serviceTypes = [] } = useServiceTypes();
   const { data: paymentTypes = [] } = usePaymentTypes();
+  const { data: visitTypes = [] } = useVisitTypes();
   const [timeAccordion, setTimeAccordion] = useState("");
 
   const onSuccessCallback = useCallback(() => {
@@ -134,7 +137,7 @@ const SaleEditPage = () => {
         description: sale.description,
         gender: sale.gender,
         payments: sale.payments,
-        isFirst: sale.isFirst,
+        visitTypes: sale.visitTypes,
       };
 
       const { message, flag } = validateForm(inputData);
@@ -155,7 +158,7 @@ const SaleEditPage = () => {
           description: inputData.description,
           gender: inputData.gender,
           payments: inputData.payments,
-          isFirst: inputData.isFirst,
+          visitTypes: inputData.visitTypes,
         };
 
         if (isEdit) {
@@ -176,14 +179,18 @@ const SaleEditPage = () => {
     [createSale, id, isEdit, serviceTypes, toast, updateSale, validateForm]
   );
 
-  const handleServiceChange = useCallback(
-    (serviceId: string) => {
-      const newServices = selectedServices.includes(serviceId)
-        ? selectedServices.filter((id) => id !== serviceId)
-        : [...selectedServices, serviceId];
-      setValue("services", newServices);
+  const handleTypesChange = useCallback(
+    (type: "visitTypes" | "services", id: string) => {
+      const selectedTypes =
+        type === "visitTypes" ? selectedVisitTypes : selectedServices;
+
+      const newTypes = selectedTypes.includes(id)
+        ? selectedTypes.filter((typeId) => typeId !== id)
+        : [...selectedTypes, id];
+
+      setValue(type, newTypes);
     },
-    [selectedServices, setValue]
+    [selectedServices, selectedVisitTypes, setValue]
   );
 
   const isFormDisabled = useMemo(() => {
@@ -222,7 +229,7 @@ const SaleEditPage = () => {
         payments: sale.payments,
         description: sale.description ?? "",
         id: sale.id,
-        isFirst: sale.isFirst,
+        visitTypes: sale.visitTypes.map((visitType) => visitType.id),
       });
     }
   }, [isEdit, reset, sale]);
@@ -407,7 +414,7 @@ const SaleEditPage = () => {
                           id={`service-${service.id}`}
                           checked={selectedServices.includes(service.id)}
                           onCheckedChange={() => {
-                            handleServiceChange(service.id);
+                            handleTypesChange("services", service.id);
                           }}
                         />
                         <Label htmlFor={`service-${service.id}`}>
@@ -419,20 +426,31 @@ const SaleEditPage = () => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion
+              type="single"
+              collapsible
+              className="w-full"
+              disabled={visitTypes.length === 0}
+            >
               <AccordionItem value="isFirst">
-                <AccordionTrigger>
-                  <RequiredLabel>신규 여부</RequiredLabel>
+                <AccordionTrigger disabled={visitTypes.length === 0}>
+                  <RequiredLabel>방문 유형</RequiredLabel>
                 </AccordionTrigger>
                 <AccordionContent className="flex gap-2 items-center">
-                  <Checkbox
-                    id="isFirst"
-                    checked={checkIsFirst}
-                    onCheckedChange={(checked) => {
-                      setValue("isFirst", checked as boolean);
-                    }}
-                  />
-                  <Label htmlFor="isFirst">신규</Label>
+                  <div className="w-full grid grid-cols-2 gap-4">
+                    {visitTypes.map(({ id, name }) => (
+                      <div key={id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`visitTypes${id}`}
+                          checked={selectedVisitTypes.includes(id)}
+                          onCheckedChange={() => {
+                            handleTypesChange("visitTypes", id);
+                          }}
+                        />
+                        <Label htmlFor={`visitTypes${id}`}>{name}</Label>
+                      </div>
+                    ))}
+                  </div>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

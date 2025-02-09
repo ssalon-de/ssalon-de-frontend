@@ -1,4 +1,5 @@
 import { ServiceType } from "../service-types/type";
+import { VisitType } from "../settings/type";
 
 export type Gender = "M" | "F";
 export type GetSalesParams = {
@@ -19,13 +20,14 @@ export type Sale = {
   payments: Payment[];
   gender: Gender;
   description?: string;
-  isFirst: boolean;
+  visitTypes: VisitType[];
 };
 
 export type CreateSaleDto = Omit<
   Sale,
-  "id" | "services" | "paymentType" | "date"
+  "id" | "services" | "paymentType" | "date" | "visitTypes"
 > & {
+  visitTypes: string[];
   date: string;
   services: string[];
   payments: Payment[];
