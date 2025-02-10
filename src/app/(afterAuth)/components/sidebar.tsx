@@ -9,6 +9,7 @@ import { useStore } from "@/shared/hooks/use-store";
 import useUserStore from "@/zustand/user";
 import { routes } from "@/shared/constants/routes";
 import SimpleCalendar from "./calendar";
+import { APP_NAME } from "@/shared/constants/app";
 
 export function Sidebar() {
   const user = useStore(useUserStore, (state) => state.user);
@@ -21,12 +22,9 @@ export function Sidebar() {
       <div className="flex-none p-6 border-b border-gray-200">
         <Link href="/" className="flex items-center space-x-2">
           <Scissors className="w-8 h-8 text-blue-600" />
-          <span className="text-xl font-bold text-gray-800">
-            {user?.company}
-          </span>
+          <span className="text-xl font-bold text-gray-800">{APP_NAME}</span>
         </Link>
       </div>
-
       <div className="flex-none p-4 border-b border-gray-200">
         <div className="flex items-center space-x-3">
           <div>
@@ -35,7 +33,6 @@ export function Sidebar() {
           </div>
         </div>
       </div>
-
       <nav className="flex-grow p-4 overflow-auto">
         <ul className="space-y-2">
           {routes.map((item) => (
@@ -55,7 +52,6 @@ export function Sidebar() {
           ))}
         </ul>
       </nav>
-
       <div className="flex-none p-4 border-t border-gray-200">
         <Button
           variant="outline"

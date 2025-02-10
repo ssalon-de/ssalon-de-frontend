@@ -14,6 +14,7 @@ import { routes } from "@/shared/constants/routes";
 import useUserStore from "@/zustand/user";
 import Calendar from "./calendar";
 import { MobileHeader } from "./mobile-header";
+import { APP_NAME } from "@/shared/constants/app";
 
 export function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,7 +34,7 @@ export function MobileMenu() {
           className="w-[300px] sm:w-[400px] overflow-y-auto"
         >
           <VisuallyHidden.Root>
-            <DialogTitle>title</DialogTitle>
+            <DialogTitle>{APP_NAME}</DialogTitle>
           </VisuallyHidden.Root>
           <div className="flex flex-col h-full">
             <div className="flex items-center justify-between py-4 border-b">
@@ -44,7 +45,7 @@ export function MobileMenu() {
               >
                 <Scissors className="w-8 h-8 text-blue-600" />
                 <span className="text-xl font-bold text-gray-800">
-                  {user?.company}
+                  {APP_NAME}
                 </span>
               </Link>
             </div>

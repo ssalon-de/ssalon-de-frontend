@@ -4,6 +4,7 @@ import { Toaster } from "@/shared/ui/toaster";
 
 import localFont from "next/font/local";
 import "./globals.css";
+import { APP_DESCRIPTION, APP_NAME } from "@/shared/constants/app";
 
 const pretandard = localFont({
   src: "../assets/fonts/PretendardVariable.ttf",
@@ -13,8 +14,8 @@ const pretandard = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "ssalon de",
-  description: "매출을 관리해보세요.",
+  title: APP_NAME,
+  description: APP_DESCRIPTION,
 };
 
 export default function RootLayout({
