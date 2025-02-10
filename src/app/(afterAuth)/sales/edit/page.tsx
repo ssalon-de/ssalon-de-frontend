@@ -74,6 +74,7 @@ const SaleEditPage = () => {
       mode: "onChange",
     });
 
+  const amount = useWatch({ control, name: "amount" });
   const gender = useWatch({ control, name: "gender" });
   const selectedServices = useWatch({ control, name: "services" });
   const selectedVisitTypes = useWatch({ control, name: "visitTypes" });
@@ -253,14 +254,15 @@ const SaleEditPage = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card>
           <CardHeader>
-            <CardTitle>매출 정보</CardTitle>
+            <CardTitle className="flex gap-2 items-center">
+              <span className="text-sm text-gray-500">총 매출액</span>
+              <span className="text-[20px] tracking-wide">
+                {Number(amount).toLocaleString()}원
+              </span>
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <RequiredLabel htmlFor="amount">합산 금액</RequiredLabel>
-                <Input {...register("amount")} id="amount" disabled required />
-              </div>
+            <div className="grid md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <RequiredLabel htmlFor="date" required>
                   날짜
@@ -281,60 +283,62 @@ const SaleEditPage = () => {
                   <p>관리 메뉴에서 결제 유형을 생성해주세요.</p>
                 </div>
               )}
-              {paymentTypes.map(({ id, name }) => {
-                const targetIndex = payments.findIndex(
-                  ({ typeId }) => typeId === id
-                );
-                const isChecked = targetIndex !== -1;
-                return (
-                  <div
-                    key={`payments${id}`}
-                    className="flex items-center space-x-3 min-h-[36px]"
-                  >
-                    <Checkbox
-                      id={`payment${id}`}
-                      checked={isChecked}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setValue("payments", [
-                            ...payments,
-                            { typeId: id, name, amount: "" },
-                          ]);
-                        } else {
-                          setValue(
-                            "payments",
-                            payments.filter(({ typeId }) => typeId !== id)
-                          );
-                        }
-                      }}
-                    />
-                    <Label htmlFor={`payment-${name}`} className="w-24">
-                      {name}
-                    </Label>
-                    {isChecked && (
-                      <Input
-                        value={payments[targetIndex].amount}
-                        onChange={(event) => {
-                          if (!isNaN(Number(event.target.value))) {
-                            setValue(
-                              `payments.${targetIndex}.amount`,
-                              event.target.value
-                            );
+              <div className="grid md:grid-cols-2 gap-4">
+                {paymentTypes.map(({ id, name }) => {
+                  const targetIndex = payments.findIndex(
+                    ({ typeId }) => typeId === id
+                  );
+                  const isChecked = targetIndex !== -1;
+                  return (
+                    <div
+                      key={`payments${id}`}
+                      className="flex items-center space-x-3 min-h-[36px]"
+                    >
+                      <Checkbox
+                        id={`payment${id}`}
+                        checked={isChecked}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setValue("payments", [
+                              ...payments,
+                              { typeId: id, name, amount: "" },
+                            ]);
                           } else {
-                            toast({
-                              description: "숫자만 입력해주세요.",
-                              variant: "destructive",
-                            });
+                            setValue(
+                              "payments",
+                              payments.filter(({ typeId }) => typeId !== id)
+                            );
                           }
                         }}
-                        key={`payments.${targetIndex}.amount`}
-                        placeholder="금액"
-                        className="w-32"
                       />
-                    )}
-                  </div>
-                );
-              })}
+                      <Label htmlFor={`payment-${name}`} className="w-24">
+                        {name}
+                      </Label>
+                      {isChecked && (
+                        <Input
+                          value={payments[targetIndex].amount}
+                          onChange={(event) => {
+                            if (!isNaN(Number(event.target.value))) {
+                              setValue(
+                                `payments.${targetIndex}.amount`,
+                                event.target.value
+                              );
+                            } else {
+                              toast({
+                                description: "숫자만 입력해주세요.",
+                                variant: "destructive",
+                              });
+                            }
+                          }}
+                          key={`payments.${targetIndex}.amount`}
+                          placeholder="금액"
+                          className="w-32"
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
             <Accordion
               type="single"
@@ -345,9 +349,7 @@ const SaleEditPage = () => {
             >
               <AccordionItem value="time">
                 <AccordionTrigger>
-                  <RequiredLabel required value={selectedTime}>
-                    시간 선택
-                  </RequiredLabel>
+                  <RequiredLabel value={selectedTime}>시간 선택</RequiredLabel>
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="grid grid-cols-4 gap-2">
