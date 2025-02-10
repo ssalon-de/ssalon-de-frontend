@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Card,
   CardContent,
@@ -8,8 +8,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+} from "@/shared/ui/card";
+import { Input } from "@/shared/ui/input";
 import { useToast } from "@/shared/hooks/use-toast";
 import { ERROR_MESSAGE } from "@/shared/constants/api-error";
 import { ApiError } from "@/shared/types/error";
@@ -20,7 +20,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { login } from "@/queries/auth/api";
-import Spinner from "@/components/ui/spinner";
+import Spinner from "@/shared/ui/spinner";
 
 export default function Page() {
   const router = useRouter();

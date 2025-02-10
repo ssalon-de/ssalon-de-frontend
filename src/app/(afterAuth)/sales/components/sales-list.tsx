@@ -11,7 +11,7 @@ import DeleteSaleAlert from "./delete-sale-alert";
 import useDateStore from "@/zustand/date";
 import { useQueryClient } from "@tanstack/react-query";
 import { KEYS } from "@/shared/constants/query-keys";
-import Spinner from "@/components/ui/spinner";
+import Spinner from "@/shared/ui/spinner";
 import { SalesFilter } from "./sales-filter";
 import { useRouter } from "next/navigation";
 import { Filter } from "@/shared/types/filter";

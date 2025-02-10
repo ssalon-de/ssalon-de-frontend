@@ -7,7 +7,7 @@ import EmptyWidget from "./empty-widget";
 import { useRouter } from "next/navigation";
 import { CHART_COLORS } from "@/shared/constants/palette";
 
-import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
+import { ChartContainer, type ChartConfig } from "@/shared/ui/chart";
 
 const chartConfig = {
   count: {

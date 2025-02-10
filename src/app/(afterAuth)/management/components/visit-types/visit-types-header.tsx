@@ -4,9 +4,9 @@ import { memo, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 
-import PageTitle from "@/components/ui/page-title";
+import PageTitle from "@/shared/ui/page-title";
 import CreateVisitTypesDialog from "./create-visit-types-dialog";
 
 const VisitTypesHeader = () => {

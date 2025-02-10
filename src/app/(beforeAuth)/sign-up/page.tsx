@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { Scissors } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
 import {
   Card,
   CardContent,
@@ -11,14 +11,14 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/shared/ui/card";
 import { useForm, useWatch } from "react-hook-form";
-import { RequiredLabel } from "@/components/ui/required-label";
+import { RequiredLabel } from "@/shared/ui/required-label";
 import { useSignUp } from "@/queries/auth";
 import { useToast } from "@/shared/hooks/use-toast";
 import { useIsMutating } from "@tanstack/react-query";
 import { KEYS } from "@/shared/constants/query-keys";
-import Spinner from "@/components/ui/spinner";
+import Spinner from "@/shared/ui/spinner";
 import { SignUpDTO } from "@/queries/auth/type";
 import { useCallback } from "react";
 import { ApiError } from "@/shared/types/error";

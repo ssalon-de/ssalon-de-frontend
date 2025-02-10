@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { MobileMenu } from "./components/mobile-menu";
 import { Sidebar } from "./components/sidebar";
-import Spinner from "@/components/ui/spinner";
+import Spinner from "@/shared/ui/spinner";
 
 export default function BeforeAuthLayout({
   children,

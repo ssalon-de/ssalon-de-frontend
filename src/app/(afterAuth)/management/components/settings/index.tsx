@@ -5,11 +5,11 @@ import {
   AccordionTrigger,
   AccordionItem,
   AccordionContent,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import PageTitle from "@/components/ui/page-title";
-import { RequiredLabel } from "@/components/ui/required-label";
+} from "@/shared/ui/accordion";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
+import PageTitle from "@/shared/ui/page-title";
+import { RequiredLabel } from "@/shared/ui/required-label";
 import { useEditSettings, useSettings } from "@/queries/settings";
 import { Setting } from "@/queries/settings/type";
 import { useToast } from "@/shared/hooks/use-toast";

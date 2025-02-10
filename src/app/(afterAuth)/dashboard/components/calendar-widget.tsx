@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import localeData from "dayjs/plugin/localeData";
 import updateLocale from "dayjs/plugin/updateLocale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import { useMonthlySales } from "@/queries/dashboard";
 import useDateStore from "@/zustand/date";
 import { useRouter } from "next/navigation";

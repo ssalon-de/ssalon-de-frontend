@@ -1,4 +1,4 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import ServiceTypes from "./components/service-types";
 import PaymentTypes from "./components/payment-types";
 import Settings from "./components/settings";

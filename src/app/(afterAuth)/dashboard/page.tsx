@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { CalendarWidget } from "./components/calendar-widget";
 import { GenderRatioWidget } from "./components/gender-ratio-widget";
 import { DailySalesLineChart } from "./components/daily-sales-line-chart";

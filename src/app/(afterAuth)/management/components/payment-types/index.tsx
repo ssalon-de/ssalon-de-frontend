@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import Spinner from "@/components/ui/spinner";
+import Spinner from "@/shared/ui/spinner";
 import PaymentTypesHeader from "./payment-types-header";
 import PaymentTypeList from "./payment-types-list";
 

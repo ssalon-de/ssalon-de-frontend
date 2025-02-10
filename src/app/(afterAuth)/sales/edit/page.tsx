@@ -2,18 +2,18 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
+import { Checkbox } from "@/shared/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/shared/ui/radio-group";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+} from "@/shared/ui/accordion";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import {
   CreateSaleDto,
   Gender,
@@ -26,7 +26,7 @@ import { useToast } from "@/shared/hooks/use-toast";
 import { useCreateSale, useSale, useUpdateSale } from "@/queries/sales";
 import { useServiceTypes } from "@/queries/service-types";
 import { usePaymentTypes } from "@/queries/payment-types";
-import { RequiredLabel } from "@/components/ui/required-label";
+import { RequiredLabel } from "@/shared/ui/required-label";
 import dayjs from "dayjs";
 import useDateStore from "@/zustand/date";
 import { useVisitTypes } from "@/queries/settings";

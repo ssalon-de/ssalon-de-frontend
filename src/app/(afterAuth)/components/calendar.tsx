@@ -2,10 +2,10 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
 import useDateStore from "@/zustand/date";
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
+import { Button } from "@/shared/ui/button";
 
 export default function Calendar() {
   const today = dayjs();

@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import Spinner from "@/components/ui/spinner";
+import Spinner from "@/shared/ui/spinner";
 import ServiceTypesHeader from "./service-types-header";
 import ServiceList from "./service-types-list";
 

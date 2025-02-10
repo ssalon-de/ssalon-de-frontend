@@ -4,7 +4,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/shared/ui/table";
 import EmptyTypes from "../empty-types";
 import PaymentTypesItem from "./payment-types-item";
 import { PaymentType } from "@/queries/payment-types/type";

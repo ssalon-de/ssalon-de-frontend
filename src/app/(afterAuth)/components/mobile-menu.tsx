@@ -4,8 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogOut, Scissors } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Button } from "@/shared/ui/button";
+import { Sheet, SheetContent } from "@/shared/ui/sheet";
 import { DialogTitle } from "@radix-ui/react-dialog";
 
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";

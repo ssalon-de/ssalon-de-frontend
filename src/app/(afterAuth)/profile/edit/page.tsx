@@ -2,24 +2,24 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
 import {
   Card,
   CardContent,
   CardHeader,
   CardDescription,
   CardFooter,
-} from "@/components/ui/card";
-import Spinner from "@/components/ui/spinner";
+} from "@/shared/ui/card";
+import Spinner from "@/shared/ui/spinner";
 
 import { useForm } from "react-hook-form";
 import { User } from "@/queries/auth/type";
 import { useUpdateUserInfo, useUserInfo } from "@/queries/auth";
 import { useToast } from "@/shared/hooks/use-toast";
 import useUserStore from "@/zustand/user";
-import PageTitle from "@/components/ui/page-title";
+import PageTitle from "@/shared/ui/page-title";
 
 export default function EditProfilePage() {
   const router = useRouter();

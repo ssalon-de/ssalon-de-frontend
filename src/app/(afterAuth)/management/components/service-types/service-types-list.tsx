@@ -6,7 +6,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/shared/ui/table";
 import EmptyTypes from "../empty-types";
 import { serverFetch } from "@/shared/utils/serverFetch";
 

@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import Spinner from "@/components/ui/spinner";
+import { Badge } from "@/shared/ui/badge";
+import Spinner from "@/shared/ui/spinner";
 import { usePaymentTypes } from "@/queries/payment-types";
 import { useServiceTypes } from "@/queries/service-types";
 import { useVisitTypes } from "@/queries/settings";

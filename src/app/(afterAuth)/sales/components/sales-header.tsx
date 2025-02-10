@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import PageTitle from "@/components/ui/page-title";
+import { Button } from "@/shared/ui/button";
+import PageTitle from "@/shared/ui/page-title";
 
 import { TotalSales } from "./total-sales";
 import Link from "next/link";

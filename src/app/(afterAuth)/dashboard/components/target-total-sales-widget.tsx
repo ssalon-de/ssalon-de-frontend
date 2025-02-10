@@ -1,6 +1,6 @@
 "use client";
 
-import { Progress } from "@/components/ui/progress";
+import { Progress } from "@/shared/ui/progress";
 import { useTargetTotalSales } from "@/queries/dashboard";
 import { TargetTotalSales } from "@/queries/dashboard/type";
 import dayjs from "dayjs";

@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import Spinner from "@/components/ui/spinner";
+import { Button } from "@/shared/ui/button";
+import Spinner from "@/shared/ui/spinner";
 import { Plus } from "lucide-react";
 import { memo } from "react";
 

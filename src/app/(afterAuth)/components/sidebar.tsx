@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Scissors, LogOut } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import { useLogout } from "@/shared/hooks/use-logout";
 import { useStore } from "@/shared/hooks/use-store";
 import useUserStore from "@/zustand/user";

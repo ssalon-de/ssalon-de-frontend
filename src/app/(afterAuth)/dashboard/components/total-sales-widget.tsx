@@ -1,7 +1,7 @@
 "use client";
 
 import dayjs from "dayjs";
-import Spinner from "@/components/ui/spinner";
+import Spinner from "@/shared/ui/spinner";
 import { useMonthlyTotalSales } from "@/queries/dashboard";
 
 export function TotalSalesWidget() {

@@ -1,14 +1,14 @@
 import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardDescription,
   CardFooter,
-} from "@/components/ui/card";
+} from "@/shared/ui/card";
 import { User } from "@/queries/auth/type";
-import PageTitle from "@/components/ui/page-title";
+import PageTitle from "@/shared/ui/page-title";
 import { serverFetch } from "@/shared/utils/serverFetch";
 
 export default async function ProfilePage() {

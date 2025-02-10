@@ -4,9 +4,9 @@ import { memo, PropsWithChildren, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Save } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { TableCell, TableRow } from "@/components/ui/table";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
+import { TableCell, TableRow } from "@/shared/ui/table";
 import { useUpdatePaymentType } from "@/queries/payment-types";
 import { PaymentType } from "@/queries/payment-types/type";
 
