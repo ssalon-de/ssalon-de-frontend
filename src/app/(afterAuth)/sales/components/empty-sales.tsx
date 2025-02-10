@@ -22,7 +22,7 @@ const EmptySales: React.FC<Props> = (props) => {
         ) : (
           <Plus className="mr-2 h-4 w-4" />
         )}
-        첫 매출 등록하기
+        등록하기
       </Button>
     </div>
   );
