@@ -86,7 +86,7 @@ export function CalendarWidget() {
                 {date.format("D")}
               </div>
               {isToday || !date.isAfter(dayjs(), "day") ? (
-                <div className="text-[7px] text-orange-500">
+                <div className="text-[7px] md:text-[10px] text-orange-500 break-words font-bold">
                   {amount?.toLocaleString()}
                 </div>
               ) : null}
