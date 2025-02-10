@@ -1,5 +1,5 @@
 import Loading from "@/shared/ui/loading";
 
-export default function AfterAuthLoading() {
+export default function SalesLoading() {
   return <Loading />;
 }
