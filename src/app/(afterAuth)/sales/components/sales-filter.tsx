@@ -41,7 +41,7 @@ export function SalesFilter({ selectedFilters, onToggle }: SalesFilterProps) {
   ] as Filter[];
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex h-[38px] py-[6px] gap-1 box-border overflow-x-auto overflow-y-hidden whitespace-nowrap scrollbar-hidden">
       {isServiceTypeFetching ||
       isPaymentTypeFetching ||
       isVisitTypesFetching ? (

@@ -18,7 +18,7 @@ export function Sidebar() {
   const isActive = (path: string) => pathname === path;
 
   return (
-    <aside className="hidden md:flex md:flex-col w-64 h-screen bg-gray-50 shadow-lg border-gray-200 border">
+    <aside className="hidden w-64 h-screen border border-gray-200 shadow-lg md:flex md:flex-col bg-gray-50">
       <div className="flex-none p-6 border-b border-gray-200">
         <Link href="/" className="flex items-center space-x-2">
           <Scissors className="w-8 h-8 text-blue-600" />
@@ -33,7 +33,7 @@ export function Sidebar() {
           </div>
         </div>
       </div>
-      <nav className="flex-grow p-4 overflow-auto">
+      <nav className="flex-grow p-4 overflow-auto scrollbar-hidden">
         <ul className="space-y-2">
           {routes.map((item) => (
             <li key={item.path}>
@@ -55,7 +55,7 @@ export function Sidebar() {
       <div className="flex-none p-4 border-t border-gray-200">
         <Button
           variant="outline"
-          className="w-full flex items-center justify-center space-x-2"
+          className="flex items-center justify-center w-full space-x-2"
           onClick={handleLogout}
         >
           <LogOut size={20} />

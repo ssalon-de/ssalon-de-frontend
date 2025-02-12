@@ -3,10 +3,19 @@
 @tailwind utilities;
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif, var(--font-pretendard);
 }
 
 @layer base {
+  /* hide scrollbar but allow scrolling */
+  .scrollbar-hidden {
+    -ms-overflow-style: none; /* for Internet Explorer, Edge */
+    scrollbar-width: none; /* for Firefox */
+  }
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none; /* for Chrome, Safari, and Opera */
+  }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
@@ -69,4 +78,32 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* 전체 스크롤바 스타일 */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 2px; /* 스크롤바 너비 */
+  height: 2px;
+}
+
+/* 스크롤바 트랙(배경) */
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f3f4f6; /* Light gray */
+  border-radius: 4px;
+}
+
+/* 스크롤바 핸들(움직이는 부분) */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #9ca3af; /* Medium gray */
+  border-radius: 4px;
+  opacity: 0.5;
+}
+
+/* 스크롤바 핸들 hover 효과 */
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #6b7280; /* Dark gray */
+}
+
+.scrollbar-auto {
+  scrollbar-gutter: stable both-edges;
 }

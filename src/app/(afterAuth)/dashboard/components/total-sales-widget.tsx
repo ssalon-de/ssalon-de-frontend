@@ -11,14 +11,14 @@ export function TotalSalesWidget() {
 
   if (isFetching) {
     return (
-      <div className="flex justify-center items-center">
+      <div className="flex items-center justify-center">
         <Spinner />
       </div>
     );
   }
 
   return (
-    <div className="h-[100%] space-y-4 max-h-[450px] overflow-auto">
+    <div className="h-[100%] space-y-4 max-h-[450px] overflow-auto scrollbar-hidden">
       <div className="text-2xl font-bold">
         총 매출: {monthlyTotalSales?.amount.toLocaleString()}원
       </div>

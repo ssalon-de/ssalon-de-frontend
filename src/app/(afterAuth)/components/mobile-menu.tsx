@@ -49,13 +49,13 @@ export function MobileMenu() {
                 </span>
               </Link>
             </div>
-            <div className="flex items-center space-x-4 py-4 px-6 border-b">
+            <div className="flex items-center px-6 py-4 space-x-4 border-b">
               <div>
                 <p className="font-medium text-gray-700">{user?.name}</p>
                 <p className="text-sm text-gray-500">{user?.email}</p>
               </div>
             </div>
-            <nav className="flex-grow py-6">
+            <nav className="flex-grow py-6 scrollbar-hidden">
               <ul className="space-y-2">
                 {routes.map((item) => (
                   <li key={item.path}>
@@ -76,10 +76,10 @@ export function MobileMenu() {
             <div className="border-t">
               <Calendar />
             </div>
-            <div className="py-4 px-6 border-t">
+            <div className="px-6 py-4 border-t">
               <Button
                 variant="outline"
-                className="w-full flex items-center justify-center space-x-2"
+                className="flex items-center justify-center w-full space-x-2"
                 onClick={() => {
                   handleLogout();
                   setIsOpen(false);
