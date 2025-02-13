@@ -125,6 +125,47 @@ const AlertDialogCancel = React.forwardRef<
 ));
 AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName;
 
+type ConfirmDialogProps = {
+  open: boolean;
+  setOpen: React.Dispatch<boolean>;
+  onConfirm: () => void;
+  title: string;
+  description?: string;
+  cancelText?: string;
+  confirmText?: string;
+};
+
+const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
+  open,
+  setOpen,
+  onConfirm,
+  title,
+  description,
+  confirmText = "확인",
+  cancelText = "취소",
+}) => {
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          {description && (
+            <AlertDialogDescription>{description}</AlertDialogDescription>
+          )}
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>{cancelText}</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm}>
+            {confirmText}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};
+
+export type { ConfirmDialogProps };
+
 export {
   AlertDialog,
   AlertDialogPortal,
@@ -137,4 +178,5 @@ export {
   AlertDialogDescription,
   AlertDialogAction,
   AlertDialogCancel,
+  ConfirmDialog,
 };

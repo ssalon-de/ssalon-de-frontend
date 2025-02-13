@@ -7,7 +7,6 @@ import { MutateType } from "@/shared/types/query";
 
 import SalesItem from "./sales-item";
 import EmptySales from "./empty-sales";
-import DeleteSaleAlert from "./delete-sale-alert";
 import useDateStore from "@/zustand/date";
 import { useQueryClient } from "@tanstack/react-query";
 import { KEYS } from "@/shared/constants/query-keys";
@@ -16,6 +15,7 @@ import { SalesFilter } from "./sales-filter";
 import { useRouter } from "next/navigation";
 import { Filter } from "@/shared/types/filter";
 import dayjs from "dayjs";
+import { ConfirmDialog } from "@/shared/ui/alert-dialog";
 
 const SalesList = () => {
   const client = useQueryClient();
@@ -170,10 +170,13 @@ const SalesList = () => {
           )}
         </div>
       </div>
-      <DeleteSaleAlert
+      <ConfirmDialog
         open={openDeleteAlert}
         setOpen={setOpenDeleteAlert}
-        onConfirmDelete={handleConfirmDelete}
+        onConfirm={handleConfirmDelete}
+        title="매출 삭제"
+        description="이 매출 기록을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다."
+        confirmText="삭제"
       />
     </>
   );
