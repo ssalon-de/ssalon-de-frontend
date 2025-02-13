@@ -7,13 +7,13 @@ import Link from "next/link";
 
 const SalesHeader = () => {
   return (
-    <div className="flex md:items-center flex-col justify-between md:flex-row gap-4 md:gap-0 items-baseline relative">
+    <div className="relative flex flex-col items-baseline justify-between gap-6 md:items-center md:flex-row md:gap-0">
       <PageTitle title="매출 목록" />
-      <div className="md:w-max md:justify-normal w-full flex gap-4 justify-between flex-wrap">
+      <div className="flex flex-wrap justify-between w-full gap-4 md:w-max md:justify-normal">
         <TotalSales />
-        <Link href="/sales/edit" className="absolute right-0 top-0 md:relative">
+        <Link href="/sales/edit" className="absolute top-0 right-0 md:relative">
           <Button>
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="w-4 h-4 mr-2" />
             매출 등록
           </Button>
         </Link>

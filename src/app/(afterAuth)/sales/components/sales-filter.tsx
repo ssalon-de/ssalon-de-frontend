@@ -43,7 +43,7 @@ export function SalesFilter({ selectedFilters, onToggle }: SalesFilterProps) {
   ] as Filter[];
 
   return (
-    <div className="flex h-[38px] py-[6px] gap-1 box-border overflow-x-auto overflow-y-hidden whitespace-nowrap scrollbar-hidden">
+    <div className="flex md:flex-wrap md:mt-[24px] h-auto py-[6px] gap-1 box-border overflow-x-auto overflow-y-hidden whitespace-nowrap scrollbar-hidden">
       {isServiceTypeFetching ||
       isPaymentTypeFetching ||
       isVisitTypesFetching ? (
@@ -57,7 +57,7 @@ export function SalesFilter({ selectedFilters, onToggle }: SalesFilterProps) {
                 ? "default"
                 : "outline"
             }
-            className="cursor-pointer"
+            className="cursor-pointer select-none"
             onClick={() => onToggle({ id, type, name })}
           >
             {name}

@@ -25,24 +25,18 @@ export function TotalSales() {
   );
   const totalCount = useMemo(() => data.length, [data]);
 
+  if (loading) return <Spinner />;
+
   return (
-    <div className="flex flex-col md:flex-row gap-2 md:gap-0">
-      <div className="flex gap-2 items-center tracking-wider">
+    <div className="flex flex-col gap-4 md:flex-row md:gap-0">
+      <div className="flex items-center gap-2 tracking-wider">
         <span className="text-sm font-medium text-gray-600">총 매출</span>
-        {loading ? (
-          <Spinner />
-        ) : (
-          <p className="text-2xl font-bold">{amount.toLocaleString()}원</p>
-        )}
+        <p className="text-2xl font-bold">{amount.toLocaleString()}원</p>
       </div>
       <div className="hidden md:block border border-[bg-gray-200] m-2 mx-4" />
-      <div className="flex gap-2 items-center tracking-wider">
+      <div className="flex items-center gap-2 tracking-wider">
         <span className="text-sm font-medium text-gray-600">예약 건수</span>
-        {loading ? (
-          <Spinner />
-        ) : (
-          <p className="text-2xl font-bold">{totalCount.toLocaleString()}건</p>
-        )}
+        <p className="text-2xl font-bold">{totalCount.toLocaleString()}건</p>
       </div>
     </div>
   );
