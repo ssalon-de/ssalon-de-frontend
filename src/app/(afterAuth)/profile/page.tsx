@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { Button } from "@/shared/ui/button";
 import {
   Card,
@@ -10,6 +9,7 @@ import {
 import { User } from "@/queries/auth/type";
 import PageTitle from "@/shared/ui/page-title";
 import { serverFetch } from "@/shared/utils/serverFetch";
+import Link from "next/link";
 
 export default async function ProfilePage() {
   const userInfo = await serverFetch<User>("/auth/info");
@@ -47,15 +47,9 @@ export default async function ProfilePage() {
           </div> */}
         </CardContent>
         <CardFooter>
-          <Button
-            onClick={async () => {
-              "use server";
-              redirect("/profile/edit");
-            }}
-            className="w-full"
-          >
-            개인정보 수정
-          </Button>
+          <Link className="w-full" href="/profile/edit">
+            <Button className="w-full">개인정보 수정</Button>
+          </Link>
         </CardFooter>
       </Card>
     </div>
