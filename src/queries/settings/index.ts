@@ -1,11 +1,27 @@
 import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
-import { Setting, UpdateVisitTypeDto, VisitType } from "./type";
 import {
+  CreatePaymentType,
+  CreateServiceType,
+  PaymentType,
+  ServiceType,
+  Setting,
+  UpdatePaymentType,
+  UpdateVisitTypeDto,
+  VisitType,
+} from "./type";
+import {
+  createPaymentType,
+  createServiceType,
   createVisitType,
+  deleteServiceType,
   deleteVisitType,
   editSettings,
+  getPaymentTypes,
+  getServiceTypes,
   getSettings,
   getVisitTypes,
+  updatePaymentType,
+  updateServiceType,
   updateVisitType,
 } from "./api";
 import { KEYS } from "@/shared/constants/query-keys";
@@ -28,6 +44,7 @@ export const useEditSettings = (options?: MutationOptions<Setting[]>) => {
   });
 };
 
+/** visit-types */
 export const useVisitTypes = (
   options?: Omit<UseQueryOptions<VisitType[]>, "queryKey" | "queryFn">
 ) => {
@@ -58,5 +75,70 @@ export const useDeleteVisitType = (options?: MutationOptions<string>) => {
   return useMutation({
     ...options,
     mutationFn: deleteVisitType,
+  });
+};
+
+/** service-types */
+export const useServiceTypes = (
+  options?: Omit<UseQueryOptions<ServiceType[]>, "queryKey" | "queryFn">
+) => {
+  return useQuery<ServiceType[]>({
+    ...options,
+    queryKey: [KEYS.serviceTypes.list],
+    queryFn: getServiceTypes,
+  });
+};
+
+export const useCreateServiceType = (
+  options?: MutationOptions<CreateServiceType>
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: createServiceType,
+  });
+};
+
+export const useUpdateServiceType = (
+  options?: MutationOptions<ServiceType>
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: updateServiceType,
+  });
+};
+
+export const useDeleteServiceType = (options?: MutationOptions<string>) => {
+  return useMutation({
+    ...options,
+    mutationFn: deleteServiceType,
+  });
+};
+
+/** payment-types */
+export const usePaymentTypes = (
+  options?: Omit<UseQueryOptions<PaymentType[]>, "queryKey" | "queryFn">
+) => {
+  return useQuery<PaymentType[]>({
+    ...options,
+    queryKey: [KEYS.paymentTypes.list],
+    queryFn: getPaymentTypes,
+  });
+};
+
+export const useCreatePaymentType = (
+  options?: MutationOptions<CreatePaymentType>
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: createPaymentType,
+  });
+};
+
+export const useUpdatePaymentType = (
+  options?: MutationOptions<UpdatePaymentType>
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: updatePaymentType,
   });
 };

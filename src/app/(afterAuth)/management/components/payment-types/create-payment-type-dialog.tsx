@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog";
-import { useCreatePaymentType } from "@/queries/payment-types";
+import { useCreatePaymentType } from "@/queries/settings";
 
 type Props = {
   open: boolean;

@@ -1,8 +1,10 @@
 import { Badge } from "@/shared/ui/badge";
 import Spinner from "@/shared/ui/spinner";
-import { usePaymentTypes } from "@/queries/payment-types";
-import { useServiceTypes } from "@/queries/service-types";
-import { useVisitTypes } from "@/queries/settings";
+import {
+  useVisitTypes,
+  useServiceTypes,
+  usePaymentTypes,
+} from "@/queries/settings";
 import { Filter } from "@/shared/types/filter";
 
 type SalesFilterProps = {

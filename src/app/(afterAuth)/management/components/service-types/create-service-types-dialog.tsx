@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog";
-import { useCreateServiceType } from "@/queries/service-types";
+import { useCreateServiceType } from "@/queries/settings";
 
 type Props = {
   open: boolean;

@@ -7,11 +7,8 @@ import { Pencil, Save, Trash2 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { TableCell, TableRow } from "@/shared/ui/table";
-import {
-  useDeleteServiceType,
-  useUpdateServiceType,
-} from "@/queries/service-types";
-import { ServiceType } from "@/queries/service-types/type";
+import { useDeleteServiceType, useUpdateServiceType } from "@/queries/settings";
+import { ServiceType } from "@/queries/settings/type";
 
 type Props = PropsWithChildren<{
   id: string;

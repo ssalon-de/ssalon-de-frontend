@@ -1,4 +1,4 @@
-import { ServiceType } from "@/queries/service-types/type";
+import { ServiceType } from "@/queries/settings/type";
 import ServiceItem from "./service-types-item";
 import {
   Table,

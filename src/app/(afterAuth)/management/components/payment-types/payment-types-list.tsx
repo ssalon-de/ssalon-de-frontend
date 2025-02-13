@@ -7,7 +7,7 @@ import {
 } from "@/shared/ui/table";
 import EmptyTypes from "../empty-types";
 import PaymentTypesItem from "./payment-types-item";
-import { PaymentType } from "@/queries/payment-types/type";
+import { PaymentType } from "@/queries/settings/type";
 import { serverFetch } from "@/shared/utils/serverFetch";
 
 export default async function PaymentTypeList() {

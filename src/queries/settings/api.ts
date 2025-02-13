@@ -1,5 +1,14 @@
 import api from "@/shared/lib/axios";
-import { Setting, UpdateVisitTypeDto, VisitType } from "./type";
+import {
+  CreatePaymentType,
+  CreateServiceType,
+  PaymentType,
+  ServiceType,
+  Setting,
+  UpdatePaymentType,
+  UpdateVisitTypeDto,
+  VisitType,
+} from "./type";
 
 export const getSettings = async (): Promise<Setting[]> => {
   const { data } = await api({
@@ -9,6 +18,16 @@ export const getSettings = async (): Promise<Setting[]> => {
   return data as Setting[];
 };
 
+export const editSettings = async (dto: Setting[]) => {
+  const { data } = await api({
+    method: "POST",
+    url: "/settings",
+    data: dto,
+  });
+  return data;
+};
+
+/** visit-types */
 export const getVisitTypes = async (): Promise<VisitType[]> => {
   const { data } = await api({
     method: "GET",
@@ -24,15 +43,6 @@ export const createVisitType = async (name: string): Promise<VisitType> => {
     data: {
       name,
     },
-  });
-  return data;
-};
-
-export const editSettings = async (dto: Setting[]) => {
-  const { data } = await api({
-    method: "POST",
-    url: "/settings",
-    data: dto,
   });
   return data;
 };
@@ -54,6 +64,77 @@ export const deleteVisitType = async (id: string): Promise<VisitType> => {
   const { data } = await api({
     method: "DELETE",
     url: `/settings/visit-types/${id}`,
+  });
+  return data;
+};
+
+/** visit-types */
+export const getServiceTypes = async (): Promise<ServiceType[]> => {
+  const { data } = await api({
+    method: "GET",
+    url: "/service-types",
+  });
+
+  return data as ServiceType[];
+};
+
+export const createServiceType = async (
+  dto: CreateServiceType
+): Promise<unknown> => {
+  const { data } = await api({
+    method: "POST",
+    url: "/service-types",
+    data: dto,
+  });
+  return data;
+};
+
+export const updateServiceType = async (dto: ServiceType): Promise<unknown> => {
+  const { data } = await api({
+    method: "PUT",
+    url: `/service-types/${dto.id}`,
+    data: {
+      name: dto.name,
+    },
+  });
+  return data;
+};
+
+export const deleteServiceType = async (id: string): Promise<unknown> => {
+  const { data } = await api({
+    method: "DELETE",
+    url: `/service-types/${id}`,
+  });
+  return data;
+};
+
+/** payment-types */
+export const getPaymentTypes = async (): Promise<PaymentType[]> => {
+  const { data } = await api({
+    method: "GET",
+    url: "/payment-types",
+  });
+  return data;
+};
+
+export const createPaymentType = async (
+  dto: CreatePaymentType
+): Promise<unknown> => {
+  const { data } = await api({
+    method: "POST",
+    url: "/payment-types",
+    data: dto,
+  });
+  return data;
+};
+
+export const updatePaymentType = async (
+  dto: UpdatePaymentType
+): Promise<unknown> => {
+  const { data } = await api({
+    method: "PUT",
+    url: `/payment-types/${dto.id}`,
+    data: dto,
   });
   return data;
 };

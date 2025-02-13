@@ -7,8 +7,8 @@ import { Pencil, Save } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { TableCell, TableRow } from "@/shared/ui/table";
-import { useUpdatePaymentType } from "@/queries/payment-types";
-import { PaymentType } from "@/queries/payment-types/type";
+import { useUpdatePaymentType } from "@/queries/settings";
+import { PaymentType } from "@/queries/settings/type";
 
 type Props = PropsWithChildren<{
   id: string;
