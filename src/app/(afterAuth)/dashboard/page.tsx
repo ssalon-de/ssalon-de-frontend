@@ -35,19 +35,19 @@ export default function Dashboard() {
             <TargetTotalSalesWidget />
           </CardContent>
         </Card>
-        <Card>
+        <Card className="flex flex-col min-h-[300px]">
           <CardHeader>
             <CardTitle>성별 비율</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 p-0">
             <GenderRatioWidget />
           </CardContent>
         </Card>
-        <Card>
+        <Card className="flex flex-col min-h-[300px]">
           <CardHeader>
             <CardTitle>방문 유형 비율</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 p-0">
             <VisitTypesRatioWidget />
           </CardContent>
         </Card>

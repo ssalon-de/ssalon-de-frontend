@@ -38,9 +38,9 @@ const renderActiveShape: ActiveShape<PieSectorDataItem> = (
   const cos = Math.cos(-RADIAN * midAngle);
   const sx = cx + (outerRadius + 10) * cos;
   const sy = cy + (outerRadius + 10) * sin;
-  const mx = cx + (outerRadius + 30) * cos;
-  const my = cy + (outerRadius + 30) * sin;
-  const ex = mx + (cos >= 0 ? 1 : -1) * 22;
+  const mx = cx + (outerRadius + 15) * cos;
+  const my = cy + (outerRadius + 15) * sin;
+  const ex = mx + (cos >= 0 ? 1 : -1) * 15;
   const ey = my;
   const textAnchor = cos >= 0 ? "start" : "end";
   const percentage = `${(percent * 100).toFixed(0)}%`;
@@ -80,12 +80,12 @@ const renderActiveShape: ActiveShape<PieSectorDataItem> = (
         fill="#333"
         fontSize={10}
       >
-        {payload.name}
+        {payload.value}건
       </text>
       <text
         x={ex + (cos >= 0 ? 1 : -1) * 12}
         y={ey}
-        dy={18}
+        dy={15}
         textAnchor={textAnchor}
         fontSize={10}
         fill="#999"
@@ -161,7 +161,7 @@ export function GenderRatioWidget() {
   }
 
   return (
-    <ResponsiveContainer width="100%" height={200}>
+    <ResponsiveContainer width="100%" height="100%">
       <PieChart>
         <Pie
           activeIndex={activeIndex}
@@ -169,9 +169,9 @@ export function GenderRatioWidget() {
           onMouseEnter={handlePieEnter}
           data={chartData}
           cx="50%"
-          cy="50%"
-          innerRadius={30}
-          outerRadius={40}
+          cy="45%"
+          innerRadius={40}
+          outerRadius={50}
           dataKey="value"
         >
           {chartData.map((_, index) => (
@@ -182,7 +182,7 @@ export function GenderRatioWidget() {
             />
           ))}
         </Pie>
-        <Legend content={CustomLegend} />
+        <Legend content={CustomLegend} wrapperStyle={{ bottom: 15 }} />
       </PieChart>
     </ResponsiveContainer>
   );

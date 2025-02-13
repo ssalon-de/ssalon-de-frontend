@@ -36,11 +36,11 @@ const renderActiveShape: ActiveShape<PieSectorDataItem> = (
   } = props;
   const sin = Math.sin(-RADIAN * midAngle);
   const cos = Math.cos(-RADIAN * midAngle);
-  const sx = cx + (outerRadius + 8) * cos;
-  const sy = cy + (outerRadius + 8) * sin;
-  const mx = cx + (outerRadius + 25) * cos; // 기존보다 짧게 조정
-  const my = cy + (outerRadius + 25) * sin; // 기존보다 짧게 조정
-  const ex = mx + (cos >= 0 ? 1 : -1) * 18; // 기존 22 → 18로 조정
+  const sx = cx + (outerRadius + 10) * cos;
+  const sy = cy + (outerRadius + 10) * sin;
+  const mx = cx + (outerRadius + 15) * cos;
+  const my = cy + (outerRadius + 15) * sin;
+  const ex = mx + (cos >= 0 ? 1 : -1) * 15;
   const ey = my;
   const textAnchor = cos >= 0 ? "start" : "end";
   const percentage = `${(percent * 100).toFixed(0)}%`;
@@ -77,6 +77,16 @@ const renderActiveShape: ActiveShape<PieSectorDataItem> = (
       <text
         x={ex + (cos >= 0 ? 1 : -1) * 12}
         y={ey}
+        textAnchor={textAnchor}
+        fill="#333"
+        fontSize={10}
+      >
+        {payload.value}건
+      </text>
+      <text
+        x={ex + (cos >= 0 ? 1 : -1) * 12}
+        y={ey}
+        dy={15}
         textAnchor={textAnchor}
         fontSize={10}
         fill="#999"
@@ -150,7 +160,7 @@ export function VisitTypesRatioWidget() {
   }
 
   return (
-    <ResponsiveContainer width="100%" height={200}>
+    <ResponsiveContainer width="100%" height="100%">
       <PieChart>
         <Pie
           activeIndex={activeIndex}
@@ -158,9 +168,9 @@ export function VisitTypesRatioWidget() {
           onMouseEnter={handlePieEnter}
           data={chartData}
           cx="50%"
-          cy="50%"
-          innerRadius={30}
-          outerRadius={40}
+          cy="40%"
+          innerRadius={50}
+          outerRadius={60}
           dataKey="value"
         >
           {chartData.map((_, index) => (
@@ -171,7 +181,7 @@ export function VisitTypesRatioWidget() {
             />
           ))}
         </Pie>
-        <Legend content={CustomLegend} />
+        <Legend content={CustomLegend} wrapperStyle={{ bottom: 15 }} />
       </PieChart>
     </ResponsiveContainer>
   );
