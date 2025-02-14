@@ -5,6 +5,8 @@ import { Toaster } from "@/shared/ui/toaster";
 import localFont from "next/font/local";
 import "./globals.css";
 import { APP_DESCRIPTION, APP_NAME } from "@/shared/constants/app";
+import { Suspense } from "react";
+import GlobalLoading from "./loading";
 
 const pretandard = localFont({
   src: "../assets/fonts/PretendardVariable.ttf",
@@ -27,7 +29,9 @@ export default function RootLayout({
     <html lang="ko">
       <body className={`${pretandard.className} bg-gray-100`}>
         <Toaster />
-        <QueryProvider>{children}</QueryProvider>
+        <Suspense fallback={<GlobalLoading />}>
+          <QueryProvider>{children}</QueryProvider>
+        </Suspense>
       </body>
     </html>
   );

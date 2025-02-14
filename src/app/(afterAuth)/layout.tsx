@@ -1,7 +1,5 @@
-import { Suspense } from "react";
 import { MobileMenu } from "./components/mobile-menu";
 import { Sidebar } from "./components/sidebar";
-import Spinner from "@/shared/ui/spinner";
 
 export default function BeforeAuthLayout({
   children,
@@ -13,11 +11,9 @@ export default function BeforeAuthLayout({
       <Sidebar />
       <MobileMenu />
       <main className="relative flex-1 p-6 overflow-auto bg-white scrollbar-hidden">
-        <Suspense fallback={<Spinner />}>
-          <div className="container mx-auto w-full mt-[70px] md:mt-0">
-            {children}
-          </div>
-        </Suspense>
+        <div className="container mx-auto w-full mt-[70px] md:mt-0">
+          {children}
+        </div>
       </main>
     </div>
   );

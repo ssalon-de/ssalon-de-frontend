@@ -1,3 +1,5 @@
+"use client";
+
 import api from "@/shared/lib/axios";
 
 import { AuthDto, SignUpDTO, User } from "./type";
