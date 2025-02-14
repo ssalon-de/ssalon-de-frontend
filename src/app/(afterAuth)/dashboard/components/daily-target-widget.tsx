@@ -25,7 +25,8 @@ export function DailyTargetWidget() {
   const isOver = targetTotalSales.totalSales > targetTotalSales.targetSales;
   const overAmount = targetTotalSales.totalSales - targetTotalSales.targetSales;
   const targetTotalSalesPerDay = Math.ceil(
-    (targetTotalSales.targetSales - targetTotalSales.totalSales) / daysInMonth
+    (targetTotalSales.targetSales - targetTotalSales.totalSales) /
+      remainingDaysInMonth
   );
 
   const handleClickRoute = () => {
