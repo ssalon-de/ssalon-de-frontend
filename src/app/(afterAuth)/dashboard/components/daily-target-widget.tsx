@@ -25,7 +25,7 @@ export function DailyTargetWidget() {
   const isOver = targetTotalSales.totalSales > targetTotalSales.targetSales;
   const overAmount = targetTotalSales.totalSales - targetTotalSales.targetSales;
   const targetTotalSalesPerDay =
-    targetTotalSales.targetSales - targetTotalSales.totalSales / daysInMonth;
+    (targetTotalSales.targetSales - targetTotalSales.totalSales) / daysInMonth;
 
   const handleClickRoute = () => {
     router.push("/management");
