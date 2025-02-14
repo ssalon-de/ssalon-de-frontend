@@ -4,7 +4,7 @@ import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent } from "@/shared/ui/card";
 import { Gender } from "@/queries/sales/type";
-import { ServiceType } from "@/queries/service-types/type";
+import { ServiceType } from "@/queries/settings/type";
 import { VisitType } from "@/queries/settings/type";
 import dayjs from "dayjs";
 import { Edit2, Trash2 } from "lucide-react";
