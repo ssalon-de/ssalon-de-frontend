@@ -14,7 +14,8 @@ export function AverageCustomerSpendingWidget() {
     dayjs().format("YYYY-MM")
   );
 
-  const { currentMonth, previousMonth } = data;
+  const currentMonth = data.currentMonth ?? initialData.currentMonth;
+  const previousMonth = data.previousMonth ?? initialData.previousMonth;
 
   const percentageChange =
     ((currentMonth - previousMonth) / previousMonth) * 100;
