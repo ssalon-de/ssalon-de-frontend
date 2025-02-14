@@ -4,7 +4,7 @@ import { useTargetTotalSales } from "@/queries/dashboard";
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
 import dayjs from "dayjs";
-import { Target, ArrowUpCircle, Calendar, Flag } from "lucide-react";
+import { ArrowUpCircle, Calendar, Flag } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const initialData = {
@@ -31,24 +31,18 @@ export function DailyTargetWidget() {
     router.push("/management");
   };
   return (
-    <div className="flex flex-col min-h-[200px]">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-700">
-          목표 달성을 위한 일일 매출
-        </h3>
-        <Target className="w-5 h-5 text-purple-500" />
-      </div>
+    <>
       {isNotSettingTarget ? (
         <div className="flex flex-col items-center justify-center flex-1 gap-4">
           목표 매출을 설정해주세요.
           <Button onClick={handleClickRoute}>설정하기</Button>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="flex flex-col gap-6">
           <div>
             <div
               className={cn(
-                "text-3xl font-bold",
+                "text-3xl font-bold mb-2",
                 isOver ? "text-blue-600" : "text-gray-900"
               )}
             >
@@ -61,7 +55,7 @@ export function DailyTargetWidget() {
               {isOver ? "목표에 도달했습니다!" : "일일 필요 매출액"}
             </p>
           </div>
-          <div className="space-y-2">
+          <div className="flex flex-col gap-5">
             <div className="flex items-center text-sm">
               <ArrowUpCircle className="w-4 h-4 mr-2 text-blue-500" />
               <span className="text-gray-600">현재 총 매출:</span>
@@ -86,6 +80,6 @@ export function DailyTargetWidget() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

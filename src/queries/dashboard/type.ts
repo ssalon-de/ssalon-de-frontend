@@ -24,3 +24,12 @@ export type DailySaleAmountCount = DailySale & {
 };
 
 export type VisitTypesRatio = Record<string, number>;
+
+export type AverageCustomerSpending = {
+  currentMonth: number;
+  previousMonth: number;
+};
+
+export type TotalCount = {
+  count: number;
+};

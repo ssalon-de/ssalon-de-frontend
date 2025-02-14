@@ -1,10 +1,12 @@
 import api from "@/shared/lib/axios";
 import {
+  AverageCustomerSpending,
   DailySale,
   DailySaleAmountCount,
   GenderRatio,
   MonthlyTotalSales,
   TargetTotalSales,
+  TotalCount,
   VisitTypesRatio,
 } from "./type";
 
@@ -59,4 +61,22 @@ export async function getVisitTypesRatio(targetMonth: string) {
   });
 
   return data as VisitTypesRatio;
+}
+
+export async function getMonthlyAverageSales(targetMonth: string) {
+  const { data } = await api({
+    method: "GET",
+    url: `/dashboard/average-customer-spending?targetMonth=${targetMonth}`,
+  });
+
+  return data as AverageCustomerSpending;
+}
+
+export async function getMonthTotalCount(targetMonth: string) {
+  const { data } = await api({
+    method: "GET",
+    url: `/dashboard/total-count?targetMonth=${targetMonth}`,
+  });
+
+  return data as TotalCount;
 }

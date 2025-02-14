@@ -1,17 +1,21 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import {
+  AverageCustomerSpending,
   DailySale,
   DailySaleAmountCount,
   GenderRatio,
   MonthlyTotalSales,
   TargetTotalSales,
+  TotalCount,
   VisitTypesRatio,
 } from "./type";
 import {
   getDailySalesAmountCount,
   getGenderRatio,
+  getMonthlyAverageSales,
   getMonthlySales,
   getMonthlyTotalSales,
+  getMonthTotalCount,
   getTargetTotalSales,
   getVisitTypesRatio,
 } from "./api";
@@ -83,5 +87,30 @@ export const useVisitTypesRatio = (
     ...options,
     queryKey: [KEYS.dashboard.widget.visitTypesRatio, targetMonth],
     queryFn: () => getVisitTypesRatio(targetMonth),
+  });
+};
+
+export const useAverageCustomerSpending = (
+  targetMonth: string,
+  options?: Omit<
+    UseQueryOptions<AverageCustomerSpending>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  return useQuery<AverageCustomerSpending>({
+    ...options,
+    queryKey: [KEYS.dashboard.widget.averageCustomerSpending, targetMonth],
+    queryFn: () => getMonthlyAverageSales(targetMonth),
+  });
+};
+
+export const useTotalCount = (
+  targetMonth: string,
+  options?: Omit<UseQueryOptions<TotalCount>, "queryKey" | "queryFn">
+) => {
+  return useQuery<TotalCount>({
+    ...options,
+    queryKey: [KEYS.dashboard.widget.totalCount, targetMonth],
+    queryFn: () => getMonthTotalCount(targetMonth),
   });
 };
