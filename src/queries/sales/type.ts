@@ -1,5 +1,4 @@
-import { ServiceType } from "../service-types/type";
-import { VisitType } from "../settings/type";
+import { ServiceType, VisitType } from "../settings/type";
 
 export type Gender = "M" | "F";
 export type GetSalesParams = {
