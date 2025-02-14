@@ -14,7 +14,7 @@ import { useEditSettings, useSettings } from "@/queries/settings";
 import { Setting } from "@/queries/settings/type";
 import { useToast } from "@/shared/hooks/use-toast";
 import { Save } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FieldPath, RegisterOptions, useForm } from "react-hook-form";
 
 type FormData = Record<string, string>;
@@ -40,6 +40,7 @@ const settings: Form[] = [
 ];
 
 const Settings = () => {
+  const [open, setOpen] = useState("");
   const { toast } = useToast();
   const { data = [] } = useSettings();
   const { register, formState, handleSubmit, reset } = useForm<FormData>({
@@ -49,6 +50,7 @@ const Settings = () => {
   const { mutate: editSettings } = useEditSettings({
     onSuccess: () => {
       toast({ description: "저장 완료!" });
+      setOpen("");
     },
     onError: () => {
       toast({
@@ -100,7 +102,14 @@ const Settings = () => {
       </div>
       {settings.map(({ name, label, placeholder, options }) => {
         return (
-          <Accordion key={name} type="single" collapsible className="w-[100%]">
+          <Accordion
+            key={name}
+            type="single"
+            collapsible
+            className="w-[100%]"
+            value={open}
+            onValueChange={setOpen}
+          >
             <AccordionItem value={name}>
               <AccordionTrigger>
                 <RequiredLabel
