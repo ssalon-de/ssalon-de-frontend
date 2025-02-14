@@ -39,7 +39,7 @@ export const useTotalAmount = (
 ) => {
   return useQuery<number>({
     ...options,
-    queryKey: [KEYS.sales.totalAmount, date],
+    queryKey: [KEYS.sales.list, KEYS.sales.totalAmount, date],
     queryFn: () => getTotalAmount(date),
   });
 };
