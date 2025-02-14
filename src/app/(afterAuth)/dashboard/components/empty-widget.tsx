@@ -13,7 +13,7 @@ const EmptyWidget: React.FC<Props> = ({
   description = "매출을 생성해주세요.",
 }) => {
   return (
-    <div className="w-full h-full flex items-center justify-center flex-col gap-3 mt-3">
+    <div className="flex flex-col items-center justify-center w-full h-full gap-3">
       <p className="text-lg text-gray-500">데이터가 존재하지 않습니다.</p>
       <p className="text-sm text-gray-700">{description}</p>
       {onClick && (
