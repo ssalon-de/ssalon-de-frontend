@@ -14,6 +14,10 @@ class SupabaseService {
     return this.supabase;
   }
 
+  async changePassword(email: string, password: string) {
+    return this.supabase.auth.updateUser({ email, password });
+  }
+
   async isValidToken(token: string) {
     let isValid = false;
     const { data } = await this.supabase.auth.getUser(token);
