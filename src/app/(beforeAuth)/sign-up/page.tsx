@@ -83,7 +83,7 @@ export default function SignUp() {
   );
 
   return (
-    <div className="min-w-[320px] w-[520px] md:h-full pb-8 m-auto bg-white shadow-xl pt-6 md:pt-[80px]">
+    <div className="min-w-[320px] w-[520px] md:h-full pb-8 m-auto bg-white shadow-xl pt-6 md:pt-[5vh] overflow-auto">
       <div className="flex flex-col gap-2 mb-8">
         <div className="flex items-center justify-center mb-6">
           <Scissors className="w-12 h-12 text-blue-600" />
