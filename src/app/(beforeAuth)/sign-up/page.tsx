@@ -31,6 +31,11 @@ const defaultValues: SignUpForm = {
 export default function SignUp() {
   const router = useRouter();
   const { toast } = useToast();
+
+  const { register, handleSubmit, formState, control, setError } = useForm({
+    defaultValues,
+    mode: "onChange",
+  });
   const { mutate: signUp } = useSignUp({
     onSuccess: () => {
       toast({
@@ -42,7 +47,9 @@ export default function SignUp() {
     },
     onError: (error) => {
       const apiError = error as ApiError;
-      if (apiError.code === ERROR_MESSAGE.EMAIL_DUPLICATED.code) {
+      if (apiError.message === ERROR_MESSAGE.EMAIL_DUPLICATED.code) {
+        setError("email", { message: ERROR_MESSAGE.EMAIL_DUPLICATED.message });
+
         return toast({
           description: ERROR_MESSAGE.EMAIL_DUPLICATED.message,
           variant: "destructive",
@@ -56,11 +63,8 @@ export default function SignUp() {
     },
   });
 
-  const { register, handleSubmit, formState, control } = useForm({
-    defaultValues,
-  });
-
   const password = useWatch({ control, name: "password" });
+  const confirmPassword = useWatch({ control, name: "confirmPassword" });
   const isLoading = useIsMutating({ mutationKey: [KEYS.user.signUp] });
 
   const onSubmit = useCallback(
@@ -178,6 +182,7 @@ export default function SignUp() {
           <Input
             {...register("password", {
               required: "비밀번호를 입력해주세요.",
+              deps: ["confirmPassword"],
               pattern: {
                 value: /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/,
                 message:
@@ -210,6 +215,7 @@ export default function SignUp() {
           <Input
             {...register("confirmPassword", {
               required: "비밀번호를 확인해주세요.",
+              deps: ["password"],
               validate: (value) =>
                 value === password || "비밀번호가 일치하지 않습니다.",
             })}
@@ -219,10 +225,15 @@ export default function SignUp() {
             isError={!!formState.errors.confirmPassword}
             required
           />
+          {!!confirmPassword && password === confirmPassword && (
+            <p className="text-xs text-green-700">
+              입력하신 비밀번호가 일치합니다.
+            </p>
+          )}
         </div>
         <Button
+          type="submit"
           className="w-full mt-2"
-          onClick={handleSubmit(onSubmit)}
           disabled={!formState.isValid}
         >
           {!!isLoading && <Spinner />}
