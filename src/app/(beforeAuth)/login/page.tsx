@@ -10,7 +10,7 @@ import { Label } from "@radix-ui/react-label";
 import { Scissors } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { login } from "@/queries/auth/api";
 import Spinner from "@/shared/ui/spinner";
 
@@ -27,35 +27,39 @@ export default function Page() {
     return email === "" || password === "" || !emailRegex.test(email);
   }, [email, password]);
 
-  const handleLogin = async () => {
-    setIsLoading(true);
-    const data = await login({ email, password });
+  const handleLogin = useCallback(
+    async (event: React.SyntheticEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      setIsLoading(true);
+      const data = await login({ email, password });
 
-    if (
-      Object.hasOwn(data, "code") ||
-      (data as unknown as ApiError).message === "fetch failed"
-    ) {
-      setIsLoading(false);
-      const { code } = data as unknown as ApiError;
+      if (
+        Object.hasOwn(data, "code") ||
+        (data as unknown as ApiError).message === "fetch failed"
+      ) {
+        setIsLoading(false);
+        const { code } = data as unknown as ApiError;
 
-      switch (code) {
-        case ERROR_MESSAGE.invalid_credentials.code:
-        case ERROR_MESSAGE.validation_failed.code:
-          return toast({
-            variant: "destructive",
-            description: ERROR_MESSAGE.validation_failed.message,
-          });
+        switch (code) {
+          case ERROR_MESSAGE.invalid_credentials.code:
+          case ERROR_MESSAGE.validation_failed.code:
+            return toast({
+              variant: "destructive",
+              description: ERROR_MESSAGE.validation_failed.message,
+            });
+        }
+      } else {
+        setUser({
+          email: data.user.email,
+          name: data.user.name,
+          company: data.user.company,
+          createdAt: data.user.createdAt,
+        });
+        router.push("/dashboard");
       }
-    } else {
-      setUser({
-        email: data.user.email,
-        name: data.user.name,
-        company: data.user.company,
-        createdAt: data.user.createdAt,
-      });
-      router.push("/dashboard");
-    }
-  };
+    },
+    [email, password, router, toast, setUser]
+  );
 
   return (
     <div className="min-w-[320px] w-[520px] h-full m-auto bg-white shadow-xl pt-12 md:pt-[20vh]">
@@ -97,11 +101,7 @@ export default function Page() {
             required
           />
         </div>
-        <Button
-          className="w-full mt-2"
-          onClick={handleLogin}
-          disabled={isDisabled}
-        >
+        <Button className="w-full mt-2" disabled={isDisabled}>
           {isLoading && <Spinner className="mr-2" />}
           로그인
         </Button>
