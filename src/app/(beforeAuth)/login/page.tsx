@@ -1,14 +1,6 @@
 "use client";
 
 import { Button } from "@/shared/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/shared/ui/card";
 import { Input } from "@/shared/ui/input";
 import { useToast } from "@/shared/hooks/use-toast";
 import { ERROR_MESSAGE } from "@/shared/constants/api-error";
@@ -18,7 +10,7 @@ import { Label } from "@radix-ui/react-label";
 import { Scissors } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { login } from "@/queries/auth/api";
 import Spinner from "@/shared/ui/spinner";
 
@@ -29,6 +21,11 @@ export default function Page() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [password, setPassword] = useState("");
+
+  const isDisabled = useMemo(() => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return email === "" || password === "" || !emailRegex.test(email);
+  }, [email, password]);
 
   const handleLogin = async () => {
     setIsLoading(true);
@@ -61,50 +58,55 @@ export default function Page() {
   };
 
   return (
-    <Card className="w-full h-full rounded-none md:rounded-lg md:w-[400px] md:h-auto">
-      <CardHeader className="space-y-1">
+    <div className="min-w-[320px] w-[520px] h-full m-auto bg-white shadow-xl pt-12 md:pt-[20vh]">
+      <div className="flex flex-col gap-2 mb-8">
         <div className="flex items-center justify-center mb-6">
           <Scissors className="w-12 h-12 text-blue-600" />
           <span className="ml-2 text-2xl font-bold text-gray-800">
             ssalon de
           </span>
         </div>
-        <CardTitle className="text-2xl font-bold text-center">로그인</CardTitle>
-        <CardDescription className="text-center">
+        <h2 className="text-2xl font-bold text-center">로그인</h2>
+        <p className="text-gray-400 text-center">
           계정에 로그인하여 매출을 관리하세요
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">이메일</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="name@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">비밀번호</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-        </form>
-      </CardContent>
-      <CardFooter className="flex flex-col space-y-4">
-        <Button className="w-full" onClick={handleLogin}>
+        </p>
+      </div>
+      <form
+        onSubmit={handleLogin}
+        className="flex flex-col gap-4 max-w-[420px] mx-auto p-6 pt-0"
+      >
+        <div className="space-y-2">
+          <Label htmlFor="email">이메일</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="name@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="password">비밀번호</Label>
+          <Input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <Button
+          className="w-full mt-2"
+          onClick={handleLogin}
+          disabled={isDisabled}
+        >
           {isLoading && <Spinner className="mr-2" />}
           로그인
         </Button>
+      </form>
+      <div className="flex flex-col items-center space-y-4">
         <div className="space-y-2 text-sm text-center">
           <a href="#" className="text-blue-600 hover:underline">
             비밀번호를 잊으셨나요?
@@ -116,7 +118,7 @@ export default function Page() {
             </Link>
           </div>
         </div>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 }
