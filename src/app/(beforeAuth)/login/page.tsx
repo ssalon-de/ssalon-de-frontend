@@ -62,7 +62,7 @@ export default function Page() {
   );
 
   return (
-    <div className="min-w-[320px] w-[520px] h-full m-auto bg-white shadow-xl pt-12 md:pt-[20vh]">
+    <div className="min-w-[320px] w-[520px] h-full m-auto bg-white shadow-xl pt-12 md:pt-[20vh] overflow-hidden">
       <div className="flex flex-col gap-2 mb-8">
         <div className="flex items-center justify-center mb-6">
           <Scissors className="w-12 h-12 text-blue-600" />
