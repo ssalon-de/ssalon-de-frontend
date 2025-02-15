@@ -108,9 +108,9 @@ export default function Page() {
       </form>
       <div className="flex flex-col items-center space-y-4">
         <div className="space-y-2 text-sm text-center">
-          <a href="#" className="text-blue-600 hover:underline">
+          {/* <a href="#" className="text-blue-600 hover:underline">
             비밀번호를 잊으셨나요?
-          </a>
+          </a> */}
           <div className="flex gap-1">
             계정이 없으신가요?
             <Link href="/sign-up" className="text-blue-600 hover:underline">

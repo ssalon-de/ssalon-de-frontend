@@ -15,6 +15,7 @@ import { SignUpDTO } from "@/queries/auth/type";
 import { useCallback } from "react";
 import { ApiError } from "@/shared/types/error";
 import { ERROR_MESSAGE } from "@/shared/constants/api-error";
+import Link from "next/link";
 
 type SignUpForm = SignUpDTO & {
   confirmPassword: string;
@@ -242,9 +243,9 @@ export default function SignUp() {
       </form>
       <div className="flex flex-col items-center space-y-4 text-sm">
         이미 계정이 있으신가요?
-        <a href="/login" className="text-blue-600 hover:underline mt-2">
+        <Link href="/login" className="text-blue-600 hover:underline mt-2">
           로그인
-        </a>
+        </Link>
       </div>
     </div>
   );
