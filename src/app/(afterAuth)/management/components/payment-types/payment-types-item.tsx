@@ -2,13 +2,14 @@
 
 import { memo, PropsWithChildren, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Pencil, Save } from "lucide-react";
+import { Pencil, Save, Trash2 } from "lucide-react";
 
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { TableCell, TableRow } from "@/shared/ui/table";
-import { useUpdatePaymentType } from "@/queries/settings";
+import { useDeletePaymentType, useUpdatePaymentType } from "@/queries/settings";
 import { PaymentType } from "@/queries/settings/type";
+import { ConfirmDialog } from "@/shared/ui/alert-dialog";
 
 type Props = PropsWithChildren<{
   id: string;
@@ -20,6 +21,13 @@ const PaymentTypeItem: React.FC<Props> = ({ id, name }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [editingId, setEditingId] = useState<string>("");
   const [editingName, setEditingName] = useState("");
+  const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
+
+  const { mutate: deletePaymentType } = useDeletePaymentType({
+    onSuccess: () => {
+      afterMutatePaymentType();
+    },
+  });
 
   const { mutate: update } = useUpdatePaymentType({
     onSuccess: () => {
@@ -47,34 +55,60 @@ const PaymentTypeItem: React.FC<Props> = ({ id, name }) => {
     });
   }, [editingId, editingName, update]);
 
+  const handleClickDelete = useCallback(
+    (id: string) => {
+      deletePaymentType(id);
+    },
+    [deletePaymentType]
+  );
+
   return (
-    <TableRow key={id}>
-      <TableCell>
-        {editingId === id ? (
-          <Input
-            value={editingName}
-            onChange={(e) => setEditingName(e.target.value)}
-          />
-        ) : (
-          name
-        )}
-      </TableCell>
-      <TableCell className="flex justify-end gap-1 text-right">
-        {isEdit && editingId === id ? (
-          <Button size="sm" onClick={handleClickSave} variant="outline">
-            <Save className="w-4 h-4" />
-          </Button>
-        ) : (
-          <Button
-            onClick={() => handleClickEdit({ id, name })}
-            size="sm"
-            variant="outline"
-          >
-            <Pencil className="w-4 h-4" />
-          </Button>
-        )}
-      </TableCell>
-    </TableRow>
+    <>
+      <TableRow key={id}>
+        <TableCell>
+          {editingId === id ? (
+            <Input
+              value={editingName}
+              onChange={(e) => setEditingName(e.target.value)}
+            />
+          ) : (
+            name
+          )}
+        </TableCell>
+        <TableCell className="flex justify-end gap-1 text-right">
+          {isEdit && editingId === id ? (
+            <Button size="sm" onClick={handleClickSave} variant="outline">
+              <Save className="w-4 h-4" />
+            </Button>
+          ) : (
+            <>
+              <Button
+                onClick={() => handleClickEdit({ id, name })}
+                size="sm"
+                variant="outline"
+              >
+                <Pencil className="w-4 h-4" />
+              </Button>
+              <Button
+                onClick={() => setOpenDeleteConfirm(true)}
+                size="sm"
+                variant="outline"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </>
+          )}
+        </TableCell>
+      </TableRow>
+      <ConfirmDialog
+        open={openDeleteConfirm}
+        setOpen={setOpenDeleteConfirm}
+        onConfirm={() => handleClickDelete(id)}
+        title="결제 유형 삭제"
+        description="결제 유형을 삭제하시겠습니까? 삭제 시 관련 데이터를 확인할 수 없습니다."
+        confirmText="삭제"
+      />
+    </>
   );
 };
 

@@ -9,6 +9,7 @@ import { Input } from "@/shared/ui/input";
 import { TableCell, TableRow } from "@/shared/ui/table";
 import { useDeleteServiceType, useUpdateServiceType } from "@/queries/settings";
 import { ServiceType } from "@/queries/settings/type";
+import { ConfirmDialog } from "@/shared/ui/alert-dialog";
 
 type Props = PropsWithChildren<{
   id: string;
@@ -20,6 +21,7 @@ const ServiceItem: React.FC<Props> = ({ id, name }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [editingId, setEditingId] = useState<string>("");
   const [editingName, setEditingName] = useState("");
+  const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
 
   const { mutate: deleteServiceType } = useDeleteServiceType({
     onSuccess: () => {
@@ -61,42 +63,52 @@ const ServiceItem: React.FC<Props> = ({ id, name }) => {
   );
 
   return (
-    <TableRow key={id}>
-      <TableCell>
-        {editingId === id ? (
-          <Input
-            value={editingName}
-            onChange={(e) => setEditingName(e.target.value)}
-          />
-        ) : (
-          name
-        )}
-      </TableCell>
-      <TableCell className="flex justify-end gap-1 text-right">
-        {isEdit && editingId === id ? (
-          <Button size="sm" onClick={handleClickSave} variant="outline">
-            <Save className="w-4 h-4" />
-          </Button>
-        ) : (
-          <>
-            <Button
-              onClick={() => handleClickEdit({ id, name })}
-              size="sm"
-              variant="outline"
-            >
-              <Pencil className="w-4 h-4" />
+    <>
+      <TableRow key={id}>
+        <TableCell>
+          {editingId === id ? (
+            <Input
+              value={editingName}
+              onChange={(e) => setEditingName(e.target.value)}
+            />
+          ) : (
+            name
+          )}
+        </TableCell>
+        <TableCell className="flex justify-end gap-1 text-right">
+          {isEdit && editingId === id ? (
+            <Button size="sm" onClick={handleClickSave} variant="outline">
+              <Save className="w-4 h-4" />
             </Button>
-            <Button
-              onClick={() => handleClickDelete(id)}
-              size="sm"
-              variant="outline"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          </>
-        )}
-      </TableCell>
-    </TableRow>
+          ) : (
+            <>
+              <Button
+                onClick={() => handleClickEdit({ id, name })}
+                size="sm"
+                variant="outline"
+              >
+                <Pencil className="w-4 h-4" />
+              </Button>
+              <Button
+                onClick={() => setOpenDeleteConfirm(true)}
+                size="sm"
+                variant="outline"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </>
+          )}
+        </TableCell>
+      </TableRow>
+      <ConfirmDialog
+        open={openDeleteConfirm}
+        setOpen={setOpenDeleteConfirm}
+        onConfirm={() => handleClickDelete(id)}
+        title="서비스 유형 삭제"
+        description="서비스 유형을 삭제하시겠습니까? 삭제 시 관련 데이터를 확인할 수 없습니다."
+        confirmText="삭제"
+      />
+    </>
   );
 };
 

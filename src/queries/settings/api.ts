@@ -138,3 +138,11 @@ export const updatePaymentType = async (
   });
   return data;
 };
+
+export const deletePaymentType = async (id: string): Promise<unknown> => {
+  const { data } = await api({
+    method: "DELETE",
+    url: `/payment-types/${id}`,
+  });
+  return data;
+};

@@ -13,6 +13,7 @@ import {
   createPaymentType,
   createServiceType,
   createVisitType,
+  deletePaymentType,
   deleteServiceType,
   deleteVisitType,
   editSettings,
@@ -140,5 +141,12 @@ export const useUpdatePaymentType = (
   return useMutation({
     ...options,
     mutationFn: updatePaymentType,
+  });
+};
+
+export const useDeletePaymentType = (options?: MutationOptions<string>) => {
+  return useMutation({
+    ...options,
+    mutationFn: deletePaymentType,
   });
 };
