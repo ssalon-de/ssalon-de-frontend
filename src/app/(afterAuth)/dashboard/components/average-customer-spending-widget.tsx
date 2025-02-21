@@ -20,6 +20,8 @@ export function AverageCustomerSpendingWidget() {
   const percentageChange =
     ((currentMonth - previousMonth) / previousMonth) * 100;
 
+  const isPercentageValid = percentageChange !== Infinity;
+
   return (
     <div className="space-y-4">
       <div>
@@ -28,16 +30,6 @@ export function AverageCustomerSpendingWidget() {
         </div>
         <p className="flex items-center justify-between mt-1 text-sm text-gray-500">
           이번 달 고객 평균 지출액
-          <span
-            className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
-              percentageChange >= 0
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-            }`}
-          >
-            {percentageChange >= 0 ? "+" : ""}
-            {percentageChange.toFixed(1)}%
-          </span>
         </p>
       </div>
       <div className="flex items-center justify-between pt-2 border-t border-gray-200">
@@ -48,19 +40,25 @@ export function AverageCustomerSpendingWidget() {
           <p className="text-sm text-gray-500">지난 달 고객 평균 지출액</p>
         </div>
         <div className="flex items-center">
-          {percentageChange >= 0 ? (
-            <TrendingUp className="w-5 h-5 mr-1 text-green-500" />
-          ) : (
-            <TrendingDown className="w-5 h-5 mr-1 text-red-500" />
+          {isPercentageValid && (
+            <>
+              {percentageChange >= 0 ? (
+                <>
+                  <TrendingUp className="w-5 h-5 mr-1 text-green-500" />
+                  <span className="text-xs font-medium text-green-600">
+                    {Math.abs(percentageChange).toFixed()}% 증가
+                  </span>
+                </>
+              ) : (
+                <>
+                  <TrendingDown className="w-5 h-5 mr-1 text-red-500" />
+                  <span className="text-xs font-medium text-red-600">
+                    {Math.abs(percentageChange).toFixed()}% 감소
+                  </span>
+                </>
+              )}
+            </>
           )}
-          <span
-            className={`text-sm font-medium ${
-              percentageChange >= 0 ? "text-green-600" : "text-red-600"
-            }`}
-          >
-            {Math.abs(percentageChange).toFixed(1)}%{" "}
-            {percentageChange >= 0 ? "증가" : "감소"}
-          </span>
         </div>
       </div>
     </div>
