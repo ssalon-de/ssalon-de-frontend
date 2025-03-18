@@ -15,9 +15,10 @@ import useIsEditSettingsStore from "@/zustand/edit-setting";
 type Props = PropsWithChildren<{
   id: string;
   name: string;
+  price?: number;
 }>;
 
-const ServiceItem: React.FC<Props> = ({ id, name }) => {
+const ServiceItem: React.FC<Props> = ({ id, name, price }) => {
   const router = useRouter();
   const editSettingId = useIsEditSettingsStore((state) => state.editSettingId);
   const setEditSettingId = useIsEditSettingsStore(
@@ -25,7 +26,7 @@ const ServiceItem: React.FC<Props> = ({ id, name }) => {
   );
   const [isEdit, setIsEdit] = useState(false);
   const [editingName, setEditingName] = useState("");
-  const [editingPrice, setEditingPrice] = useState<number | undefined>();
+  const [editingPrice, setEditingPrice] = useState<string>("");
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
 
   const { mutate: deleteServiceType } = useDeleteServiceType({
@@ -38,7 +39,7 @@ const ServiceItem: React.FC<Props> = ({ id, name }) => {
     onSuccess: () => {
       setIsEdit(false);
       setEditingName("");
-      setEditingPrice(0);
+      setEditingPrice("");
       afterMutateServiceType();
       setEditSettingId("");
     },
@@ -50,9 +51,10 @@ const ServiceItem: React.FC<Props> = ({ id, name }) => {
 
   const handleClickEdit = useCallback(
     (serviceType: ServiceType) => {
+      console.log(serviceType);
       setIsEdit(true);
       setEditingName(serviceType.name);
-      setEditingPrice(serviceType.price ?? undefined);
+      setEditingPrice(`${serviceType.price ?? ""}`);
       setEditSettingId(serviceType.id);
     },
     [setEditSettingId]
@@ -62,7 +64,7 @@ const ServiceItem: React.FC<Props> = ({ id, name }) => {
     updateServiceType({
       id: editSettingId,
       name: editingName,
-      price: editingPrice ?? undefined,
+      price: +editingPrice,
     });
   }, [editSettingId, editingName, editingPrice, updateServiceType]);
 
@@ -73,26 +75,38 @@ const ServiceItem: React.FC<Props> = ({ id, name }) => {
     [deleteServiceType]
   );
 
+  const handleChangePrice = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      if (/^\d*\.?\d*$/.test(value)) {
+        setEditingPrice(value);
+      }
+    },
+    []
+  );
+
   return (
     <>
       <TableRow key={id}>
         <TableCell>
           {editSettingId === id ? (
-            <div className="flex flex-col md:flex-row gap-2">
-              <Input
-                placeholder="(필수) 서비스 유형"
-                value={editingName}
-                onChange={(e) => setEditingName(e.target.value)}
-              />
-              <Input
-                placeholder="(선택) 가격을 입력해주세요."
-                type="number"
-                value={editingPrice ?? undefined}
-                onChange={(e) => setEditingPrice(+e.target.value)}
-              />
-            </div>
+            <Input
+              value={editingName}
+              onChange={(e) => setEditingName(e.target.value)}
+            />
           ) : (
             name
+          )}
+        </TableCell>
+        <TableCell>
+          {editSettingId === id ? (
+            <Input
+              type="number"
+              value={editingPrice}
+              onChange={handleChangePrice}
+            />
+          ) : (
+            price
           )}
         </TableCell>
         <TableCell className="flex justify-end gap-1 text-right">
@@ -103,7 +117,7 @@ const ServiceItem: React.FC<Props> = ({ id, name }) => {
           ) : (
             <>
               <Button
-                onClick={() => handleClickEdit({ id, name })}
+                onClick={() => handleClickEdit({ id, name, price })}
                 size="sm"
                 variant="outline"
               >
