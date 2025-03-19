@@ -185,7 +185,7 @@ const SaleEditPage = () => {
   );
 
   const handleTypesChange = useCallback(
-    (type: "visitTypes" | "services", id: string) => {
+    (type: "visitTypes" | "services", id: string, checked: boolean) => {
       const selectedTypes =
         type === "visitTypes" ? selectedVisitTypes : selectedServices;
 
@@ -194,8 +194,21 @@ const SaleEditPage = () => {
         : [...selectedTypes, id];
 
       setValue(type, newTypes);
+
+      if (type === "services" && checked) {
+        const selectedService = serviceTypes.find(
+          (service) => service.id === id
+        );
+        if (selectedService) {
+          if (payments.length > 0 && payments[0].amount === "") {
+            const newPayments = [...payments];
+            newPayments[0].amount = selectedService.price?.toString() ?? "";
+            setValue("payments", newPayments);
+          }
+        }
+      }
     },
-    [selectedServices, selectedVisitTypes, setValue]
+    [payments, selectedServices, selectedVisitTypes, serviceTypes, setValue]
   );
 
   const isFormDisabled = useMemo(() => {
@@ -213,7 +226,7 @@ const SaleEditPage = () => {
     []
   );
 
-  const title = isEdit ? "매출 수정" : "매출 등록";
+  const title = useMemo(() => (isEdit ? "매출 수정" : "매출 등록"), [isEdit]);
 
   useEffect(() => {
     if (paymentTypes.length > 0) {
@@ -410,21 +423,24 @@ const SaleEditPage = () => {
                   서비스 유형
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid md:grid-cols-2 gap-4">
                     {serviceTypes.map((service) => (
                       <div
                         key={service.id}
-                        className="flex items-center space-x-2"
+                        className="flex items-center space-x-2 min-h-[36px]"
                       >
                         <Checkbox
                           id={`service-${service.id}`}
                           checked={selectedServices.includes(service.id)}
-                          onCheckedChange={() => {
-                            handleTypesChange("services", service.id);
+                          onCheckedChange={(state) => {
+                            handleTypesChange("services", service.id, !!state);
                           }}
                         />
                         <Label htmlFor={`service-${service.id}`}>
                           {service.name}
+                          {service.price && (
+                            <span className="ml-1">{`(${service.price.toLocaleString()}원)`}</span>
+                          )}
                         </Label>
                       </div>
                     ))}
@@ -449,8 +465,8 @@ const SaleEditPage = () => {
                         <Checkbox
                           id={`visitTypes${id}`}
                           checked={selectedVisitTypes.includes(id)}
-                          onCheckedChange={() => {
-                            handleTypesChange("visitTypes", id);
+                          onCheckedChange={(checked) => {
+                            handleTypesChange("visitTypes", id, !!checked);
                           }}
                         />
                         <Label htmlFor={`visitTypes${id}`}>{name}</Label>
