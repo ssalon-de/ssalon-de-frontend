@@ -16,6 +16,13 @@ import { useToast } from "@/shared/hooks/use-toast";
 import { Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FieldPath, RegisterOptions, useForm } from "react-hook-form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/ui/select";
 
 type FormData = Record<string, string>;
 type Form = {
@@ -37,6 +44,23 @@ const settings: Form[] = [
       },
     },
   },
+];
+
+const colors = [
+  "red",
+  "orange",
+  "yellow",
+  "lime",
+  "green",
+  "teal",
+  "cyan",
+  "blue",
+  "indigo",
+  "violet",
+  "purple",
+  "fuchsia",
+  "pink",
+  "gray",
 ];
 
 const Settings = () => {
@@ -135,6 +159,115 @@ const Settings = () => {
           </Accordion>
         );
       })}
+      <Accordion
+        type="single"
+        collapsible
+        className="w-[100%]"
+        value={open}
+        onValueChange={setOpen}
+      >
+        <AccordionItem value="badge-color">
+          <AccordionTrigger>
+            <RequiredLabel>뱃지 색상 커스텀</RequiredLabel>
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="p-1 flex flex-col gap-2">
+              <div className="flex gap-2">
+                <RequiredLabel className="text-gray-400">
+                  결제 유형
+                </RequiredLabel>
+                <Select>
+                  <SelectTrigger className="w-[120px]">
+                    <SelectValue placeholder="결제 유형" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {colors.map((color) => (
+                      <SelectItem key={`payment${color}`} value={color}>
+                        <div
+                          className="w-3 h-3 rounded-full inline-block mr-2"
+                          style={{
+                            backgroundColor: color,
+                          }}
+                        />
+                        <span>{color}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex gap-2">
+                <RequiredLabel className="text-gray-400">
+                  방문 유형
+                </RequiredLabel>
+                <Select>
+                  <SelectTrigger className="w-[120px]">
+                    <SelectValue placeholder="방문 유형" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {colors.map((color) => (
+                      <SelectItem key={`visitType${color}`} value={color}>
+                        <div
+                          className="w-3 h-3 rounded-full inline-block mr-2"
+                          style={{
+                            backgroundColor: color,
+                          }}
+                        />
+                        <span>{color}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex gap-2">
+                <RequiredLabel className="text-gray-400">
+                  서비스 유형
+                </RequiredLabel>
+                <Select>
+                  <SelectTrigger className="w-[120px]">
+                    <SelectValue placeholder="서비스 유형" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {colors.map((color) => (
+                      <SelectItem key={`serviceType${color}`} value={color}>
+                        <div
+                          className="w-3 h-3 rounded-full inline-block mr-2"
+                          style={{
+                            backgroundColor: color,
+                          }}
+                        />
+                        <span>{color}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex gap-2">
+                <RequiredLabel className="text-gray-400">
+                  성별 유형
+                </RequiredLabel>
+                <Select>
+                  <SelectTrigger className="w-[120px]">
+                    <SelectValue placeholder="성별 유형" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {colors.map((color) => (
+                      <SelectItem key={`genderType${color}`} value={color}>
+                        <div
+                          className="w-3 h-3 rounded-full inline-block mr-2"
+                          style={{
+                            backgroundColor: color,
+                          }}
+                        />
+                        <span>{color}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </form>
   );
 };
