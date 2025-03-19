@@ -200,9 +200,14 @@ const SaleEditPage = () => {
           (service) => service.id === id
         );
         if (selectedService) {
-          if (payments.length > 0 && payments[0].amount === "") {
-            const newPayments = [...payments];
-            newPayments[0].amount = selectedService.price?.toString() ?? "";
+          const newPayments = [...payments];
+          const emptyAmountPayments = newPayments.find(
+            ({ amount }) => amount === ""
+          );
+
+          if (emptyAmountPayments) {
+            emptyAmountPayments.amount =
+              selectedService.price?.toString() ?? "";
             setValue("payments", newPayments);
           }
         }
