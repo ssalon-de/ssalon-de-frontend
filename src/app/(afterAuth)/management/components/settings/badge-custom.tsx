@@ -13,7 +13,7 @@ import { memo } from "react";
 
 const colorCustomSettings = [
   {
-    key: "payment",
+    key: "paymentType",
     label: "결제 유형",
   },
   {
@@ -25,7 +25,7 @@ const colorCustomSettings = [
     label: "서비스 유형",
   },
   {
-    key: "genderType",
+    key: "gender",
     label: "성별 유형",
   },
 ];

@@ -6,6 +6,7 @@ import {
   usePaymentTypes,
 } from "@/queries/settings";
 import { Filter } from "@/shared/types/filter";
+import useBadgeCustomStore from "@/zustand/badge-custom";
 
 type SalesFilterProps = {
   selectedFilters: Filter[];
@@ -13,6 +14,7 @@ type SalesFilterProps = {
 };
 
 export function SalesFilter({ selectedFilters, onToggle }: SalesFilterProps) {
+  const badgeCustom = useBadgeCustomStore((state) => state.badgeCustom);
   const { data: serviceTypes = [], isFetching: isServiceTypeFetching } =
     useServiceTypes({
       select: (data) =>
@@ -34,6 +36,8 @@ export function SalesFilter({ selectedFilters, onToggle }: SalesFilterProps) {
     { id: "M", name: "남성", type: "gender" },
     { id: "F", name: "여성", type: "gender" },
   ];
+
+  console.log(badgeCustom);
 
   const filterList = [
     ...visitTypes,

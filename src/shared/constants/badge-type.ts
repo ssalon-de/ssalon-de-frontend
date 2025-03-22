@@ -1,6 +1,6 @@
 export const BADGE_TYPE = {
   serviceType: "serviceType",
-  payment: "payment",
+  paymentType: "paymentType",
   visitType: "visitType",
-  genderType: "genderType",
+  gender: "gender",
 } as const;

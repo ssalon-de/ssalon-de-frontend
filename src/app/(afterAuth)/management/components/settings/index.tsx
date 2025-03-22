@@ -45,10 +45,10 @@ const settings: Form[] = [
 
 const defaultValues: FormData = {
   goal: "",
-  payment: "",
+  paymentType: "",
   visitType: "",
   serviceType: "",
-  genderType: "",
+  gender: "",
 };
 
 const Settings = () => {
@@ -64,8 +64,8 @@ const Settings = () => {
 
   const {
     serviceType = "",
-    genderType = "",
-    payment = "",
+    gender = "",
+    paymentType = "",
     visitType = "",
   } = useWatch({ control });
 
@@ -87,10 +87,10 @@ const Settings = () => {
       const dto: Setting[] = [];
       const badgeTypes = Object.keys(BADGE_TYPE);
       const customColor: Record<keyof typeof BADGE_TYPE, ColorKey | ""> = {
-        payment: "",
+        paymentType: "",
         visitType: "",
         serviceType: "",
-        genderType: "",
+        gender: "",
       };
 
       Object.entries(data).forEach(([name, value]) => {
@@ -199,10 +199,10 @@ const Settings = () => {
                 setValue(key, color);
               }}
               value={{
-                payment,
+                paymentType,
                 visitType,
                 serviceType,
-                genderType,
+                gender,
               }}
             />
           </AccordionContent>
