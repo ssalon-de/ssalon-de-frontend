@@ -15,14 +15,11 @@ import { Setting } from "@/queries/settings/type";
 import { useToast } from "@/shared/hooks/use-toast";
 import { Save } from "lucide-react";
 import { useEffect, useState } from "react";
-import { FieldPath, RegisterOptions, useForm } from "react-hook-form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { FieldPath, RegisterOptions, useForm, useWatch } from "react-hook-form";
+import BadgeCustom from "./badge-custom";
+import { BADGE_TYPE } from "@/shared/constants/badge-type";
+import { ColorKey } from "@/shared/types/palette";
+import useBadgeCustomStore from "@/zustand/badge-custom";
 
 type FormData = Record<string, string>;
 type Form = {
@@ -46,31 +43,32 @@ const settings: Form[] = [
   },
 ];
 
-const colors = [
-  "red",
-  "orange",
-  "yellow",
-  "lime",
-  "green",
-  "teal",
-  "cyan",
-  "blue",
-  "indigo",
-  "violet",
-  "purple",
-  "fuchsia",
-  "pink",
-  "gray",
-];
+const defaultValues: FormData = {
+  goal: "",
+  payment: "",
+  visitType: "",
+  serviceType: "",
+  genderType: "",
+};
 
 const Settings = () => {
   const [open, setOpen] = useState("");
   const { toast } = useToast();
   const { data = [] } = useSettings();
-  const { register, formState, handleSubmit, reset } = useForm<FormData>({
-    defaultValues: { goal: "" },
-    mode: "onChange",
-  });
+  const setBadgeCustom = useBadgeCustomStore((state) => state.setBadgeCustom);
+  const { register, formState, handleSubmit, reset, setValue, control } =
+    useForm<FormData>({
+      defaultValues,
+      mode: "onChange",
+    });
+
+  const {
+    serviceType = "",
+    genderType = "",
+    payment = "",
+    visitType = "",
+  } = useWatch({ control });
+
   const { mutate: editSettings } = useEditSettings({
     onSuccess: () => {
       toast({ description: "저장 완료!" });
@@ -86,22 +84,46 @@ const Settings = () => {
 
   const handleSave = (data: FormData) => {
     if (formState.isValid) {
-      const dto: Setting[] = Object.entries(data).map(([name, value]) => ({
-        name,
-        value,
-      }));
-      editSettings(dto);
+      const dto: Setting[] = [];
+      const badgeTypes = Object.keys(BADGE_TYPE);
+      const customColor: Record<keyof typeof BADGE_TYPE, ColorKey | ""> = {
+        payment: "",
+        visitType: "",
+        serviceType: "",
+        genderType: "",
+      };
+
+      Object.entries(data).forEach(([name, value]) => {
+        if (badgeTypes.includes(name)) {
+          customColor[name as keyof typeof BADGE_TYPE] = value as ColorKey;
+        } else {
+          dto.push({ name, value });
+        }
+      });
+
+      setBadgeCustom(customColor);
+      editSettings([
+        ...dto,
+        { name: "customBadge", value: JSON.stringify(customColor) },
+      ]);
     }
   };
 
   useEffect(() => {
     if (data.length > 0) {
       const resetValues = data.reduce((prev, cur) => {
-        const findItem = prev[cur.name];
-        if (!findItem) {
-          prev[cur.name] = "";
+        if (cur.name === "customBadge") {
+          const customBadge = JSON.parse(cur.value);
+          Object.entries(customBadge).forEach(([key, value]) => {
+            prev[key] = value as string;
+          });
+        } else {
+          const findItem = prev[cur.name];
+          if (!findItem) {
+            prev[cur.name] = "";
+          }
+          prev[cur.name] = cur.value;
         }
-        prev[cur.name] = cur.value;
         return { ...prev };
       }, {} as FormData);
       reset({ ...resetValues });
@@ -171,100 +193,18 @@ const Settings = () => {
             <RequiredLabel>뱃지 색상 커스텀</RequiredLabel>
           </AccordionTrigger>
           <AccordionContent>
-            <div className="p-1 flex flex-col gap-2">
-              <div className="flex gap-2">
-                <RequiredLabel className="text-gray-400">
-                  결제 유형
-                </RequiredLabel>
-                <Select>
-                  <SelectTrigger className="w-[120px]">
-                    <SelectValue placeholder="결제 유형" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {colors.map((color) => (
-                      <SelectItem key={`payment${color}`} value={color}>
-                        <div
-                          className="w-3 h-3 rounded-full inline-block mr-2"
-                          style={{
-                            backgroundColor: color,
-                          }}
-                        />
-                        <span>{color}</span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex gap-2">
-                <RequiredLabel className="text-gray-400">
-                  방문 유형
-                </RequiredLabel>
-                <Select>
-                  <SelectTrigger className="w-[120px]">
-                    <SelectValue placeholder="방문 유형" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {colors.map((color) => (
-                      <SelectItem key={`visitType${color}`} value={color}>
-                        <div
-                          className="w-3 h-3 rounded-full inline-block mr-2"
-                          style={{
-                            backgroundColor: color,
-                          }}
-                        />
-                        <span>{color}</span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex gap-2">
-                <RequiredLabel className="text-gray-400">
-                  서비스 유형
-                </RequiredLabel>
-                <Select>
-                  <SelectTrigger className="w-[120px]">
-                    <SelectValue placeholder="서비스 유형" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {colors.map((color) => (
-                      <SelectItem key={`serviceType${color}`} value={color}>
-                        <div
-                          className="w-3 h-3 rounded-full inline-block mr-2"
-                          style={{
-                            backgroundColor: color,
-                          }}
-                        />
-                        <span>{color}</span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex gap-2">
-                <RequiredLabel className="text-gray-400">
-                  성별 유형
-                </RequiredLabel>
-                <Select>
-                  <SelectTrigger className="w-[120px]">
-                    <SelectValue placeholder="성별 유형" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {colors.map((color) => (
-                      <SelectItem key={`genderType${color}`} value={color}>
-                        <div
-                          className="w-3 h-3 rounded-full inline-block mr-2"
-                          style={{
-                            backgroundColor: color,
-                          }}
-                        />
-                        <span>{color}</span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+            <BadgeCustom
+              onChangeColor={(key, color) => {
+                console.log(key, color);
+                setValue(key, color);
+              }}
+              value={{
+                payment,
+                visitType,
+                serviceType,
+                genderType,
+              }}
+            />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
