@@ -15,6 +15,11 @@ import { login } from "@/queries/auth/api";
 import Spinner from "@/shared/ui/spinner";
 import { EMAIL_REGEX } from "@/shared/constants/regex";
 
+import { signIn } from "next-auth/react";
+
+import kakaoIcon from "@/assets/images/icons/kakao.svg";
+import Image from "next/image";
+
 export default function Page() {
   const router = useRouter();
   const { setUser } = useUserStore();
@@ -106,6 +111,14 @@ export default function Page() {
           로그인
         </Button>
       </form>
+      <div className="flex items-center justify-center mb-4">
+        <Image
+          src={kakaoIcon}
+          alt="kakaoIcon"
+          className="cursor-pointer"
+          onClick={() => signIn("kakao")}
+        />
+      </div>
       <div className="flex flex-col items-center space-y-4">
         <div className="space-y-2 text-sm text-center">
           {/* <a href="#" className="text-blue-600 hover:underline">
