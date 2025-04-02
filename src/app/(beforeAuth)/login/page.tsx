@@ -66,6 +66,10 @@ export default function Page() {
     [email, password, router, toast, setUser]
   );
 
+  const oauthLogin = useCallback(async () => {
+    await signIn("kakao", { callbackUrl: "/dashboard" });
+  }, []);
+
   return (
     <div className="min-w-[320px] w-[520px] h-full m-auto bg-white shadow-xl pt-12 md:pt-[20vh] overflow-hidden">
       <div className="flex flex-col gap-2 mb-8">
@@ -116,7 +120,7 @@ export default function Page() {
           src={kakaoIcon}
           alt="kakaoIcon"
           className="cursor-pointer"
-          onClick={() => signIn("kakao")}
+          onClick={oauthLogin}
         />
       </div>
       <div className="flex flex-col items-center space-y-4">

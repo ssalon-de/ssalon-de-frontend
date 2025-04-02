@@ -1,27 +1,64 @@
+import { BASE_URL } from "@/shared/constants/env";
 import NextAuth from "next-auth";
 import KakaoProvider from "next-auth/providers/kakao";
 
 const handler = NextAuth({
   providers: [
-    // 카카오 Provider
     KakaoProvider({
       clientId: process.env.NEXT_KAKAO_CLIENT_ID!,
       clientSecret: process.env.NEXT_KAKAO_SECRET!,
     }),
   ],
+  session: {
+    maxAge: 30 * 24 * 60 * 60, // 30일
+  },
   callbacks: {
-    async jwt({ token, user, account }) {
-      // 리턴되는 값들은 token에 저장된다.
-      console.log("token", token, "user", user, account);
-      return { ...token, ...user };
+    async signIn({ user, account }) {
+      let isSuccess = false;
+      if (account?.provider && user?.email) {
+        const requestBody = {
+          email: user?.email ?? "",
+          provider: account?.provider ?? "",
+        };
+
+        try {
+          const res = await fetch(`${BASE_URL}/api/auth/login`, {
+            method: "POST",
+            body: JSON.stringify(requestBody),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          isSuccess = true;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      return isSuccess;
+    },
+    async jwt({ token, account }) {
+      if (account?.provider && account?.access_token) {
+        token.accessToken = account.access_token;
+        token.provider = account.provider;
+      }
+      return token;
     },
 
     async session({ session, token }) {
-      session.user = token;
+      if (token?.accessToken && session.user) {
+        session = {
+          ...session,
+          accessToken: token.accessToken,
+          provider: token.provider,
+        };
+      }
       return session;
     },
   },
-  pages: {},
+  pages: {
+    signIn: "/login",
+  },
 });
 
 export { handler as GET, handler as POST };
