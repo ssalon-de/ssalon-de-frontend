@@ -14,7 +14,8 @@ const handler = NextAuth({
   },
   callbacks: {
     async signIn({ user, account }) {
-      let isSuccess = false;
+      let isSuccess: boolean | string = false;
+
       if (account?.provider && user?.email) {
         const requestBody = {
           email: user?.email ?? "",
@@ -22,13 +23,22 @@ const handler = NextAuth({
         };
 
         try {
-          const res = await fetch(`${BASE_URL}/api/auth/login`, {
+          const res = await fetch(`${BASE_URL}/auth/oauth`, {
             method: "POST",
             body: JSON.stringify(requestBody),
             headers: {
               "Content-Type": "application/json",
             },
           });
+          console.log(`${BASE_URL}/api/auth/oauth`, res);
+
+          if (res.ok) {
+            const data = await res.json();
+
+            if (!data.isUser) {
+              isSuccess = "/profile";
+            }
+          }
 
           isSuccess = true;
         } catch (error) {
