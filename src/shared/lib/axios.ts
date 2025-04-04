@@ -1,10 +1,11 @@
-import { logout, reissue } from "@/queries/auth/api";
+import { reissue } from "@/queries/auth/api";
 import axios, { AxiosRequestConfig } from "axios";
 
 import qs from "qs";
 
 import Cookies from "js-cookie";
 import { BASE_URL } from "../constants/env";
+import { signOut } from "next-auth/react";
 
 // 토큰 재발급 중 중복 요청을 방지하기 위한 변수
 let isRefreshing = false;
@@ -66,7 +67,8 @@ api.interceptors.response.use(
           }
         }
       } catch {
-        await logout();
+        // await logout();
+        await signOut({ callbackUrl: "/login" });
         window.location.href = "/login";
       } finally {
         isRefreshing = false;

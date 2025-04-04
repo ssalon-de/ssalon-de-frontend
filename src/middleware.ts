@@ -1,27 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseService } from "./shared/lib/supabase";
+// import { supabaseService } from "./shared/lib/supabase";
+import { getServerSession } from "next-auth";
 
-const AUTH_PAGES = ["/", "/login", "/sign-up", "/find-password"];
+const BEFORE_AUTH_ROUTES = ["/", "/login", "/sign-up", "/find-password"];
 
-const logout = async (url: string) => {
-  const response = NextResponse.redirect(new URL("/login", url));
-  await supabaseService.logout();
+// const logout = async (url: string) => {
+//   const response = NextResponse.redirect(new URL("/login", url));
 
-  response.cookies.delete("accessToken");
-  response.cookies.delete("refreshToken");
-  return response;
-};
+//   await signOut();
+//   // await supabaseService.logout();
 
+//   response.cookies.delete("accessToken");
+//   response.cookies.delete("refreshToken");
+//   return response;
+// };
+
+// middleware에서 valid로직 제외
 export async function middleware(req: NextRequest) {
-  const { nextUrl, cookies } = req;
+  const { nextUrl } = req;
 
-  const accessToken = cookies.get("accessToken")?.value;
-  const refreshToken = cookies.get("refreshToken")?.value ?? "";
+  const session = await getServerSession();
+  // const refreshToken = cookies.get("refreshToken")?.value ?? "";
 
-  const isBeforeAuthPage = AUTH_PAGES.includes(nextUrl.pathname);
+  const isBeforeAuthRoute = BEFORE_AUTH_ROUTES.includes(nextUrl.pathname);
 
   if (nextUrl.pathname === "/") {
-    if (accessToken) {
+    if (session?.accessToken) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     } else {
       if (nextUrl.pathname === "/") {
@@ -32,53 +36,54 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  if (isBeforeAuthPage) {
+  if (isBeforeAuthRoute) {
     return NextResponse.next();
   }
 
-  if (!accessToken) {
-    return logout(req.url);
-  }
+  // if (!session?.accessToken) {
+  //   return logout(req.url);
+  // }
 
-  const isValid = await supabaseService.isValidToken(accessToken);
+  // valid를 사용할지 체크
+  // const isValid = await supabaseService.isValidToken(session?.accessToken);
 
-  if (isValid) {
-    return NextResponse.next();
-  }
+  // if (isValid) {
+  //   return NextResponse.next();
+  // }
 
-  if (!refreshToken) {
-    return logout(req.url);
-  }
+  // if (!refreshToken) {
+  //   return logout(req.url);
+  // }
 
-  const { data, error } = await supabaseService.reissueToken(refreshToken);
+  // const { data, error } = await supabaseService.reissueToken(refreshToken);
 
-  if (data) {
-    const response = NextResponse.next();
-    const accessToken = data.session?.access_token ?? "";
-    const refreshToken = data.session?.refresh_token ?? "";
+  // if (data) {
+  //   const response = NextResponse.next();
+  //   const accessToken = data.session?.access_token ?? "";
+  //   const refreshToken = data.session?.refresh_token ?? "";
 
-    response.cookies.set("accessToken", accessToken, {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      maxAge: 60 * 60 * 1,
-    });
+  //   response.cookies.set("accessToken", accessToken, {
+  //     httpOnly: false,
+  //     secure: process.env.NODE_ENV === "production",
+  //     sameSite: "strict",
+  //     path: "/",
+  //     maxAge: 60 * 60 * 1,
+  //   });
 
-    response.cookies.set("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7,
-    });
+  //   response.cookies.set("refreshToken", refreshToken, {
+  //     httpOnly: true,
+  //     secure: process.env.NODE_ENV === "production",
+  //     sameSite: "strict",
+  //     path: "/",
+  //     maxAge: 60 * 60 * 24 * 7,
+  //   });
 
-    return response;
-  }
+  //   return response;
+  // }
 
-  if (error) {
-    return logout(req.url);
-  }
+  // if (error) {
+  //   return logout(req.url);
+  // }
 }
 
 export const config = {

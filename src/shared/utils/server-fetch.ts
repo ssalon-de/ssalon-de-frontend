@@ -71,6 +71,10 @@ export async function serverFetch<T>(
       const { accessToken: reissueAccessToken } = await reissueResponse.json();
 
       headers.set("Authorization", `Bearer ${reissueAccessToken}`);
+      cookieStore.set("accessToken", reissueAccessToken, {
+        httpOnly: process.env.NODE_ENV === "production",
+        secure: true,
+      });
 
       const retryResponse = await fetch(`${BASE_URL}${url}`, {
         ...options,
