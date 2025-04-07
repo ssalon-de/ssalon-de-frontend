@@ -1,9 +1,8 @@
-"use client";
-
 import api from "@/shared/lib/axios";
 
 import { AuthDto, SignUpDTO, User } from "./type";
 import { encryptPassword } from "@/shared/utils/encrypt";
+import { BASE_URL } from "@/shared/constants/env";
 
 export const login = async (dto: AuthDto): Promise<{ user: User }> => {
   try {
@@ -22,21 +21,9 @@ export const login = async (dto: AuthDto): Promise<{ user: User }> => {
   }
 };
 
-export async function logout() {
-  try {
-    const res = await fetch("/api/logout", {
-      method: "POST",
-    });
-
-    return res;
-  } catch (error) {
-    throw error;
-  }
-}
-
 export async function reissue() {
   try {
-    const res = await fetch("/api/reissue", {
+    const res = await fetch(`${BASE_URL}/auth/reissue`, {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",

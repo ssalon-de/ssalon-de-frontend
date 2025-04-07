@@ -11,14 +11,31 @@ import { routes } from "@/shared/constants/routes";
 import Calendar from "./calendar";
 import { APP_NAME } from "@/shared/constants/app";
 import { useInitCustomBadge } from "@/shared/hooks/use-init-custom-badge";
+import { useEffect } from "react";
+import { useUserInfo } from "@/queries/auth";
+import Spinner from "@/shared/ui/spinner";
 
 export function Sidebar() {
+  const { data: userInfo, isLoading } = useUserInfo();
   const user = useStore(useUserStore, (state) => state.user);
+  const setUser = useUserStore((state) => state.setUser);
   const pathname = usePathname();
   const handleLogout = useLogout();
   const isActive = (path: string) => pathname === path;
 
   useInitCustomBadge();
+
+  useEffect(() => {
+    const isUserNotInit = !user?.email;
+    if (userInfo && isUserNotInit) {
+      setUser({
+        email: userInfo?.email || "",
+        name: userInfo?.name || "",
+        company: userInfo?.company || "",
+        createdAt: userInfo?.createdAt || "",
+      });
+    }
+  }, [userInfo, user]);
 
   return (
     <aside className="hidden w-64 h-screen border border-gray-200 shadow-lg md:flex md:flex-col bg-gray-50">
@@ -28,13 +45,19 @@ export function Sidebar() {
           <span className="text-xl font-bold text-gray-800">{APP_NAME}</span>
         </Link>
       </div>
-      <div className="flex-none p-4 border-b border-gray-200">
-        <div className="flex items-center space-x-3">
-          <div>
-            <p className="font-medium text-gray-700">{user?.name}</p>
-            <p className="text-sm text-gray-500">{user?.email}</p>
+      <div className="flex-none p-4 border-b border-gray-200 min-h-[77px]">
+        {isLoading ? (
+          <div className="flex items-center justify-center w-full h-full">
+            <Spinner />
           </div>
-        </div>
+        ) : (
+          <div className="flex items-center space-x-3">
+            <div>
+              <p className="font-medium text-gray-700">{user?.name}</p>
+              <p className="text-sm text-gray-500">{user?.email}</p>
+            </div>
+          </div>
+        )}
       </div>
       <nav className="flex-grow p-4 overflow-auto scrollbar-hidden">
         <ul className="space-y-2">

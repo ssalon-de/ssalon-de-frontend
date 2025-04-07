@@ -1,6 +1,7 @@
 import { BASE_URL } from "@/shared/constants/env";
 import NextAuth from "next-auth";
 import KakaoProvider from "next-auth/providers/kakao";
+import { cookies } from "next/headers";
 
 const handler = NextAuth({
   providers: [
@@ -10,10 +11,11 @@ const handler = NextAuth({
     }),
   ],
   session: {
-    maxAge: 30 * 24 * 60 * 60, // 30일
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
   },
   callbacks: {
     async signIn({ user, account }) {
+      const cookieStore = await cookies();
       let isSuccess: boolean | string = false;
 
       if (account?.provider && user?.email) {
@@ -30,10 +32,22 @@ const handler = NextAuth({
               "Content-Type": "application/json",
             },
           });
-          console.log(`${BASE_URL}/api/auth/oauth`, res);
 
           if (res.ok) {
             const data = await res.json();
+
+            cookieStore.set("accessToken", data.accessToken, {
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "strict",
+              maxAge: 60 * 60 * 1000, // 1시간
+            });
+
+            cookieStore.set("refreshToken", data.refreshToken, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "strict",
+              maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
+            });
 
             if (!data.isUser) {
               isSuccess = "/profile";
@@ -69,6 +83,7 @@ const handler = NextAuth({
   pages: {
     signIn: "/login",
   },
+  secret: process.env.NEXTAUTH_SECRET,
 });
 
 export { handler as GET, handler as POST };

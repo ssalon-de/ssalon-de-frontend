@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogOut, Scissors } from "lucide-react";
@@ -16,9 +16,13 @@ import Calendar from "./calendar";
 import { MobileHeader } from "./mobile-header";
 import { APP_NAME } from "@/shared/constants/app";
 import { useInitCustomBadge } from "@/shared/hooks/use-init-custom-badge";
+import { useUserInfo } from "@/queries/auth";
+import Spinner from "@/shared/ui/spinner";
 
 export function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
+  const { data: userInfo, isLoading } = useUserInfo();
+  const setUser = useUserStore((state) => state.setUser);
   const handleLogout = useLogout();
   const pathname = usePathname();
 
@@ -27,6 +31,18 @@ export function MobileMenu() {
   const isActive = (path: string) => pathname === path;
 
   useInitCustomBadge();
+
+  useEffect(() => {
+    const isUserNotInit = !user?.email;
+    if (userInfo && isUserNotInit) {
+      setUser({
+        email: userInfo?.email || "",
+        name: userInfo?.name || "",
+        company: userInfo?.company || "",
+        createdAt: userInfo?.createdAt || "",
+      });
+    }
+  }, [userInfo, user]);
 
   return (
     <>
@@ -53,10 +69,16 @@ export function MobileMenu() {
               </Link>
             </div>
             <div className="flex items-center px-6 py-4 space-x-4 border-b">
-              <div>
-                <p className="font-medium text-gray-700">{user?.name}</p>
-                <p className="text-sm text-gray-500">{user?.email}</p>
-              </div>
+              {isLoading ? (
+                <div className="flex items-center justify-center w-full h-full">
+                  <Spinner />
+                </div>
+              ) : (
+                <div>
+                  <p className="font-medium text-gray-700">{user?.name}</p>
+                  <p className="text-sm text-gray-500">{user?.email}</p>
+                </div>
+              )}
             </div>
             <nav className="flex-grow py-6 scrollbar-hidden">
               <ul className="space-y-2">
