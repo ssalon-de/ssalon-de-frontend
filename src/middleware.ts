@@ -1,11 +1,11 @@
-import type { NextRequest, NextFetchEvent } from "next/server";
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { decode, getToken } from "next-auth/jwt";
 
 // sign-up, find-password 제거 (oauth만 유지)
 const BEFORE_AUTH_ROUTES = ["/", "/login"];
 
-export async function middleware(req: NextRequest, _: NextFetchEvent) {
+export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const redirectTo = (dest: string) =>
     NextResponse.redirect(new URL(dest, url));
