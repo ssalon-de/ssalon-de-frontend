@@ -1,10 +1,13 @@
 import { Payment } from "@/queries/sales/type";
 import type { PaymentType } from "@/queries/settings/type";
+import { KEYS } from "@/shared/constants/query-keys";
 import { useToast } from "@/shared/hooks/use-toast";
+import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import Spinner from "@/shared/ui/spinner";
+import { useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import { UseFormSetValue } from "react-hook-form";
 
@@ -25,6 +28,7 @@ const PaymentType: React.FC<PaymentTypeProps> = ({
   onCheckedChange,
   onPaymentTypeAmountChange,
 }) => {
+  console.log(name, isChecked, amount);
   return (
     <div className="flex items-center space-x-3 min-h-[36px]">
       <Checkbox
@@ -66,6 +70,8 @@ const PaymentTypes: React.FC<Props> = (props) => {
   const { isEmptyPaymentTypes, isLoading, paymentTypes, payments, setValue } =
     props;
 
+  const queryClient = useQueryClient();
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center w-full h-full">
@@ -74,11 +80,30 @@ const PaymentTypes: React.FC<Props> = (props) => {
     );
   }
 
+  const onClickReload = (event: React.SyntheticEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    queryClient.invalidateQueries({
+      queryKey: [KEYS.paymentTypes.list],
+    });
+  };
+
   if (isEmptyPaymentTypes) {
     return (
       <div className="flex flex-col items-center py-4 space-y-2 text-xs text-gray-500">
         <p>결제 유형이 존재하지 않습니다.</p>
         <p>관리 메뉴에서 결제 유형을 생성해주세요.</p>
+        <p>
+          결제 유형이 존재하는 경우 아래 버튼을 통해 데이터를 다시 호출해주세요.
+        </p>
+        <Button
+          type="button"
+          className="mt-2"
+          size="sm"
+          variant="outline"
+          onClick={onClickReload}
+        >
+          Reload
+        </Button>
       </div>
     );
   }

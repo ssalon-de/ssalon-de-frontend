@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
-import { Checkbox } from "@/shared/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/shared/ui/radio-group";
 import {
   Accordion,
@@ -33,9 +32,9 @@ import { RequiredLabel } from "@/shared/ui/required-label";
 import dayjs from "dayjs";
 import useDateStore from "@/zustand/date";
 import { formatDate } from "@/shared/utils/dayjs";
-import PaymentTypes from "./payment-types";
-import ServiceTypes from "./service-types";
-import VisitTypes from "./visit-types";
+import PaymentTypes from "./components/payment-types";
+import ServiceTypes from "./components/service-types";
+import VisitTypes from "./components/visit-types";
 
 type SaleForm = Omit<Sale, "services" | "payments" | "id" | "date"> & {
   date: string;
@@ -248,12 +247,12 @@ const SaleEditPage = () => {
   const title = useMemo(() => (isEdit ? "매출 수정" : "매출 등록"), [isEdit]);
 
   useEffect(() => {
-    if (paymentTypes.length > 0) {
+    if (!isEdit && paymentTypes.length > 0) {
       setValue("payments", [
         { typeId: paymentTypes[0].id, name: paymentTypes[0].name, amount: "" },
       ]);
     }
-  }, [paymentTypes, setValue]);
+  }, [isEdit, paymentTypes, setValue]);
 
   useEffect(() => {
     if (isEdit && sale) {
