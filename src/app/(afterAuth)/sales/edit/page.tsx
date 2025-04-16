@@ -33,6 +33,9 @@ import { RequiredLabel } from "@/shared/ui/required-label";
 import dayjs from "dayjs";
 import useDateStore from "@/zustand/date";
 import { formatDate } from "@/shared/utils/dayjs";
+import PaymentTypes from "./payment-types";
+import ServiceTypes from "./service-types";
+import VisitTypes from "./visit-types";
 
 type SaleForm = Omit<Sale, "services" | "payments" | "id" | "date"> & {
   date: string;
@@ -89,9 +92,12 @@ const SaleEditPage = () => {
     enabled: isEdit,
   });
 
-  const { data: serviceTypes = [] } = useServiceTypes();
-  const { data: paymentTypes = [] } = usePaymentTypes();
-  const { data: visitTypes = [] } = useVisitTypes();
+  const { data: serviceTypes = [], isLoading: isServiceTypesLoading } =
+    useServiceTypes();
+  const { data: paymentTypes = [], isLoading: isPaymentTypesLoading } =
+    usePaymentTypes();
+  const { data: visitTypes = [], isLoading: isVisitTypesLoading } =
+    useVisitTypes();
   const [timeAccordion, setTimeAccordion] = useState("");
 
   const onSuccessCallback = useCallback(() => {
@@ -200,6 +206,7 @@ const SaleEditPage = () => {
         const selectedService = serviceTypes.find(
           (service) => service.id === id
         );
+
         if (selectedService) {
           const newPayments = [...payments];
           const emptyAmountPayments = newPayments.find(
@@ -305,68 +312,13 @@ const SaleEditPage = () => {
             </div>
             <div className="space-y-2">
               <RequiredLabel required>결제 유형</RequiredLabel>
-              {paymentTypes.length === 0 && (
-                <div className="flex flex-col items-center py-4 space-y-2 text-xs text-gray-500">
-                  <p>결제 유형이 존재하지 않습니다.</p>
-                  <p>관리 메뉴에서 결제 유형을 생성해주세요.</p>
-                </div>
-              )}
-              <div className="grid md:grid-cols-2 gap-4">
-                {paymentTypes.map(({ id, name }) => {
-                  const targetIndex = payments.findIndex(
-                    ({ typeId }) => typeId === id
-                  );
-                  const isChecked = targetIndex !== -1;
-                  return (
-                    <div
-                      key={`payments${id}`}
-                      className="flex items-center space-x-3 min-h-[36px]"
-                    >
-                      <Checkbox
-                        id={`payment${id}`}
-                        checked={isChecked}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setValue("payments", [
-                              ...payments,
-                              { typeId: id, name, amount: "" },
-                            ]);
-                          } else {
-                            setValue(
-                              "payments",
-                              payments.filter(({ typeId }) => typeId !== id)
-                            );
-                          }
-                        }}
-                      />
-                      <Label htmlFor={`payment-${name}`} className="w-24">
-                        {name}
-                      </Label>
-                      {isChecked && (
-                        <Input
-                          value={payments[targetIndex].amount}
-                          onChange={(event) => {
-                            if (!isNaN(Number(event.target.value))) {
-                              setValue(
-                                `payments.${targetIndex}.amount`,
-                                event.target.value
-                              );
-                            } else {
-                              toast({
-                                description: "숫자만 입력해주세요.",
-                                variant: "destructive",
-                              });
-                            }
-                          }}
-                          key={`payments.${targetIndex}.amount`}
-                          placeholder="금액"
-                          className="w-32"
-                        />
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+              <PaymentTypes
+                paymentTypes={paymentTypes}
+                payments={payments}
+                setValue={setValue}
+                isEmptyPaymentTypes={paymentTypes.length === 0}
+                isLoading={isPaymentTypesLoading}
+              />
             </div>
             <Accordion
               type="single"
@@ -379,28 +331,12 @@ const SaleEditPage = () => {
                   서비스 유형
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {serviceTypes.map((service) => (
-                      <div
-                        key={service.id}
-                        className="flex items-center space-x-2 min-h-[36px]"
-                      >
-                        <Checkbox
-                          id={`service-${service.id}`}
-                          checked={selectedServices.includes(service.id)}
-                          onCheckedChange={(state) => {
-                            handleTypesChange("services", service.id, !!state);
-                          }}
-                        />
-                        <Label htmlFor={`service-${service.id}`}>
-                          {service.name}
-                          {!!service.price && (
-                            <span className="ml-1">{`(${service.price.toLocaleString()}원)`}</span>
-                          )}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
+                  <ServiceTypes
+                    isLoading={isServiceTypesLoading}
+                    serviceTypes={serviceTypes}
+                    selectedServices={selectedServices}
+                    onChangeTypes={handleTypesChange}
+                  />
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -476,20 +412,12 @@ const SaleEditPage = () => {
                   <RequiredLabel>방문 유형</RequiredLabel>
                 </AccordionTrigger>
                 <AccordionContent className="flex gap-2 items-center">
-                  <div className="w-full grid grid-cols-2 gap-4">
-                    {visitTypes.map(({ id, name }) => (
-                      <div key={id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`visitTypes${id}`}
-                          checked={selectedVisitTypes.includes(id)}
-                          onCheckedChange={(checked) => {
-                            handleTypesChange("visitTypes", id, !!checked);
-                          }}
-                        />
-                        <Label htmlFor={`visitTypes${id}`}>{name}</Label>
-                      </div>
-                    ))}
-                  </div>
+                  <VisitTypes
+                    isLoading={isVisitTypesLoading}
+                    visitTypes={visitTypes}
+                    selectedVisitTypes={selectedVisitTypes}
+                    onChangeTypes={handleTypesChange}
+                  />
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
