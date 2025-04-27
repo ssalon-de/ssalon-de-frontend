@@ -27,10 +27,10 @@ function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const { onLogout, isLogoutIdle } = useLogout();
   const { selectedDate, onChangeDate, today } = useCalendar();
-  const { isLoading, enabledInitialize } = useInitUserInfo();
 
   const isActive = (path: string) => pathname === path;
 
+  const { isLoading, enabledInitialize } = useInitUserInfo();
   useInitCustomBadge();
   usePrefetchFilters();
 

@@ -25,7 +25,6 @@ function Sidebar() {
   const isActive = (path: string) => pathname === path;
 
   const { isLoading, enabledInitialize } = useInitUserInfo();
-
   useInitCustomBadge();
   usePrefetchFilters();
 
