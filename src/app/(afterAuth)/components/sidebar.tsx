@@ -15,6 +15,7 @@ import LoadingButton from "@/shared/ui/loading-button";
 import { Calendar } from "@/shared/ui/calendar";
 import { useCalendar } from "@/shared/hooks/use-calendar";
 import { memo } from "react";
+import usePrefetchFilters from "@/shared/hooks/use-prefetch-filters";
 
 function Sidebar() {
   const user = useStore(useUserStore, (state) => state.user);
@@ -24,7 +25,9 @@ function Sidebar() {
   const isActive = (path: string) => pathname === path;
 
   const { isLoading, enabledInitialize } = useInitUserInfo();
+
   useInitCustomBadge();
+  usePrefetchFilters();
 
   return (
     <aside className="hidden w-64 h-screen border border-gray-200 shadow-lg md:flex md:flex-col bg-gray-50">
