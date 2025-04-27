@@ -51,6 +51,7 @@ export const useEditSettings = (options?: MutationOptions<Setting[]>) => {
   });
 };
 
+/** visit-types */
 type VisitTypesQueryOptions = Omit<UseQueryOptions<VisitType[]>, "queryKey">;
 export const visitTypesQueryOptions = (options?: VisitTypesQueryOptions) =>
   queryOptions({
@@ -60,7 +61,6 @@ export const visitTypesQueryOptions = (options?: VisitTypesQueryOptions) =>
     queryFn: getVisitTypes,
   });
 
-/** visit-types */
 export const useVisitTypes = (
   options?: Omit<UseQueryOptions<VisitType[]>, "queryKey" | "queryFn">
 ) => {
