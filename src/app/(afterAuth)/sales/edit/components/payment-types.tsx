@@ -1,3 +1,4 @@
+import React from "react";
 import { Payment } from "@/queries/sales/type";
 import { usePaymentTypes } from "@/queries/settings";
 import type { PaymentType } from "@/queries/settings/type";
@@ -10,8 +11,7 @@ import { Label } from "@/shared/ui/label";
 import Spinner from "@/shared/ui/spinner";
 import { useQueryClient } from "@tanstack/react-query";
 import { LucideRotateCw } from "lucide-react";
-import React, { useEffect } from "react";
-import { UseFormSetValue } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
 type PaymentTypeProps = {
   isChecked: boolean;
@@ -58,16 +58,15 @@ const PaymentType: React.FC<PaymentTypeProps> = ({
 const MemoizedPayment = React.memo(PaymentType);
 
 type Props = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setValue: UseFormSetValue<any>;
   payments: Payment[];
   isEdit: boolean;
 };
 
 const PaymentTypes: React.FC<Props> = (props) => {
+  const { payments } = props;
+  const { setValue } = useFormContext();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { payments, setValue, isEdit } = props;
 
   const { data: paymentTypes = [], isFetching, isError } = usePaymentTypes();
 
@@ -108,16 +107,6 @@ const PaymentTypes: React.FC<Props> = (props) => {
       });
     }
   };
-
-  // @todo: check
-  console.log(payments);
-  useEffect(() => {
-    if (!isEdit && !isEmptyPaymentTypes) {
-      setValue("payments", [
-        { typeId: paymentTypes[0].id, name: paymentTypes[0].name, amount: "" },
-      ]);
-    }
-  }, [isEdit, paymentTypes, isEmptyPaymentTypes, setValue]);
 
   if (isFetching) {
     return (
