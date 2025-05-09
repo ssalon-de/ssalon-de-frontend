@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/shared/ui/radio-group";
 import {
   Accordion,
   AccordionContent,
@@ -15,7 +14,6 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import {
   CreateSaleDto,
-  Gender,
   Payment,
   Sale,
   UpdateSaleDto,
@@ -38,6 +36,8 @@ import {
 } from "@/queries/settings";
 import { useQueryClient } from "@tanstack/react-query";
 import { KEYS } from "@/shared/constants/query-keys";
+import TimeSelectField from "./components/time-select-field";
+import GenderSelectField from "./components/gender-select-field";
 
 type SaleForm = Omit<Sale, "services" | "payments" | "id" | "date"> & {
   date: string;
@@ -47,11 +47,6 @@ type SaleForm = Omit<Sale, "services" | "payments" | "id" | "date"> & {
   payments: Payment[];
   id?: string;
 };
-
-const genderItems = [
-  { label: "남성", value: "M" },
-  { label: "여성", value: "F" },
-];
 
 const SaleEditPage = () => {
   const router = useRouter();
@@ -63,6 +58,10 @@ const SaleEditPage = () => {
 
   const id = searchParams.get("saleId") ?? "";
   const isEdit = !!id;
+  const title = isEdit ? "매출 수정" : "매출 등록";
+
+  const [timeAccordion, setTimeAccordion] = useState("");
+
   const defaultValues: SaleForm = useMemo(
     () => ({
       date: formatDate({ date }),
@@ -111,8 +110,6 @@ const SaleEditPage = () => {
     enabled: isEdit,
   });
 
-  const [timeAccordion, setTimeAccordion] = useState("");
-
   const onSuccessCallback = useCallback(() => {
     reset(defaultValues);
     client.invalidateQueries({
@@ -131,23 +128,25 @@ const SaleEditPage = () => {
   const validateForm = useCallback((data: SaleForm) => {
     const validate = {
       message: "",
-      flag: true,
+      flag: false,
     };
+
     if (+data.amount === 0) {
       validate.message = "결제 유형을 통해 금액을 입력해주세요.";
-      validate.flag = false;
     } else if (data.payments.length === 0) {
       validate.message = "결제 유형을 선택해주세요.";
-      validate.flag = false;
     } else if (!!data.time || !!data.date) {
       if (!data.time) {
         validate.message = "날짜를 입력한 경우 시간을 필수로 선택해주세요.";
-        validate.flag = false;
       } else if (!data.date) {
         validate.message = "시간을 선택한 경우 날짜를 필수로 입력해주세요.";
-        validate.flag = false;
       }
     }
+
+    if (validate.message === "") {
+      validate.flag = true;
+    }
+
     return validate;
   }, []);
 
@@ -204,61 +203,65 @@ const SaleEditPage = () => {
     [createSale, id, isEdit, serviceTypes, toast, updateSale, validateForm]
   );
 
-  const handleTypesChange = useCallback(
-    (type: "visitTypes" | "services", id: string, checked: boolean) => {
-      const selectedTypes =
-        type === "visitTypes" ? selectedVisitTypes : selectedServices;
+  const setAmountToEmptyPayment = useCallback(
+    (targetId: string) => {
+      const selectedService = serviceTypes.find(
+        (service) => service.id === targetId
+      );
 
-      const newTypes = selectedTypes.includes(id)
-        ? selectedTypes.filter((typeId) => typeId !== id)
-        : [...selectedTypes, id];
+      if (selectedService) {
+        const newPayments = [...payments];
+        const emptyAmountPayments = newPayments.find(
+          ({ amount }) => amount === ""
+        );
+
+        if (emptyAmountPayments) {
+          emptyAmountPayments.amount = selectedService.price?.toString() ?? "";
+        } else if (newPayments.length > 0) {
+          const firstPayment = newPayments[0];
+          const selectedServicePrice = selectedService.price ?? 0;
+          const addedPrice = +firstPayment.amount + selectedServicePrice;
+          firstPayment.amount = addedPrice.toString();
+        }
+
+        setValue("payments", newPayments);
+      }
+    },
+    [payments, serviceTypes, setValue]
+  );
+
+  const handleTypesChange = useCallback(
+    (type: "services" | "visitTypes", targetId: string, checked: boolean) => {
+      const selectedTypes =
+        type === "services" ? selectedServices : selectedVisitTypes;
+
+      const newTypes = selectedTypes.includes(targetId)
+        ? selectedTypes.filter((typeId) => typeId !== targetId)
+        : [...selectedTypes, targetId];
 
       setValue(type, newTypes);
 
       if (type === "services" && checked) {
-        const selectedService = serviceTypes.find(
-          (service) => service.id === id
-        );
-
-        if (selectedService) {
-          const newPayments = [...payments];
-          const emptyAmountPayments = newPayments.find(
-            ({ amount }) => amount === ""
-          );
-
-          if (emptyAmountPayments) {
-            emptyAmountPayments.amount =
-              selectedService.price?.toString() ?? "";
-          } else if (newPayments.length > 0) {
-            const firstPayment = newPayments[0];
-            const selectedServicePrice = selectedService.price ?? 0;
-            const addedPrice = +firstPayment.amount + selectedServicePrice;
-            firstPayment.amount = addedPrice.toString();
-          }
-
-          setValue("payments", newPayments);
-        }
+        setAmountToEmptyPayment(targetId);
       }
     },
-    [payments, selectedServices, selectedVisitTypes, serviceTypes, setValue]
+    [selectedServices, selectedVisitTypes, setValue, setAmountToEmptyPayment]
   );
 
-  const isFormDisabled = useMemo(() => {
+  const handleSelectTime = (time: string) => {
+    if (selectedTime === time) {
+      setValue("time", "");
+    } else {
+      setValue("time", time);
+    }
+    setTimeAccordion("");
+    isTouchTime.current = true;
+  };
+
+  const isSubmitButtonDisabled = useMemo(() => {
     const hasError = Object.keys(formState.errors).length > 0;
     return paymentTypes.length === 0 || formState.isSubmitting || hasError;
   }, [paymentTypes, formState]);
-
-  const timeSlots = useMemo(
-    () =>
-      Array.from({ length: 27 }, (_, i) => {
-        const hour = Math.floor(i / 2) + 9;
-        const minute = i % 2 === 0 ? "00" : "30";
-        return `${hour.toString().padStart(2, "0")}:${minute}`;
-      }),
-    []
-  );
-
-  const title = isEdit ? "매출 수정" : "매출 등록";
 
   useEffect(() => {
     if (!isEdit && paymentTypes.length > 0) {
@@ -364,26 +367,10 @@ const SaleEditPage = () => {
                   </RequiredLabel>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="grid grid-cols-4 gap-2">
-                    {timeSlots.map((time) => (
-                      <Button
-                        key={time}
-                        type="button"
-                        variant={selectedTime === time ? "default" : "outline"}
-                        onClick={() => {
-                          if (selectedTime === time) {
-                            setValue("time", "");
-                          } else {
-                            setValue("time", time);
-                          }
-                          setTimeAccordion("");
-                          isTouchTime.current = true;
-                        }}
-                      >
-                        {time}
-                      </Button>
-                    ))}
-                  </div>
+                  <TimeSelectField
+                    selectedTime={selectedTime}
+                    onClickSelect={handleSelectTime}
+                  />
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -391,21 +378,10 @@ const SaleEditPage = () => {
               <AccordionItem value="serviceTypes">
                 <AccordionTrigger>성별</AccordionTrigger>
                 <AccordionContent>
-                  <RadioGroup
-                    value={gender}
-                    onValueChange={(value) =>
-                      setValue("gender", value as Gender)
-                    }
-                    className="flex gap-4"
-                    required
-                  >
-                    {genderItems.map(({ label, value }) => (
-                      <div key={value} className="flex items-center space-x-2">
-                        <RadioGroupItem value={value} id={`gender-${value}`} />
-                        <Label htmlFor={`gender-${value}`}>{label}</Label>
-                      </div>
-                    ))}
-                  </RadioGroup>
+                  <GenderSelectField
+                    gender={gender}
+                    onClickSelect={(gender) => setValue("gender", gender)}
+                  />
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -435,7 +411,11 @@ const SaleEditPage = () => {
                 className="col-span-3"
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isFormDisabled}>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isSubmitButtonDisabled}
+            >
               매출 등록
             </Button>
           </CardContent>
