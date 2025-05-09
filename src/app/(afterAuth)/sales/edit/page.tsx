@@ -29,11 +29,7 @@ import PaymentTypes from "./components/payment-types";
 import ServiceTypes from "./components/service-types";
 import VisitTypes from "./components/visit-types";
 import { PATH } from "@/shared/constants/path";
-import {
-  usePaymentTypes,
-  useServiceTypes,
-  useVisitTypes,
-} from "@/queries/settings";
+import { useServiceTypes } from "@/queries/settings";
 import { useQueryClient } from "@tanstack/react-query";
 import { KEYS } from "@/shared/constants/query-keys";
 import TimeSelectField from "./components/time-select-field";
@@ -77,16 +73,6 @@ const SaleEditPage = () => {
     [date]
   );
 
-  const {
-    data: visitTypes = [],
-    isFetching: isVisitTypesFetching,
-    isError: isVisitTypesError,
-  } = useVisitTypes();
-  const {
-    data: paymentTypes = [],
-    isFetching: isPaymentTypesFetching,
-    isError: isPaymentTypesError,
-  } = usePaymentTypes();
   const {
     data: serviceTypes = [],
     isFetching: isServiceTypesFetching,
@@ -260,16 +246,8 @@ const SaleEditPage = () => {
 
   const isSubmitButtonDisabled = useMemo(() => {
     const hasError = Object.keys(formState.errors).length > 0;
-    return paymentTypes.length === 0 || formState.isSubmitting || hasError;
-  }, [paymentTypes, formState]);
-
-  useEffect(() => {
-    if (!isEdit && paymentTypes.length > 0) {
-      setValue("payments", [
-        { typeId: paymentTypes[0].id, name: paymentTypes[0].name, amount: "" },
-      ]);
-    }
-  }, [isEdit, paymentTypes, setValue]);
+    return formState.isSubmitting || hasError;
+  }, [formState]);
 
   useEffect(() => {
     if (isEdit && sale) {
@@ -329,12 +307,9 @@ const SaleEditPage = () => {
             <div className="space-y-2">
               <RequiredLabel required>결제 유형</RequiredLabel>
               <PaymentTypes
-                paymentTypes={paymentTypes}
+                isEdit={isEdit}
                 payments={payments}
                 setValue={setValue}
-                isEmptyPaymentTypes={paymentTypes.length === 0}
-                isError={isPaymentTypesError}
-                isLoading={isPaymentTypesFetching}
               />
             </div>
             <Accordion type="single" collapsible className="w-full">
@@ -392,9 +367,6 @@ const SaleEditPage = () => {
                 </AccordionTrigger>
                 <AccordionContent className="flex gap-2 items-center">
                   <VisitTypes
-                    isError={isVisitTypesError}
-                    isLoading={isVisitTypesFetching}
-                    visitTypes={visitTypes}
                     selectedVisitTypes={selectedVisitTypes}
                     onChangeTypes={handleTypesChange}
                   />
