@@ -142,9 +142,10 @@ const SaleEditPage = () => {
     } else if (!!data.time || !!data.date) {
       if (!data.time) {
         validate.message = "날짜를 입력한 경우 시간을 필수로 선택해주세요.";
-        // return validate;
+        validate.flag = false;
       } else if (!data.date) {
         validate.message = "시간을 선택한 경우 날짜를 필수로 입력해주세요.";
+        validate.flag = false;
       }
     }
     return validate;
@@ -164,9 +165,9 @@ const SaleEditPage = () => {
         visitTypes: sale.visitTypes,
       };
 
-      const { message, flag } = validateForm(inputData);
+      const { message, flag: valid } = validateForm(inputData);
 
-      if (flag) {
+      if (valid) {
         const services = sale.services.reduce((prev, cur) => {
           const service = serviceTypes.find((service) => service.id === cur);
           if (service) {
