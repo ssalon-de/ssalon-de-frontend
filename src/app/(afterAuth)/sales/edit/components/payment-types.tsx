@@ -80,8 +80,6 @@ const PaymentTypes: React.FC<Props> = (props) => {
     });
   };
 
-  console.log(payments);
-
   const handleCheckedChange = (checked: boolean, id: string) => {
     const paymentType = paymentTypes.find((type) => type.id === id);
     if (checked) {
@@ -111,6 +109,8 @@ const PaymentTypes: React.FC<Props> = (props) => {
     }
   };
 
+  // @todo: check
+  console.log(payments);
   useEffect(() => {
     if (!isEdit && !isEmptyPaymentTypes) {
       setValue("payments", [
