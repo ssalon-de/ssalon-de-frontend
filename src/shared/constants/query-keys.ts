@@ -1,9 +1,16 @@
 export const KEYS = {
+  filters: "FILTERS",
   serviceTypes: {
     list: "SERVICE-TYPES",
   },
   paymentTypes: {
     list: "PAYMENT-TYPES",
+  },
+  visitTypes: {
+    list: "VISIT-TYPES",
+  },
+  settings: {
+    list: "SETTINGS",
   },
   sales: {
     list: "SALES",
@@ -25,8 +32,8 @@ export const KEYS = {
       totalCount: "TOTAL-COUNT",
     },
   },
-  settings: {
-    visitTypes: "VISIT-TYPES",
-    list: "SETTINGS",
-  },
 };
+
+export const VISIT_TYPES_KEY = [KEYS.filters, KEYS.visitTypes.list];
+export const SERVICE_TYPES_KEY = [KEYS.filters, KEYS.serviceTypes.list];
+export const PAYMENT_TYPES_KEY = [KEYS.filters, KEYS.paymentTypes.list];

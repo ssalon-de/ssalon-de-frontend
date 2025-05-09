@@ -1,7 +1,12 @@
+import { useServiceTypes } from "@/queries/settings";
 import type { ServiceType } from "@/queries/settings/type";
+import { SERVICE_TYPES_KEY } from "@/shared/constants/query-keys";
+import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { Label } from "@/shared/ui/label";
 import Spinner from "@/shared/ui/spinner";
+import { useQueryClient } from "@tanstack/react-query";
+import { LucideRotateCw } from "lucide-react";
 import React from "react";
 
 type ServiceTypeProps = {
@@ -38,8 +43,6 @@ const ServiceType: React.FC<ServiceTypeProps> = (props) => {
 const MemoizedServiceType = React.memo(ServiceType);
 
 type Props = {
-  isLoading: boolean;
-  serviceTypes: ServiceType[];
   selectedServices: string[];
   onChangeTypes: (
     type: "visitTypes" | "services",
@@ -49,9 +52,60 @@ type Props = {
 };
 
 const ServiceTypes: React.FC<Props> = (props) => {
-  const { serviceTypes, selectedServices, isLoading, onChangeTypes } = props;
+  const { selectedServices, onChangeTypes } = props;
+  const queryClient = useQueryClient();
 
-  if (isLoading) {
+  const { data: serviceTypes = [], isFetching, isError } = useServiceTypes();
+
+  const isEmpty = serviceTypes.length === 0;
+
+  const onClickReload = (event: React.SyntheticEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    queryClient.invalidateQueries({
+      queryKey: SERVICE_TYPES_KEY,
+    });
+  };
+
+  if (isEmpty) {
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <p className="text-gray-500 text-xs text-center mb-2">
+          등록된 서비스가 존재하지 않습니다.
+        </p>
+        <p className="text-gray-500 text-xs text-center">
+          만약 서비스가 존재한다면 아래 새로고침 버튼을 클릭해주세요.
+        </p>
+        <Button
+          size="sm"
+          type="button"
+          className="mt-2"
+          variant="outline"
+          onClick={onClickReload}
+        >
+          <LucideRotateCw className="text-gray-500" />
+        </Button>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <p className="text-gray-500 text-xs">서비스를 불러오지 못했습니다.</p>
+        <Button
+          size="sm"
+          type="button"
+          className="mt-2"
+          variant="outline"
+          onClick={onClickReload}
+        >
+          <LucideRotateCw className="text-gray-500" />
+        </Button>
+      </div>
+    );
+  }
+
+  if (isFetching) {
     return (
       <div className="flex items-center justify-center w-full h-full">
         <Spinner />
@@ -76,4 +130,4 @@ const ServiceTypes: React.FC<Props> = (props) => {
   );
 };
 
-export default React.memo(ServiceTypes);
+export default ServiceTypes;

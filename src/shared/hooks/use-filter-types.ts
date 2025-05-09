@@ -10,7 +10,6 @@ import {
   VisitType,
 } from "@/queries/settings/type";
 import { useQueries } from "@tanstack/react-query";
-import { useMemo } from "react";
 
 type ReturnType = {
   visitTypes: VisitType[];
@@ -20,8 +19,11 @@ type ReturnType = {
   isLoading: boolean;
   isError: boolean;
   isVisitTypesFetching: boolean;
+  isVisitTypesError: boolean;
   isPaymentTypesFetching: boolean;
+  isPaymentTypesError: boolean;
   isServiceTypesFetching: boolean;
+  isServiceTypesError: boolean;
 };
 
 const useFilterTypes = (): ReturnType => {
@@ -36,18 +38,16 @@ const useFilterTypes = (): ReturnType => {
   const [visitTypesResult, paymentTypesResult, serviceTypesResult] =
     queriesResult;
 
-  const genders = useMemo(
-    () => [
-      { id: "M", name: "남성" },
-      { id: "F", name: "여성" },
-    ],
-    []
-  );
+  const genders = [
+    { id: "M", name: "남성" },
+    { id: "F", name: "여성" },
+  ];
 
   const isLoading =
-    visitTypesResult.isLoading ||
-    paymentTypesResult.isLoading ||
+    visitTypesResult.isLoading &&
+    paymentTypesResult.isLoading &&
     serviceTypesResult.isLoading;
+
   const isError =
     visitTypesResult.isError ||
     paymentTypesResult.isError ||
@@ -63,6 +63,9 @@ const useFilterTypes = (): ReturnType => {
     isVisitTypesFetching: visitTypesResult.isFetching,
     isPaymentTypesFetching: paymentTypesResult.isFetching,
     isServiceTypesFetching: serviceTypesResult.isFetching,
+    isVisitTypesError: visitTypesResult.isError,
+    isPaymentTypesError: paymentTypesResult.isError,
+    isServiceTypesError: serviceTypesResult.isError,
   };
 };
 

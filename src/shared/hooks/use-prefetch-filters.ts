@@ -1,12 +1,17 @@
+import { useCallback, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   paymentTypesQueryOptions,
   serviceTypesQueryOptions,
   visitTypesQueryOptions,
 } from "@/queries/settings";
-import { useCallback, useEffect, useRef } from "react";
 
-const usePrefetchFilters = () => {
+type Result = {
+  isMount: boolean;
+  prefetchFilters: () => void;
+};
+
+const usePrefetchFilters = (): Result => {
   const isMount = useRef(false);
   const queryClient = useQueryClient();
 
@@ -15,6 +20,9 @@ const usePrefetchFilters = () => {
   const paymentTypesOptions = paymentTypesQueryOptions();
 
   const prefetchFilters = useCallback(async () => {
+    if (isMount.current) return;
+    isMount.current = true;
+
     await queryClient.prefetchQuery({
       ...visitTypesOptions,
     });
@@ -31,12 +39,10 @@ const usePrefetchFilters = () => {
     paymentTypesOptions,
   ]);
 
-  useEffect(() => {
-    if (isMount.current) return;
-
-    isMount.current = true;
-    prefetchFilters();
-  }, [prefetchFilters]);
+  return {
+    isMount: isMount.current,
+    prefetchFilters,
+  };
 };
 
 export default usePrefetchFilters;

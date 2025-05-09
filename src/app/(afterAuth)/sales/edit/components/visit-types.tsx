@@ -1,6 +1,11 @@
+import { useVisitTypes } from "@/queries/settings";
+import { VISIT_TYPES_KEY } from "@/shared/constants/query-keys";
+import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { Label } from "@/shared/ui/label";
 import Spinner from "@/shared/ui/spinner";
+import { useQueryClient } from "@tanstack/react-query";
+import { LucideRotateCw } from "lucide-react";
 import React from "react";
 
 type VisitTypeProps = {
@@ -33,8 +38,6 @@ const VisitType: React.FC<VisitTypeProps> = (props) => {
 const MemoizedVisitType = React.memo(VisitType);
 
 type Props = {
-  isLoading: boolean;
-  visitTypes: { id: string; name: string }[];
   selectedVisitTypes: string[];
   onChangeTypes: (
     type: "visitTypes" | "services",
@@ -44,15 +47,69 @@ type Props = {
 };
 
 const VisitTypes: React.FC<Props> = (props) => {
-  const { isLoading, visitTypes, selectedVisitTypes, onChangeTypes } = props;
+  const { data: visitTypes = [], isFetching, isError } = useVisitTypes();
 
-  if (isLoading) {
+  const queryClient = useQueryClient();
+  const { selectedVisitTypes, onChangeTypes } = props;
+
+  const isEmpty = visitTypes.length === 0;
+
+  const onClickReload = (event: React.SyntheticEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    queryClient.invalidateQueries({
+      queryKey: VISIT_TYPES_KEY,
+    });
+  };
+
+  if (isEmpty) {
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <p className="text-gray-500 text-xs text-center mb-2">
+          등록하신 방문 유형이 존재하지 않습니다.
+        </p>
+        <p className="text-gray-500 text-xs text-center">
+          등록한 방문 유형이 존재한다면 아래 새로고침 버튼을 클릭해주세요.
+        </p>
+        <Button
+          size="sm"
+          type="button"
+          className="mt-2"
+          variant="outline"
+          onClick={onClickReload}
+        >
+          <LucideRotateCw className="text-gray-500" />
+        </Button>
+      </div>
+    );
+  }
+
+  if (isFetching) {
     return (
       <div className="flex items-center justify-center w-full h-full">
         <Spinner />
       </div>
     );
   }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <p className="text-gray-500 text-xs">
+          방문 유형을 불러오지 못했습니다.
+        </p>
+        <Button
+          size="sm"
+          type="button"
+          className="mt-2"
+          variant="outline"
+          onClick={onClickReload}
+        >
+          <LucideRotateCw className="text-gray-500" />
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full grid grid-cols-2 gap-4">
       {visitTypes.map(({ id, name }) => (
@@ -68,4 +125,4 @@ const VisitTypes: React.FC<Props> = (props) => {
   );
 };
 
-export default React.memo(VisitTypes);
+export default VisitTypes;

@@ -1,6 +1,8 @@
+import React from "react";
 import { Payment } from "@/queries/sales/type";
+import { usePaymentTypes } from "@/queries/settings";
 import type { PaymentType } from "@/queries/settings/type";
-import { KEYS } from "@/shared/constants/query-keys";
+import { PAYMENT_TYPES_KEY } from "@/shared/constants/query-keys";
 import { useToast } from "@/shared/hooks/use-toast";
 import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
@@ -8,8 +10,8 @@ import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import Spinner from "@/shared/ui/spinner";
 import { useQueryClient } from "@tanstack/react-query";
-import React from "react";
-import { UseFormSetValue } from "react-hook-form";
+import { LucideRotateCw } from "lucide-react";
+import { useFormContext } from "react-hook-form";
 
 type PaymentTypeProps = {
   isChecked: boolean;
@@ -56,56 +58,26 @@ const PaymentType: React.FC<PaymentTypeProps> = ({
 const MemoizedPayment = React.memo(PaymentType);
 
 type Props = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setValue: UseFormSetValue<any>;
-  isEmptyPaymentTypes: boolean;
-  isLoading: boolean;
   payments: Payment[];
-  paymentTypes: PaymentType[];
+  isEdit: boolean;
 };
 
 const PaymentTypes: React.FC<Props> = (props) => {
+  const { payments } = props;
+  const { setValue } = useFormContext();
   const { toast } = useToast();
-  const { isEmptyPaymentTypes, isLoading, paymentTypes, payments, setValue } =
-    props;
-
   const queryClient = useQueryClient();
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center w-full h-full">
-        <Spinner />
-      </div>
-    );
-  }
+  const { data: paymentTypes = [], isFetching, isError } = usePaymentTypes();
+
+  const isEmptyPaymentTypes = paymentTypes.length === 0;
 
   const onClickReload = (event: React.SyntheticEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     queryClient.invalidateQueries({
-      queryKey: [KEYS.paymentTypes.list],
+      queryKey: PAYMENT_TYPES_KEY,
     });
   };
-
-  if (isEmptyPaymentTypes) {
-    return (
-      <div className="flex flex-col items-center py-4 space-y-2 text-xs text-gray-500">
-        <p>결제 유형이 존재하지 않습니다.</p>
-        <p>관리 메뉴에서 결제 유형을 생성해주세요.</p>
-        <p>
-          결제 유형이 존재하는 경우 아래 버튼을 통해 데이터를 다시 호출해주세요.
-        </p>
-        <Button
-          type="button"
-          className="mt-2"
-          size="sm"
-          variant="outline"
-          onClick={onClickReload}
-        >
-          Reload
-        </Button>
-      </div>
-    );
-  }
 
   const handleCheckedChange = (checked: boolean, id: string) => {
     const paymentType = paymentTypes.find((type) => type.id === id);
@@ -136,6 +108,32 @@ const PaymentTypes: React.FC<Props> = (props) => {
     }
   };
 
+  if (isFetching) {
+    return (
+      <div className="flex items-center justify-center w-full h-full">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (isEmptyPaymentTypes || isError) {
+    return (
+      <div className="flex flex-col items-center py-4 space-y-2 text-xs text-gray-500">
+        <p>결제 유형이 존재하지 않거나 호출을 실패했습니다.</p>
+        <p>결제 유형이 존재하는 경우 새로고침을 클릭해주세요.</p>
+        <Button
+          type="button"
+          className="mt-2"
+          size="sm"
+          variant="outline"
+          onClick={onClickReload}
+        >
+          <LucideRotateCw className="text-gray-500" />
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="grid md:grid-cols-2 gap-4">
       {paymentTypes.map(({ id, name }) => {
@@ -159,4 +157,4 @@ const PaymentTypes: React.FC<Props> = (props) => {
   );
 };
 
-export default React.memo(PaymentTypes);
+export default PaymentTypes;
