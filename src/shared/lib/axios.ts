@@ -23,7 +23,7 @@ function paramsSerializer(params: unknown): string {
 function createApiInstance(bearerJwt = "", options: AxiosRequestConfig = {}) {
   const api = axios.create({
     baseURL: BASE_URL,
-    timeout: API_TIMEOUT,
+    // timeout: API_TIMEOUT,
     withCredentials: true,
     paramsSerializer: {
       serialize: paramsSerializer,

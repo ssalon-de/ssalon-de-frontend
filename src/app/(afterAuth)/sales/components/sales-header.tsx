@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Plus, File } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import PageTitle from "@/shared/ui/page-title";
 
@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { PATH } from "@/shared/constants/path";
 import { useQueryClient } from "@tanstack/react-query";
 import { KEYS } from "@/shared/constants/query-keys";
+import Link from "next/link";
 
 const SalesHeader = () => {
   const router = useRouter();
@@ -23,6 +24,12 @@ const SalesHeader = () => {
     <div className="relative flex flex-col items-baseline justify-between gap-6 md:items-center md:flex-row md:gap-0">
       <PageTitle title="매출 목록" />
       <div className="flex flex-wrap justify-between w-full gap-4 md:w-max md:justify-normal">
+        <Link href={PATH.SALES_MULTI}>
+          {/* 추후 수정 */}
+          <Button size="sm" variant="secondary">
+            <File className="w-4 h-4" />
+          </Button>
+        </Link>
         <TotalSales />
         <Button
           onClick={handleClick}
