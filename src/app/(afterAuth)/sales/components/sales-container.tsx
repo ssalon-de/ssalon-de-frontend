@@ -16,6 +16,7 @@ import { ACTION } from "@/shared/constants/action";
 import SalesList from "./sales-list";
 import { PATH } from "@/shared/constants/path";
 import useSelectedFiltersStore from "@/zustand/selected-filter";
+import DatePicker from "./date-picker";
 
 const SalesContainer = () => {
   const client = useQueryClient();
@@ -93,6 +94,7 @@ const SalesContainer = () => {
 
   return (
     <>
+      <DatePicker />
       <SalesFilter />
       <div className="space-y-4">
         <SalesList
