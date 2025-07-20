@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, Suspense, useCallback, useMemo, useState } from "react";
 
 import { useDeleteSale, useSales } from "@/queries/sales";
 import { MutateType } from "@/shared/types/query";
@@ -16,16 +16,16 @@ import { ACTION } from "@/shared/constants/action";
 import SalesList from "./sales-list";
 import { PATH } from "@/shared/constants/path";
 import useSelectedFiltersStore from "@/zustand/selected-filter";
-import DatePicker from "./date-picker";
+
+import dynamic from "next/dynamic";
+
+const DatePicker = dynamic(() => import("./date-picker"), { ssr: false });
 
 const SalesContainer = () => {
   const client = useQueryClient();
   const router = useRouter();
   const [openDeleteAlert, setOpenDeleteAlert] = useState(false);
   const [selectedSale, setSelectedSale] = useState<string>();
-  const selectedFilters = useSelectedFiltersStore(
-    (state) => state.selectedFilters
-  );
   const getFilteredSales = useSelectedFiltersStore(
     (state) => state.getFilteredSales
   );
@@ -52,7 +52,7 @@ const SalesContainer = () => {
 
   const filteredSales = useMemo(
     () => getFilteredSales(sales),
-    [sales, selectedFilters, getFilteredSales]
+    [sales, getFilteredSales]
   );
 
   const onAfterMutate = useCallback(
@@ -94,7 +94,9 @@ const SalesContainer = () => {
 
   return (
     <>
-      <DatePicker />
+      <Suspense>
+        <DatePicker />
+      </Suspense>
       <SalesFilter />
       <div className="space-y-4">
         <SalesList
