@@ -3,9 +3,11 @@
 import { useCreateBulkSale } from "@/queries/sales";
 import { Payment } from "@/queries/sales/type";
 import { usePaymentTypes } from "@/queries/settings";
+import { PaymentType } from "@/queries/settings/type";
 import { ERROR_MESSAGE } from "@/shared/constants/error-message";
 import { PATH } from "@/shared/constants/path";
 import { KEYS } from "@/shared/constants/query-keys";
+import { NUMBER_REGEX } from "@/shared/constants/regex";
 import { useToast } from "@/shared/hooks/use-toast";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardFooter } from "@/shared/ui/card";
@@ -17,21 +19,32 @@ import useDateStore from "@/zustand/date";
 import { useQueryClient } from "@tanstack/react-query";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 
-type BulkSale = {
-  amount: number;
-  payments: Pick<Payment, "typeId" | "amount">[];
-};
+interface PaymentTypeWithChecked extends Payment {
+  checked: boolean;
+}
 
-type Form = {
+interface Form {
   date: string;
-  bulkSales: BulkSale[];
-};
+  bulkSales: {
+    payments: PaymentTypeWithChecked[];
+  }[];
+}
 
 const defaultValues: Form = {
   date: "",
-  bulkSales: [{ amount: 0, payments: [] }],
+  bulkSales: [{ payments: [] }],
+};
+
+const makePayment = (paymentType: PaymentType): PaymentTypeWithChecked => {
+  return {
+    typeId: paymentType.id,
+    name: paymentType.name,
+    amount: "",
+    checked: false,
+  };
 };
 
 const BulkPage = () => {
@@ -42,7 +55,7 @@ const BulkPage = () => {
   const { control, handleSubmit, reset, setValue } = useForm<Form>({
     defaultValues: {
       ...defaultValues,
-      date: date,
+      date,
     },
   });
 
@@ -65,7 +78,12 @@ const BulkPage = () => {
     },
   });
 
-  const { data: paymentTypes = [], isFetching, isError } = usePaymentTypes();
+  const {
+    data: paymentTypes = [],
+    // isFetching,
+    // isError,
+    isSuccess,
+  } = usePaymentTypes();
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -73,18 +91,21 @@ const BulkPage = () => {
     rules: {
       minLength: {
         value: 1,
-        message: ERROR_MESSAGE.NEED_MINIMUM_ONE_SALE.message,
+        message: ERROR_MESSAGE.NEED_MINIMUM_ONE_SALE,
       },
     },
   });
 
   const bulkSales = useWatch({ control, name: "bulkSales" });
 
-  console.log(bulkSales);
+  const isEmptyPayments = bulkSales.every(
+    ({ payments }) => payments.length === 0
+  );
 
   const appendField = () => {
+    const payments = paymentTypes.map(makePayment);
     append(
-      { amount: 0, payments: [] },
+      { payments },
       {
         shouldFocus: true,
       }
@@ -94,7 +115,7 @@ const BulkPage = () => {
   const removeField = (index: number) => {
     if (fields.length === 1) {
       return toast({
-        description: ERROR_MESSAGE.NEED_MINIMUM_ONE_SALE.message,
+        description: ERROR_MESSAGE.NEED_MINIMUM_ONE_SALE,
         variant: "destructive",
       });
     }
@@ -107,20 +128,46 @@ const BulkPage = () => {
   };
 
   const handleClickSave = (formData: Form) => {
-    const bulkSales = formData.bulkSales.map((sale) => sale.amount);
+    const bulkSales = formData.bulkSales.map((sale) => {
+      const amount = sale.payments.reduce((prev, cur) => {
+        return cur.checked ? prev + (+cur.amount || 0) : prev;
+      }, 0);
+      const filterdEmptyPayments = sale.payments.filter(({ checked }) => {
+        return checked;
+      });
+      return {
+        amount,
+        payments: filterdEmptyPayments.map(({ typeId, amount, name }) => ({
+          typeId,
+          amount,
+          name,
+        })),
+      };
+    });
+
+    const isValid = bulkSales.every((sale) => {
+      return sale.amount > 0 && sale.payments.length > 0;
+    });
+
+    if (!isValid) {
+      return toast({
+        description: ERROR_MESSAGE.INVALID_BULK_SALE,
+        variant: "destructive",
+      });
+    }
+
     createBulkSales({
       date: formData.date,
       bulkSales,
     });
   };
 
-  // const isChecked = (fieldIndex: number, paymentTypeId: string) => {
-  //   return bulkSales[fieldIndex].payments.some(
-  //     (payment) => payment.typeId === paymentTypeId
-  //   );
-  // };
-
-  console.log("bulkSales", bulkSales);
+  useEffect(() => {
+    if (isSuccess && isEmptyPayments) {
+      const payments = paymentTypes.map(makePayment);
+      setValue("bulkSales", [{ payments }]);
+    }
+  }, [isSuccess]);
 
   return (
     <form
@@ -129,86 +176,73 @@ const BulkPage = () => {
     >
       <PageTitle className="flex justify-between">
         매출 다중 입력
-        <Button>저장</Button>
+        <Button type="submit">저장</Button>
       </PageTitle>
       <div className="grid md:grid-cols-2 gap-4">
         {fields.map((field, index) => {
-          const bulkSale = bulkSales[index];
+          const amount = field.payments.reduce((prev, cur) => {
+            return cur.amount ? prev + +cur.amount : prev;
+          }, 0);
           return (
             <Card key={field.id}>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-2">
-                  <Label className="w-12" htmlFor={`bulkSales.${index}.amount`}>
-                    총 매출
+                  <Label
+                    className="text-gray-700"
+                    htmlFor={`bulkSales.${index}.amount`}
+                  >
+                    매출
                   </Label>
-                  <Input
-                    key={`bulkSale.${index}.amount`}
-                    disabled
-                    placeholder="매출 유형을 통해 매출을 입력해주세요."
-                    {...control.register(`bulkSales.${index}.amount`)}
-                  />
+                  <span className="text-lg tracking-wide">
+                    {Number(amount).toLocaleString()}원
+                  </span>
                 </div>
                 <div className="flex flex-col gap-6 mt-4">
-                  {paymentTypes.map((paymentType, paymentTypesIndex) => {
-                    console.log(bulkSale);
-                    const payments = bulkSale?.payments ?? [];
+                  {field.payments.map((payment, paymentIndex) => {
                     const onChangeCheckbox = (checked: boolean) => {
-                      const newPayments = checked
-                        ? [...payments, { typeId: paymentType.id, amount: "" }]
-                        : payments.filter(
-                            ({ typeId }) => typeId !== paymentType.id
-                          );
-                      setValue(`bulkSales.${index}.payments`, newPayments);
+                      setValue(`bulkSales.${index}.payments.${paymentIndex}`, {
+                        ...payment,
+                        checked,
+                        amount: checked ? payment.amount : "",
+                      });
                     };
-
-                    const isChecked = payments.some(
-                      ({ typeId }) => typeId === paymentType.id
-                    );
 
                     return (
                       <div
-                        key={`${index}-${paymentType.id}`}
+                        key={`${index}${payment.typeId}`}
                         className="h-6 flex items-center gap-2"
                       >
                         <Checkbox
+                          id={`bulkSales.${index}.payments.${paymentIndex}`}
+                          checked={payment.checked}
                           onCheckedChange={onChangeCheckbox}
-                          id={`bulkSales.${index}.payments.${paymentTypesIndex}`}
                         />
                         <Label
-                          htmlFor={`bulkSales.${index}.payments.${paymentTypesIndex}`}
+                          htmlFor={`bulkSales.${index}.payments.${paymentIndex}`}
                         >
-                          {paymentType.name}
+                          {payment.name}
                         </Label>
-                        {isChecked && (
-                          <Input
-                            type="number"
-                            placeholder="금액"
-                            className="w-24 ml-2"
-                            value={
-                              bulkSale.payments.find(
-                                (payment) => payment.typeId === paymentType.id
-                              )?.amount || ""
+                        <Input
+                          type="number"
+                          placeholder="금액"
+                          className="w-[120px] ml-2"
+                          disabled={!payment.checked}
+                          value={payment.amount}
+                          onChange={(event) => {
+                            const amount = event.target.value;
+                            if (NUMBER_REGEX.test(amount)) {
+                              setValue(
+                                `bulkSales.${index}.payments.${paymentIndex}.amount`,
+                                amount
+                              );
+                            } else {
+                              toast({
+                                description: ERROR_MESSAGE.INPUT_ONLY_NUMBER,
+                                variant: "destructive",
+                              });
                             }
-                            onChange={(e) => {
-                              const amount = e.target.value;
-                              if (!isNaN(+amount)) {
-                                setValue(
-                                  `bulkSales.${index}.payments`,
-                                  bulkSale.payments.map((payment) =>
-                                    payment.typeId === paymentType.id
-                                      ? { ...payment, amount }
-                                      : payment
-                                  )
-                                );
-                              } else {
-                                toast({
-                                  description: "숫자만 입력해주세요.",
-                                  variant: "destructive",
-                                });
-                              }
-                            }}
-                          />
-                        )}
+                          }}
+                        />
                       </div>
                     );
                   })}
