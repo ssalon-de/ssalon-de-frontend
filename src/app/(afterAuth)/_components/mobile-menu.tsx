@@ -52,8 +52,8 @@ function MobileMenu() {
                 isLoading={enabledInitialize || isLoading}
               />
             </div>
-            <nav className="flex-grow py-6 scrollbar-hidden">
-              <ul className="space-y-2">
+            <nav className="flex-grow py-2 scrollbar-hidden">
+              <ul>
                 {routes.map((item) => (
                   <li key={item.path}>
                     <Link
@@ -64,7 +64,9 @@ function MobileMenu() {
                       onClick={() => setIsOpen(false)}
                     >
                       {item?.icon && <item.icon size={20} />}
-                      <span>{item.label}</span>
+                      <span className="text-sm text-gray-500">
+                        {item.label}
+                      </span>
                     </Link>
                   </li>
                 ))}
